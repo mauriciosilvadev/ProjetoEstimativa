@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="dd2b57d2-e16b-4248-9c04-72536e2ee50b" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2sBbT3mDn4IuvVlyKhAB4caLzt1" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "Application.TelaPrincipal.executor": "Run",
+    "Application.TelaPrincipalTree.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/clayt/Dropbox/Exemplos - Java/ProjetoEstimativaCardViewMDI",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Modules",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "editor.preferences.fonts.default",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="Application.Main">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="br.projeto.Main" />
+      <module name="ProjetoEstimativaMDI" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.projeto.presenter.window_command.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="PrincipalView" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="br.projeto.PrincipalView" />
+      <module name="ProjetoEstimativaMDI" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.projeto.presenter.window_command.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TelaPrincipal" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="br.projeto.TelaPrincipal" />
+      <module name="ProjetoEstimativaMDI" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="br.projeto.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+        <item itemvalue="Application.TelaPrincipal" />
+        <item itemvalue="Application.PrincipalView" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-125ca727e0f0-intellij.indexing.shared.core-IU-243.23654.189" />
+        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-IU-243.23654.189" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="dd2b57d2-e16b-4248-9c04-72536e2ee50b" name="Changes" comment="" />
+      <created>1737931921236</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1737931921236</updated>
+      <workItem from="1737931922988" duration="1391000" />
+      <workItem from="1737942495951" duration="10589000" />
+      <workItem from="1737988241546" duration="3838000" />
+      <workItem from="1738000351314" duration="5874000" />
+      <workItem from="1738010421282" duration="4336000" />
+      <workItem from="1738014816334" duration="405000" />
+      <workItem from="1738017704712" duration="2511000" />
+      <workItem from="1738021483664" duration="35000" />
+      <workItem from="1738022791820" duration="1090000" />
+      <workItem from="1738023916591" duration="145000" />
+      <workItem from="1738098295756" duration="475000" />
+      <workItem from="1738154686167" duration="1005000" />
+      <workItem from="1738159361037" duration="10000" />
+      <workItem from="1738178591786" duration="72000" />
+      <workItem from="1738181708222" duration="12000" />
+      <workItem from="1738190128246" duration="295000" />
+      <workItem from="1738249066848" duration="40000" />
+      <workItem from="1738255470239" duration="118000" />
+      <workItem from="1738255652441" duration="669000" />
+      <workItem from="1738259440003" duration="54000" />
+      <workItem from="1738273228282" duration="4000" />
+      <workItem from="1738437808610" duration="3349000" />
+      <workItem from="1738444665393" duration="3192000" />
+      <workItem from="1738500747501" duration="307000" />
+      <workItem from="1738501067623" duration="50000" />
+      <workItem from="1738501125327" duration="61000" />
+      <workItem from="1738501712695" duration="511000" />
+      <workItem from="1738585538180" duration="3578000" />
+      <workItem from="1738777328061" duration="2378000" />
+      <workItem from="1738793603192" duration="382000" />
+      <workItem from="1738881554296" duration="837000" />
+      <workItem from="1738884199514" duration="23000" />
+      <workItem from="1738965740607" duration="11621000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
