@@ -1,59 +1,63 @@
 # ProjectTreeMDI
 
-ProjectTreeMDI é uma aplicação de exemplo que implementa uma arquitetura de interface gráfica com visualização em árvore e suporte a Múltiplos Documentos (MDI). O projeto segue o padrão **Model-View-Presenter (MVP) - Passive View**, promovendo uma separação clara entre a lógica de apresentação e a interface do usuário.
+Projeto com arquitetura de tela utilizando **JTree** para navegação hierárquica e **JDesktopPane** para múltiplas janelas internas (MDI). Estruturado com o padrão **MVP (Model-View-Presenter)** no estilo **Passive View**, o projeto foca em uma abordagem modular e escalável para o desenvolvimento de aplicações Java.
 
-## Funcionalidades
+## 🛠️ Tecnologias Utilizadas
+- **Java** (JDK 17)
+- **Swing** (para a interface gráfica)
+- **FlatLaf** (tema moderno para o Swing)
+- **JFreeChart** (para gráficos)
 
-- **Visualização em Árvore**: Gerenciamento de projetos em uma estrutura hierárquica.
-- **MDI (Multiple Document Interface)**: Abertura de múltiplas janelas de projeto simultaneamente.
-- **Padrão MVP Passive View**: Garantia de separação entre a camada de apresentação e a interface do usuário.
-- **Mock de Dados**: Simulação de dados para demonstração das funcionalidades.
-- **Gerenciamento de Janelas**: Opções para organizar janelas lado a lado e restaurar estados anteriores usando o padrão de projeto Memento.
+## 📂 Estrutura do Projeto
+O código está organizado de forma clara e modular, seguindo o padrão MVP:
 
-## Tecnologias Utilizadas
+```
+├── br.projeto
+│   ├── command       # Comandos que executam ações específicas (padrão Command)
+│   ├── model         # Modelos de dados (Projetos, Funcionalidades, etc.)
+│   ├── presenter     # Lógica de apresentação (controla a interação View-Model)
+│   ├── repository    # Repositório de dados (mockado para simulação)
+│   ├── service       # Serviços auxiliares para cálculos e manipulação de dados
+│   └── view          # Componentes de interface gráfica (Swing)
+```
 
-- **Java Swing**: Para criação da interface gráfica.
-- **FlatLaf**: Biblioteca para temas modernos no Swing.
-- **JFreeChart**: Geração de gráficos e visualizações de dados.
+## 🔍 Funcionalidades
+- **Navegação Hierárquica**: Visualização de projetos em árvore com **JTree**.
+- **MDI (Interface Multi-documento)**: Abertura de múltiplas janelas internas para detalhamento de projetos.
+- **Estimativas de Projeto**: Cálculo de prazos e custos com base nos perfis e funcionalidades selecionadas.
+- **Gráficos Dinâmicos**: Exibição de gráficos de distribuição de custos e tipos de projeto com **JFreeChart**.
+- **Persistência de Layout**: Salva e restaura o layout das janelas abertas (padrão Memento).
 
-## Estrutura do Projeto
+## 🎯 Padrões de Projeto Aplicados
+- **MVP (Passive View)**: A lógica da aplicação está separada da interface, facilitando manutenção e testes.
+- **Command**: Encapsulamento de ações em comandos reutilizáveis.
+- **Memento**: Persistência do estado das janelas para restaurar o layout.
+- **Observer**: Atualização automática das janelas ao modificar dados do repositório.
 
-- **Model**: Representação dos dados do projeto.
-- **View**: Interfaces gráficas que interagem com o usuário.
-- **Presenter**: Camada de lógica que conecta o Model à View.
-- **Service**: Serviços auxiliares para manipulação de dados e negócio.
-- **Command**: Implementação do padrão Command para execução de ações.
-
-## Como Executar
-
+## 🚀 Como Executar o Projeto
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seuusuario/ProjectTreeMDI.git
+   git clone https://github.com/claytonfraga/projecttreeMDI
    ```
-2. Navegue até o diretório do projeto:
+
+2. Navegue até o diretório do projeto e compile:
    ```bash
-   cd ProjectTreeMDI
-   ```
-3. Compile o projeto:
-   ```bash
+   cd projecttreeMDI
    mvn clean install
    ```
-4. Execute a aplicação:
+
+3. Execute o projeto:
    ```bash
-   java -jar target/ProjectTreeMDI.jar
+   java -jar target/ProjetoEstimativaMDI.jar
    ```
 
-## Contribuição
+## 📝 Observações
+- Os dados são **mockados** para demonstração.
+- O projeto é um exemplo educacional de arquitetura e padrões de projeto em aplicações Java Swing.
 
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues ou enviar pull requests.
+## 📜 Licença
+Distribuído sob a licença MIT. Consulte `LICENSE` para mais informações.
 
-1. Fork este repositório.
-2. Crie uma branch para sua feature (`git checkout -b feature/sua-feature`).
-3. Commit suas alterações (`git commit -m 'Adicionando nova funcionalidade'`).
-4. Push para a branch (`git push origin feature/sua-feature`).
-5. Abra um Pull Request.
+---
 
-## Licença
-
-Este projeto é licenciado sob a Licença MIT
-
+💻 **Desenvolvido por [Clayton Fraga](https://github.com/claytonfraga)** 🚀
