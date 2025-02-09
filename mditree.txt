@@ -1,0 +1,1894 @@
+﻿
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\Main.java
+
+package br.projeto;
+
+import br.projeto.presenter.PrincipalPresenter;
+import br.projeto.repository.ProjetoRepositoryMock;
+
+import javax.swing.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            PrincipalPresenter presenter = new PrincipalPresenter(new ProjetoRepositoryMock());
+        });
+    }
+}
+
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\command\AbrirDashboardProjetoCommand.java
+
+package br.projeto.command;
+
+import br.projeto.presenter.DashBoardProjetoPresenter;
+import br.projeto.repository.ProjetoRepositoryMock;
+import br.projeto.view.DashBoardProjetoView;
+
+import javax.swing.*;
+
+public class AbrirDashboardProjetoCommand implements ProjetoCommand {
+    private final JDesktopPane desktop;
+    private final ProjetoRepositoryMock repository;
+
+    public AbrirDashboardProjetoCommand(JDesktopPane desktop, ProjetoRepositoryMock repository) {
+        this.desktop = desktop;
+        this.repository = repository;
+    }
+
+    @Override
+    public void execute() {
+        DashBoardProjetoView dashboardView = new DashBoardProjetoView();
+        new DashBoardProjetoPresenter(dashboardView, repository);
+        desktop.add(dashboardView);
+        dashboardView.setVisible(true);
+        try {
+            dashboardView.setMaximum(true);
+        } catch (Exception ignored) {
+        }
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\command\AbrirDetalhesProjetoProjetoCommand.java
+
+package br.projeto.command;
+
+import br.projeto.presenter.DetalheProjetoPresenter;
+import br.projeto.repository.ProjetoRepositoryMock;
+import br.projeto.view.DetalheProjetoView;
+
+import javax.swing.*;
+
+public class AbrirDetalhesProjetoProjetoCommand implements ProjetoCommand {
+    private final ProjetoRepositoryMock repository;
+    private final JDesktopPane desktop;
+    private String projetoNome;
+
+    public AbrirDetalhesProjetoProjetoCommand(ProjetoRepositoryMock repository, JDesktopPane desktop) {
+        this.repository = repository;
+        this.desktop = desktop;
+    }
+
+    public void setProjetoNome(String projetoNome) {
+        this.projetoNome = projetoNome;
+    }
+
+    @Override
+    public void execute() {
+        if (projetoNome == null || projetoNome.isEmpty()) {
+            throw new IllegalStateException("O nome do projeto nÃ£o foi definido para este comando.");
+        }
+
+        DetalheProjetoView detalheView = new DetalheProjetoView();
+
+        new DetalheProjetoPresenter(detalheView, repository, projetoNome);
+
+        desktop.add(detalheView);
+        detalheView.setTitle("Detalhes do Projeto: " + projetoNome);
+        detalheView.setVisible(true);
+        try {
+            detalheView.setMaximum(true);
+        } catch (Exception ignored) {
+        }
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\command\AbrirInternalFrameGenericoProjetoCommand.java
+
+package br.projeto.command;
+
+import javax.swing.*;
+
+public class AbrirInternalFrameGenericoProjetoCommand implements ProjetoCommand {
+    private final JDesktopPane desktop;
+    private final String titulo;
+
+    public AbrirInternalFrameGenericoProjetoCommand(JDesktopPane desktop, String titulo) {
+        this.desktop = desktop;
+        this.titulo = titulo;
+    }
+
+    @Override
+    public void execute() {
+        JInternalFrame frame = new JInternalFrame(titulo, true, true, true, true);
+        frame.setSize(desktop.getWidth(), desktop.getHeight());
+        frame.setIconifiable(false);
+        frame.setVisible(true);
+        desktop.add(frame);
+        try {
+            frame.setMaximum(true);
+        } catch (Exception ignored) {
+        }
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\command\CriarProjetoProjetoCommand.java
+
+package br.projeto.command;
+
+import br.projeto.model.Projeto;
+import br.projeto.repository.ProjetoRepositoryMock;
+import br.projeto.service.CriarProjetoMock;
+
+import javax.swing.*;
+import java.util.Optional;
+
+public class CriarProjetoProjetoCommand implements ProjetoCommand {
+    private final ProjetoRepositoryMock repository;
+    private final JDesktopPane desktop;
+    private final CriarProjetoMock criarProjetoMock;
+
+    public CriarProjetoProjetoCommand(ProjetoRepositoryMock repository, JDesktopPane desktop) {
+        this.repository = repository;
+        this.desktop = desktop;
+        this.criarProjetoMock = new CriarProjetoMock(repository);
+    }
+
+    @Override
+    public void execute() {
+        Optional<Projeto> projetoCriado = criarProjetoMock.criarProjetoAleatorio();
+
+        projetoCriado.ifPresentOrElse(
+                projeto -> {
+                    repository.adicionarProjeto(
+                            projeto.getNome(),
+                            projeto.getCriador(),
+                            projeto.getDataCriacao(),
+                            projeto.getStatus(),
+                            projeto.isCompartilhado(),
+                            projeto.getCompartilhadoPor(),
+                            projeto.getPerfis(),
+                            projeto.getFuncionalidadesEscolhidas()
+                    );
+                    new MostrarMensagemProjetoCommand("Projeto \"" + projeto.getNome() + "\" criado com sucesso!").execute();
+                },
+                () -> new MostrarMensagemProjetoCommand("Falha ao criar o projeto.").execute());
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\command\ExcluirProjetoProjetoCommand.java
+
+package br.projeto.command;
+
+import br.projeto.repository.ProjetoRepositoryMock;
+
+import javax.swing.*;
+
+public class ExcluirProjetoProjetoCommand implements ProjetoCommand {
+    private final ProjetoRepositoryMock repository;
+    private String projetoNome;
+
+    public ExcluirProjetoProjetoCommand(ProjetoRepositoryMock repository) {
+        this.repository = repository;
+    }
+
+    public ExcluirProjetoProjetoCommand(ProjetoRepositoryMock repository, String projetoNome) {
+        this.repository = repository;
+        this.projetoNome = projetoNome;
+    }
+
+    public void setProjetoNome(String projetoNome) {
+        this.projetoNome = projetoNome;
+    }
+
+    @Override
+    public void execute() {
+        if (projetoNome == null || projetoNome.isEmpty()) {
+            new MostrarMensagemProjetoCommand("Nome do projeto nÃ£o definido.").execute();
+            return;
+        }
+
+        int confirmacao = JOptionPane.showConfirmDialog(
+                null,
+                "Deseja realmente excluir o projeto \"" + projetoNome + "\"?",
+                "Confirmar ExclusÃ£o",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirmacao == JOptionPane.YES_OPTION) {
+            boolean removido = repository.removerProjetoPorNome(projetoNome);
+            if (removido) {
+                new MostrarMensagemProjetoCommand("Projeto \"" + projetoNome + "\" removido com sucesso!").execute();
+            } else {
+                new MostrarMensagemProjetoCommand("Erro ao remover o projeto \"" + projetoNome + "\".").execute();
+            }
+        }
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\command\MostrarMensagemProjetoCommand.java
+
+package br.projeto.command;
+
+import javax.swing.*;
+
+public class MostrarMensagemProjetoCommand implements ProjetoCommand {
+    private final String mensagem;
+
+    public MostrarMensagemProjetoCommand(String mensagem) {
+        this.mensagem = mensagem;
+    }
+
+    @Override
+    public void execute() {
+        JOptionPane.showMessageDialog(null, mensagem);
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\command\ProjetoCommand.java
+
+package br.projeto.command;
+
+public interface ProjetoCommand {
+    void execute();
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\model\Projeto.java
+
+package br.projeto.model;
+
+import java.util.List;
+import java.util.Map;
+
+public class Projeto {
+    private String nome;
+    private String criador;
+    private String dataCriacao;
+    private String status;
+    private boolean compartilhado;
+    private String compartilhadoPor;
+    private List<String> perfis;
+    private Map<String, Integer> funcionalidadesEscolhidas;
+
+    public Projeto(String nome, String criador, String dataCriacao, String status, boolean compartilhado,
+                   String compartilhadoPor, List<String> perfis, Map<String, Integer> funcionalidadesEscolhidas) {
+        if (perfis == null || perfis.isEmpty() || perfis.size() > 2) {
+            throw new IllegalArgumentException("Um projeto deve conter entre 1 e 2 tipos.");
+        }
+
+        this.nome = nome;
+        this.criador = criador;
+        this.dataCriacao = dataCriacao;
+        this.status = status;
+        this.compartilhado = compartilhado;
+        this.compartilhadoPor = compartilhadoPor;
+        this.perfis = perfis;
+        this.funcionalidadesEscolhidas = funcionalidadesEscolhidas;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public String getCriador() {
+        return criador;
+    }
+
+    public String getDataCriacao() {
+        return dataCriacao;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public boolean isCompartilhado() {
+        return compartilhado;
+    }
+
+    public String getCompartilhadoPor() {
+        return compartilhadoPor;
+    }
+
+    public List<String> getPerfis() {
+        return perfis;
+    }
+
+    public Map<String, Integer> getFuncionalidadesEscolhidas() {
+        return funcionalidadesEscolhidas;
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\model\Subject.java
+
+package br.projeto.model;
+
+import br.projeto.presenter.Observer;
+
+public interface Subject {
+    void addObserver(Observer observer);
+
+    void removeObserver(Observer observer);
+
+    void notifyObservers();
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\presenter\DashBoardProjetoPresenter.java
+
+package br.projeto.presenter;
+
+import br.projeto.model.Projeto;
+import br.projeto.repository.ProjetoRepositoryMock;
+import br.projeto.service.EstimaProjetoService;
+import br.projeto.view.DashBoardProjetoView;
+import org.jfree.data.general.DefaultPieDataset;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class DashBoardProjetoPresenter implements Observer {
+    private final DashBoardProjetoView view;
+    private final EstimaProjetoService estimaService;
+    private final ProjetoRepositoryMock repository;
+
+    public DashBoardProjetoPresenter(DashBoardProjetoView view, ProjetoRepositoryMock repository) {
+        this.view = view;
+        this.repository = repository;
+        this.estimaService = new EstimaProjetoService();
+
+        this.repository.addObserver(this);
+        carregarDashboard();
+    }
+
+    private void carregarDashboard() {
+        List<Projeto> projetos = repository.getProjetos();
+
+        int totalProjetos = projetos.size();
+        int diasTotais = projetos.stream()
+                .mapToInt(estimaService::calcularDiasTotais)
+                .sum();
+        double custoTotal = projetos.stream()
+                .mapToDouble(estimaService::calcularCusto)
+                .sum();
+
+        view.exibirDadosConsolidados(totalProjetos, diasTotais, custoTotal);
+
+        DefaultPieDataset datasetCustos = gerarDatasetCustos(projetos);
+        DefaultPieDataset datasetProjetos = gerarDatasetProjetos(projetos);
+
+        view.atualizarGraficos(datasetCustos, datasetProjetos);
+    }
+
+    private DefaultPieDataset gerarDatasetCustos(List<Projeto> projetos) {
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        for (Projeto projeto : projetos) {
+            double custo = estimaService.calcularCusto(projeto);
+            dataset.setValue(projeto.getNome(), custo);
+        }
+        return dataset;
+    }
+
+    private DefaultPieDataset gerarDatasetProjetos(List<Projeto> projetos) {
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        Map<String, Long> tipos = projetos.stream()
+                .flatMap(projeto -> projeto.getPerfis().stream())
+                .collect(Collectors.groupingBy(tipo -> tipo, Collectors.counting()));
+
+        for (Map.Entry<String, Long> entry : tipos.entrySet()) {
+            dataset.setValue(entry.getKey(), entry.getValue());
+        }
+        return dataset;
+    }
+
+    @Override
+    public void update(List<Projeto> projetos) {
+        carregarDashboard();
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\presenter\DesktopMemento.java
+
+package br.projeto.presenter;
+
+import javax.swing.*;
+import java.awt.*;
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
+
+public class DesktopMemento implements Serializable {
+    private final Map<String, Rectangle> frameBounds;
+
+    public DesktopMemento(JDesktopPane desktop) {
+        frameBounds = new HashMap<>();
+        for (JInternalFrame frame : desktop.getAllFrames()) {
+            frameBounds.put(frame.getTitle(), frame.getBounds());
+        }
+    }
+
+    public void restore(JDesktopPane desktop) {
+        for (JInternalFrame frame : desktop.getAllFrames()) {
+            Rectangle bounds = frameBounds.get(frame.getTitle());
+            if (bounds != null) {
+                frame.setBounds(bounds);
+            }
+        }
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\presenter\DetalheProjetoPresenter.java
+
+package br.projeto.presenter;
+
+import br.projeto.model.Projeto;
+import br.projeto.repository.ProjetoRepositoryMock;
+import br.projeto.service.EstimaProjetoService;
+import br.projeto.view.DetalheProjetoView;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class DetalheProjetoPresenter implements Observer {
+    private final DetalheProjetoView view;
+    private final EstimaProjetoService estimaService;
+    private final ProjetoRepositoryMock repository;
+    private final String projetoNome;
+
+    public DetalheProjetoPresenter(DetalheProjetoView view, ProjetoRepositoryMock repository, String projetoNome) {
+        this.view = view;
+        this.repository = repository;
+        this.projetoNome = projetoNome;
+        this.estimaService = new EstimaProjetoService();
+
+        this.repository.addObserver(this);
+        carregarDetalhesProjeto();
+    }
+
+    private void carregarDetalhesProjeto() {
+        Projeto projeto = repository.getProjetoPorNome(projetoNome);
+        if (projeto != null) {
+            carregarCabecalho(projeto);
+            carregarDetalhes(projeto);
+        }
+    }
+
+    private void carregarCabecalho(Projeto projeto) {
+        String tiposConcatenados = projeto.getPerfis().stream()
+                .collect(Collectors.joining(", "));
+
+        view.atualizarCabecalho(
+                projeto.getNome(),
+                projeto.getCriador(),
+                projeto.getDataCriacao(),
+                tiposConcatenados,
+                projeto.getStatus()
+        );
+    }
+
+    private void carregarDetalhes(Projeto projeto) {
+        Object[][] dadosTabela = projeto.getFuncionalidadesEscolhidas()
+                .entrySet()
+                .stream()
+                .map(entry -> {
+                    String nomeFuncionalidade = entry.getKey();
+                    int dias = entry.getValue();
+                    double valor = estimaService.calcularValorUnitario(projeto.getPerfis().get(0), dias);
+                    return new Object[]{nomeFuncionalidade, dias, String.format("R$ %.2f", valor)};
+                })
+                .toArray(Object[][]::new);
+
+        double valorTotal = calcularValorTotal(projeto);
+        view.atualizarTabela(dadosTabela, valorTotal);
+    }
+
+    private double calcularValorTotal(Projeto projeto) {
+        return projeto.getFuncionalidadesEscolhidas()
+                .entrySet()
+                .stream()
+                .mapToDouble(entry -> {
+                    int dias = entry.getValue();
+                    return estimaService.calcularValorUnitario(projeto.getPerfis().get(0), dias);
+                })
+                .sum();
+    }
+
+    @Override
+    public void update(List<Projeto> projetos) {
+        carregarDetalhesProjeto();
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\presenter\Observer.java
+
+package br.projeto.presenter;
+
+import br.projeto.model.Projeto;
+
+import java.util.List;
+
+public interface Observer {
+    void update(List<Projeto> projetos);
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\presenter\PrincipalPresenter.java
+
+package br.projeto.presenter;
+
+import br.projeto.command.*;
+import br.projeto.model.Projeto;
+import br.projeto.presenter.window_command.*;
+import br.projeto.repository.ProjetoRepositoryMock;
+import br.projeto.service.ConstrutorDeArvoreNavegacaoService;
+import br.projeto.service.NoArvoreComposite;
+import br.projeto.view.GlobalWindowManager;
+import br.projeto.view.PrincipalView;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import java.util.*;
+
+public final class PrincipalPresenter implements Observer {
+    private final PrincipalView view;
+    private final ProjetoRepositoryMock repository;
+    private final ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService;
+    private final Map<String, ProjetoCommand> comandos;
+    private final List<WindowCommand> windowCommands = new ArrayList<>();
+
+    public PrincipalPresenter(ProjetoRepositoryMock repository) {
+        this.view = new PrincipalView();
+        this.repository = repository;
+        this.repository.addObserver(this);
+
+        this.construtorDeArvoreNavegacaoService = new ConstrutorDeArvoreNavegacaoService();
+
+        GlobalWindowManager.initialize(view);
+
+        this.comandos = inicializarComandos();
+
+        inicializarEExecutarWindowCommands();
+        view.setVisible(true);
+    }
+
+    private void inicializarEExecutarWindowCommands() {
+        Arrays.asList(
+                new ConfigurarViewCommand(this),
+                new ConfigurarMenuJanelaCommand(this),
+                new SetLookAndFeelCommand()
+        ).forEach(WindowCommand::execute);
+    }
+
+
+    private Map<String, ProjetoCommand> inicializarComandos() {
+        Map<String, ProjetoCommand> comandos = new HashMap<>();
+        comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), repository));
+        comandos.put("UsuÃ¡rio", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "UsuÃ¡rio"));
+        comandos.put("Ver perfis de projeto", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Ver Perfis de Projetos"));
+        comandos.put("Elaborar estimativa", new MostrarMensagemProjetoCommand("Elaborar estimativa ainda nÃ£o implementada"));
+        comandos.put("Visualizar estimativa", new MostrarMensagemProjetoCommand("Visualizar estimativa ainda nÃ£o implementada"));
+        comandos.put("Compartilhar projeto de estimativa", new MostrarMensagemProjetoCommand("Compartilhar ainda nÃ£o implementado"));
+        comandos.put("Exportar projeto de estimativa", new MostrarMensagemProjetoCommand("Exportar ainda nÃ£o implementado"));
+        comandos.put("Novo projeto", new CriarProjetoProjetoCommand(repository, view.getDesktop()));
+        comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(repository));
+        comandos.put("Abrir detalhes", new AbrirDetalhesProjetoProjetoCommand(repository, view.getDesktop()));
+        return comandos;
+    }
+
+    public void configurarArvore() {
+        NoArvoreComposite raiz = construtorDeArvoreNavegacaoService.criarNo("Principal", "principal", comandos.get("Principal"));
+        NoArvoreComposite noUsuario = construtorDeArvoreNavegacaoService.criarNo("UsuÃ¡rio", "usuario", comandos.get("UsuÃ¡rio"));
+        NoArvoreComposite noPerfis = construtorDeArvoreNavegacaoService.criarNo("Ver perfis de projeto", "perfil", comandos.get("Ver perfis de projeto"));
+        NoArvoreComposite noProjetos = construtorDeArvoreNavegacaoService.criarNo("Projetos", "projeto", null);
+
+        noProjetos.setMenuContextual(() -> {
+            JPopupMenu menu = new JPopupMenu();
+            JMenuItem novoProjetoItem = new JMenuItem("Novo Projeto");
+            novoProjetoItem.addActionListener(e -> {
+                ProjetoCommand cmd = comandos.get("Novo projeto");
+                if (cmd != null) {
+                    cmd.execute();
+                }
+            });
+            menu.add(novoProjetoItem);
+            return menu;
+        });
+
+        raiz.adicionarFilho(noUsuario);
+        raiz.adicionarFilho(noPerfis);
+        raiz.adicionarFilho(noProjetos);
+
+        List<Projeto> listaProjetos = repository.getProjetos();
+        for (final Projeto projeto : listaProjetos) {
+            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(repository, view.getDesktop()) {
+                @Override
+                public void execute() {
+                    if (!isFrameAberto("Detalhes do Projeto: " + projeto.getNome())) {
+                        super.execute();
+                        bloquearMinimizacao("Detalhes do Projeto: " + projeto.getNome());
+                    }
+                }
+            };
+            cmdDetalhes.setProjetoNome(projeto.getNome());
+            NoArvoreComposite noProjeto = construtorDeArvoreNavegacaoService.criarNo(projeto.getNome(), "projeto", cmdDetalhes);
+
+            adicionarMenuContextual(projeto, noProjeto);
+
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Elaborar estimativa", "action", comandos.get("Elaborar estimativa")));
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar estimativa", "action", comandos.get("Visualizar estimativa")));
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Compartilhar projeto de estimativa", "action", comandos.get("Compartilhar projeto de estimativa")));
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Exportar projeto de estimativa", "action", comandos.get("Exportar projeto de estimativa")));
+            noProjetos.adicionarFilho(noProjeto);
+        }
+
+        DefaultMutableTreeNode modeloArvore = construtorDeArvoreNavegacaoService.converterParaNoMutavel(raiz);
+        JTree arvore = construtorDeArvoreNavegacaoService.criarJTreeDoModelo(modeloArvore);
+        view.setTree(arvore);
+    }
+
+    private void adicionarMenuContextual(Projeto projeto, NoArvoreComposite noProjeto) {
+        noProjeto.setMenuContextual(() -> {
+            JPopupMenu menu = new JPopupMenu();
+            JMenuItem excluirProjetoItem = new JMenuItem("Excluir Projeto");
+            excluirProjetoItem.addActionListener(e -> {
+                ProjetoCommand cmdExcluir = new ExcluirProjetoProjetoCommand(repository, projeto.getNome());
+                cmdExcluir.execute();
+            });
+            menu.add(excluirProjetoItem);
+            return menu;
+        });
+    }
+
+
+    @Override
+    public void update(final List<Projeto> listaProjetos) {
+        SwingUtilities.invokeLater(() -> {
+            WindowCommand fecharJanelasCommand = new FecharJanelasRelacionadasCommand(view.getDesktop(), listaProjetos);
+            fecharJanelasCommand.execute();
+            configurarArvore();
+        });
+    }
+
+
+    private boolean isFrameAberto(String titulo) {
+        JInternalFrame[] frames = view.getDesktop().getAllFrames();
+        for (JInternalFrame frame : frames) {
+            if (frame.getTitle().equals(titulo)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void bloquearMinimizacao(String titulo) {
+        JInternalFrame[] frames = view.getDesktop().getAllFrames();
+        for (JInternalFrame frame : frames) {
+            if (frame.getTitle().equals(titulo)) {
+                frame.setIconifiable(false);
+            }
+        }
+    }
+
+    public void restaurarJanelas() {
+        DesktopMemento memento = Zelador.getInstance().restaurarEstado();
+        if (memento != null) {
+            memento.restore(getView().getDesktop());
+            getView().revalidate();
+            getView().repaint();
+        } else {
+            new MostrarMensagemProjetoCommand("Nenhum estado anterior salvo para restaurar.").execute();
+        }
+    }
+
+
+    public Map<String, ProjetoCommand> getComandos() {
+        return comandos;
+    }
+
+
+    public ProjetoRepositoryMock getRepository() {
+        return repository;
+    }
+
+    public PrincipalView getView() {
+        return view;
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\presenter\Zelador.java
+
+package br.projeto.presenter;
+
+import java.util.Stack;
+
+public class Zelador {
+    private static Zelador instance;
+    private final Stack<DesktopMemento> mementoStack;
+
+    private Zelador() {
+        mementoStack = new Stack<>();
+    }
+
+    public static Zelador getInstance() {
+        if (instance == null) {
+            instance = new Zelador();
+        }
+        return instance;
+    }
+
+    public void salvarEstado(DesktopMemento memento) {
+        mementoStack.push(memento);
+    }
+
+    public DesktopMemento restaurarEstado() {
+        if (!mementoStack.isEmpty()) {
+            return mementoStack.pop();
+        }
+        return null;
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\presenter\window_command\ConfigurarMenuJanelaCommand.java
+
+package br.projeto.presenter.window_command;
+
+
+import br.projeto.presenter.PrincipalPresenter;
+
+import javax.swing.*;
+
+public class ConfigurarMenuJanelaCommand implements WindowCommand {
+    private final PrincipalPresenter presenter;
+
+    public ConfigurarMenuJanelaCommand(PrincipalPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    public void execute() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu menuJanela = new JMenu("Janela");
+
+        JMenuItem itemLadoALado = new JMenuItem("Lado a Lado");
+        itemLadoALado.addActionListener(e -> new OrganizarLadoALadoCommand(presenter
+                .getView()
+                .getDesktop()).execute());
+
+        JMenuItem itemRestaurar = new JMenuItem("Restaurar Janelas");
+        itemRestaurar.addActionListener(e -> presenter.restaurarJanelas());
+
+        menuJanela.add(itemLadoALado);
+        menuJanela.add(itemRestaurar);
+        menuBar.add(menuJanela);
+        presenter.getView().setJMenuBar(menuBar);
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\presenter\window_command\ConfigurarViewCommand.java
+
+package br.projeto.presenter.window_command;
+
+
+import br.projeto.command.MostrarMensagemProjetoCommand;
+import br.projeto.command.ProjetoCommand;
+import br.projeto.presenter.PrincipalPresenter;
+import br.projeto.service.CriarBarraBotaoService;
+
+import javax.swing.*;
+
+public class ConfigurarViewCommand implements WindowCommand {
+    private final PrincipalPresenter presenter;
+
+    public ConfigurarViewCommand(PrincipalPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    public void execute() {
+        presenter.configurarArvore();
+        JToolBar barraDeBotoes = new CriarBarraBotaoService(presenter.getComandos()).criarBarraDeBotoes();
+        presenter.getView().setMainComponents(barraDeBotoes);
+
+        SwingUtilities.invokeLater(() -> {
+            ProjetoCommand comandoPrincipal = presenter.getComandos().get("Principal");
+            if (comandoPrincipal != null) {
+                comandoPrincipal.execute();
+            } else {
+                new MostrarMensagemProjetoCommand("Comando 'Principal' nÃ£o encontrado.").execute();
+            }
+        });
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\presenter\window_command\FecharJanelasRelacionadasCommand.java
+
+package br.projeto.presenter.window_command;
+
+import br.projeto.command.ProjetoCommand;
+import br.projeto.model.Projeto;
+
+import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class FecharJanelasRelacionadasCommand implements WindowCommand {
+    private final JDesktopPane desktop;
+    private final List<Projeto> listaProjetos;
+
+    public FecharJanelasRelacionadasCommand(JDesktopPane desktop, List<Projeto> listaProjetos) {
+        this.desktop = desktop;
+        this.listaProjetos = listaProjetos;
+    }
+
+    @Override
+    public void execute() {
+        List<String> nomesProjetos = new ArrayList<>();
+        for (Projeto projeto : listaProjetos) {
+            nomesProjetos.add(projeto.getNome());
+        }
+
+        JInternalFrame[] quadrosInternos = desktop.getAllFrames();
+        for (JInternalFrame quadroInterno : quadrosInternos) {
+            if (quadroInterno.getTitle().startsWith("Detalhes do Projeto: ")) {
+                String nomeProjeto = quadroInterno.getTitle().replace("Detalhes do Projeto: ", "");
+                if (!nomesProjetos.contains(nomeProjeto)) {
+                    quadroInterno.dispose();
+                }
+            }
+        }
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\presenter\window_command\OrganizarLadoALadoCommand.java
+
+package br.projeto.presenter.window_command;
+
+import br.projeto.presenter.DesktopMemento;
+import br.projeto.presenter.Zelador;
+
+import javax.swing.*;
+import java.awt.*;
+
+public class OrganizarLadoALadoCommand implements WindowCommand {
+    private final JDesktopPane desktop;
+
+    public OrganizarLadoALadoCommand(JDesktopPane desktop) {
+        this.desktop = desktop;
+    }
+
+    @Override
+    public void execute() {
+        Zelador.getInstance().salvarEstado(new DesktopMemento(desktop));
+
+        JInternalFrame[] frames = desktop.getAllFrames();
+        int cols = (int) Math.ceil(Math.sqrt(frames.length));
+        int rows = (int) Math.ceil((double) frames.length / cols);
+        Dimension size = desktop.getSize();
+
+        int w = size.width / cols;
+        int h = size.height / rows;
+
+        for (int i = 0; i < frames.length; i++) {
+            int x = (i % cols) * w;
+            int y = (i / cols) * h;
+            frames[i].setBounds(x, y, w, h);
+        }
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\presenter\window_command\SetLookAndFeelCommand.java
+
+package br.projeto.presenter.window_command;
+
+import com.formdev.flatlaf.FlatLightLaf;
+
+import javax.swing.*;
+
+public class SetLookAndFeelCommand implements WindowCommand {
+
+    @Override
+    public void execute() {
+        try {
+            UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception e) {
+            System.err.println("Erro ao definir o FlatLaf. Usando Look and Feel padrÃ£o.");
+        }
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\presenter\window_command\WindowCommand.java
+
+package br.projeto.presenter.window_command;
+
+
+public interface WindowCommand {
+    void execute();
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\repository\ProjetoRepositoryMock.java
+
+package br.projeto.repository;
+
+import br.projeto.model.Projeto;
+import br.projeto.model.Subject;
+import br.projeto.presenter.Observer;
+
+import java.util.*;
+
+public class ProjetoRepositoryMock implements Subject {
+    private final List<Projeto> projetos;
+    private final List<Observer> observers;
+
+    public ProjetoRepositoryMock() {
+        projetos = new ArrayList<>();
+        observers = new ArrayList<>();
+
+        // Projeto 1: Web/Back-end
+        Map<String, Integer> funcionalidades1 = new HashMap<>();
+        funcionalidades1.put("Tamanho do App: MÃ©dio", 30);
+        funcionalidades1.put("Cadastro por E-mail e Senha", 1);
+        funcionalidades1.put("Painel (Dashboard)", 5);
+        funcionalidades1.put("Contas Multi-tenant", 3);
+        funcionalidades1.put("SubdomÃ­nios", 4);
+        funcionalidades1.put("E-mails Transacionais", 2);
+        funcionalidades1.put("Gerente de Projeto", 10);
+        funcionalidades1.put("NÃ­vel de UI: BÃ¡sico", 50);
+        funcionalidades1.put("IntegraÃ§Ã£o com CMS", 7);
+        funcionalidades1.put("Monitoramento de Performance", 1);
+        funcionalidades1.put("RelatÃ³rios de Erros", 1);
+
+        projetos.add(new Projeto(
+                "Gerenciamento Corporativo",
+                "Usuario 1",
+                "01/01/2023",
+                "Estimado",
+                false,
+                null,
+                Arrays.asList("Web/Back-end"),
+                funcionalidades1
+        ));
+
+        // Projeto 2: iOS
+        Map<String, Integer> funcionalidades2 = new HashMap<>();
+        funcionalidades2.put("Tamanho do App: Pequeno", 10);
+        funcionalidades2.put("Cadastro pelo Facebook", 2);
+        funcionalidades2.put("Feed de Atividades", 4);
+        funcionalidades2.put("Upload de MÃ­dia", 4);
+        funcionalidades2.put("Perfis de UsuÃ¡rio", 2);
+        funcionalidades2.put("NotificaÃ§Ãµes Push", 3);
+        funcionalidades2.put("Design de Ãcone do App", 7);
+        funcionalidades2.put("NÃ­vel de UI: Profissional", 70);
+        funcionalidades2.put("Apple Watch", 7);
+        funcionalidades2.put("SincronizaÃ§Ã£o em Nuvem", 5);
+
+        projetos.add(new Projeto(
+                "Aplicativo Social iOS",
+                "Usuario 2",
+                "02/02/2023",
+                "Em andamento",
+                true,
+                "Usuario 1",
+                Arrays.asList("iOS"),
+                funcionalidades2
+        ));
+
+        // Projeto 3: Android
+        Map<String, Integer> funcionalidades3 = new HashMap<>();
+        funcionalidades3.put("Tamanho do App: MÃ©dio", 30);
+        funcionalidades3.put("Cadastro pelo Google", 2);
+        funcionalidades3.put("Feed de Atividades", 4);
+        funcionalidades3.put("Compartilhamento Social", 1);
+        funcionalidades3.put("Pesquisa", 3);
+        funcionalidades3.put("Mensagens", 5);
+        funcionalidades3.put("NÃ­vel de UI: BÃ¡sico", 50);
+        funcionalidades3.put("Dados de Sensores do Dispositivo", 5);
+        funcionalidades3.put("CÃ³digos de Barras ou QR Codes", 2);
+
+        projetos.add(new Projeto(
+                "Aplicativo de Marketplace Android",
+                "Usuario 3",
+                "03/03/2023",
+                "Estimado",
+                false,
+                null,
+                Arrays.asList("Android"),
+                funcionalidades3
+        ));
+
+        // Projeto 4: Web/Back-end e iOS
+        Map<String, Integer> funcionalidades4 = new HashMap<>();
+        funcionalidades4.put("Tamanho do App: Grande", 50);
+        funcionalidades4.put("Cadastro por E-mail e Senha", 1);
+        funcionalidades4.put("Feed de Atividades", 4);
+        funcionalidades4.put("Painel (Dashboard)", 5);
+        funcionalidades4.put("NotificaÃ§Ãµes Push", 3);
+        funcionalidades4.put("Upload de MÃ­dia", 4);
+        funcionalidades4.put("Gerente de Projeto", 10);
+        funcionalidades4.put("NÃ­vel de UI: Profissional", 70);
+        funcionalidades4.put("Planos de Assinatura", 8);
+        funcionalidades4.put("Envio de SMS", 4);
+
+        projetos.add(new Projeto(
+                "Aplicativo Financeiro Completo",
+                "Usuario 4",
+                "04/04/2023",
+                "Em andamento",
+                true,
+                "Usuario 2",
+                Arrays.asList("Web/Back-end", "iOS"),
+                funcionalidades4
+        ));
+
+        // Projeto 5: Android com Web/Back-end
+        Map<String, Integer> funcionalidades5 = new HashMap<>();
+        funcionalidades5.put("Tamanho do App: MÃ©dio", 30);
+        funcionalidades5.put("Cadastro pelo Facebook", 2);
+        funcionalidades5.put("Feed de Atividades", 4);
+        funcionalidades5.put("Mensagens", 5);
+        funcionalidades5.put("Compartilhamento Social", 1);
+        funcionalidades5.put("Pesquisa", 3);
+        funcionalidades5.put("Painel (Dashboard)", 5);
+        funcionalidades5.put("NÃ­vel de UI: BÃ¡sico", 50);
+        funcionalidades5.put("Processamento de Pagamentos", 5);
+        funcionalidades5.put("Suporte MultilÃ­ngue", 4);
+
+        projetos.add(new Projeto(
+                "Plataforma de Compras Android",
+                "Usuario 5",
+                "05/05/2023",
+                "Estimado",
+                false,
+                null,
+                Arrays.asList("Android", "Web/Back-end"),
+                funcionalidades5
+        ));
+
+        // Projeto 6: Web/Back-end com funcionalidades extras
+        Map<String, Integer> funcionalidades6 = new HashMap<>();
+        funcionalidades6.put("Tamanho do App: Pequeno", 10);
+        funcionalidades6.put("Painel (Dashboard)", 5);
+        funcionalidades6.put("E-mails Transacionais", 2);
+        funcionalidades6.put("SubdomÃ­nios", 4);
+        funcionalidades6.put("Contas Multi-tenant", 3);
+        funcionalidades6.put("NÃ­vel de UI: MVP", 30);
+        funcionalidades6.put("Conectar a um ou mais serviÃ§os de terceiros", 6);
+        funcionalidades6.put("ModeraÃ§Ã£o / AprovaÃ§Ã£o de ConteÃºdo", 4);
+
+        projetos.add(new Projeto(
+                "Sistema de Suporte Web",
+                "Usuario 6",
+                "06/06/2023",
+                "Em andamento",
+                true,
+                "Usuario 4",
+                Arrays.asList("Web/Back-end"),
+                funcionalidades6
+        ));
+    }
+
+    public List<Projeto> getProjetos() {
+        return projetos;
+    }
+
+    public Projeto getProjetoPorNome(String nome) {
+        return projetos.stream()
+                .filter(projeto -> projeto.getNome().equals(nome))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public void adicionarProjeto(String nome, String criador, String dataCriacao, String status,
+                                 boolean compartilhado, String compartilhadoPor,
+                                 List<String> tipos, Map<String, Integer> funcionalidadesEscolhidas) {
+        Projeto novoProjeto = new Projeto(nome, criador, dataCriacao, status, compartilhado,
+                compartilhadoPor, tipos, funcionalidadesEscolhidas);
+        projetos.add(novoProjeto);
+        notifyObservers();
+    }
+
+    public boolean removerProjetoPorNome(String nome) {
+        boolean removido = projetos.removeIf(projeto -> projeto.getNome().equals(nome));
+        if (removido) {
+            notifyObservers();
+        }
+        return removido;
+    }
+
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update(projetos);
+        }
+    }
+
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\service\ComponenteNoArvore.java
+
+package br.projeto.service;
+
+import br.projeto.command.ProjetoCommand;
+
+import java.util.List;
+
+public interface ComponenteNoArvore {
+    String obterTexto();
+
+    String obterChaveIcone();
+
+    ProjetoCommand obterComando();
+
+    List<ComponenteNoArvore> obterFilhos();
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\service\ConstrutorDeArvoreNavegacaoService.java
+
+package br.projeto.service;
+
+import br.projeto.command.ProjetoCommand;
+
+import javax.swing.*;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Enumeration;
+
+public final class ConstrutorDeArvoreNavegacaoService {
+
+    public ConstrutorDeArvoreNavegacaoService() {
+    }
+
+    public NoArvoreComposite criarNo(String texto, String chaveIcone, ProjetoCommand comando) {
+        return new NoArvoreComposite(texto, chaveIcone, comando);
+    }
+
+    public DefaultMutableTreeNode converterParaNoMutavel(ComponenteNoArvore comp) {
+        DefaultMutableTreeNode node = new DefaultMutableTreeNode(comp);
+        for (ComponenteNoArvore filho : comp.obterFilhos()) {
+            node.add(converterParaNoMutavel(filho));
+        }
+        return node;
+    }
+
+    public JTree criarJTreeDoModelo(DefaultMutableTreeNode raiz) {
+        final JTree arvore = new JTree(raiz);
+        arvore.setShowsRootHandles(true);
+        arvore.setRootVisible(true);
+        arvore.setCellRenderer(new DefaultTreeCellRenderer() {
+            @Override
+            public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+                super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+                DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+                ComponenteNoArvore comp = (ComponenteNoArvore) node.getUserObject();
+                setIcon(IconService.getIcon(comp.obterChaveIcone()));
+                return this;
+            }
+        });
+
+        arvore.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent evento) {
+                if (SwingUtilities.isLeftMouseButton(evento)) {
+                    int row = arvore.getRowForLocation(evento.getX(), evento.getY());
+                    if (row != -1) {
+                        arvore.setSelectionRow(row);
+                        TreePath path = arvore.getPathForRow(row);
+                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                        ComponenteNoArvore comp = (ComponenteNoArvore) node.getUserObject();
+                        ProjetoCommand cmd = comp.obterComando();
+                        if (cmd != null) {
+                            cmd.execute();
+                        }
+                    }
+                } else if (evento.isPopupTrigger() || SwingUtilities.isRightMouseButton(evento)) {
+                    int row = arvore.getRowForLocation(evento.getX(), evento.getY());
+                    if (row != -1) {
+                        arvore.setSelectionRow(row);
+                        TreePath path = arvore.getPathForRow(row);
+                        DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+                        Object userObj = node.getUserObject();
+                        if (userObj instanceof NoArvoreComposite) {
+                            NoArvoreComposite noComposite = (NoArvoreComposite) userObj;
+                            if (noComposite.getMenuContextual() != null) {
+                                JPopupMenu menu = noComposite.getMenuContextual().criarMenuContextual();
+                                menu.show(arvore, evento.getX(), evento.getY());
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        expandirTodosOsNos(arvore);
+        return arvore;
+    }
+
+    private void expandirTodosOsNos(JTree arvore) {
+        DefaultMutableTreeNode raiz = (DefaultMutableTreeNode) arvore.getModel().getRoot();
+        Enumeration<?> enumeracao = raiz.children();
+        while (enumeracao.hasMoreElements()) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) enumeracao.nextElement();
+            TreePath path = new TreePath(node.getPath());
+            arvore.expandPath(path);
+        }
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\service\CriarBarraBotaoService.java
+
+package br.projeto.service;
+
+import br.projeto.command.ProjetoCommand;
+
+import javax.swing.*;
+import java.util.Map;
+
+public class CriarBarraBotaoService {
+    private final Map<String, ProjetoCommand> comandos;
+
+    public CriarBarraBotaoService(Map<String, ProjetoCommand> comandos) {
+        this.comandos = comandos;
+    }
+
+    public JToolBar criarBarraDeBotoes() {
+        JToolBar toolBar = new JToolBar();
+        toolBar.setFloatable(false);
+
+        adicionarBotao(toolBar, "Dashboard", "principal", "Principal");
+        adicionarBotao(toolBar, "Novo Projeto", "projeto", "Novo projeto");
+        adicionarBotao(toolBar, "UsuÃ¡rio", "usuario", "UsuÃ¡rio");
+
+        return toolBar;
+    }
+
+    private void adicionarBotao(JToolBar toolBar, String texto, String iconeKey, String comandoChave) {
+        JButton botao = new JButton(texto);
+        botao.setIcon(IconService.getIcon(iconeKey));
+        botao.addActionListener(e -> {
+            ProjetoCommand comando = comandos.get(comandoChave);
+            if (comando == null) {
+                throw new IllegalArgumentException("Comando nÃ£o encontrado: " + comandoChave);
+            }
+            comando.execute();
+        });
+        toolBar.add(botao);
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\service\CriarProjetoMock.java
+
+package br.projeto.service;
+
+import br.projeto.model.Projeto;
+import br.projeto.repository.ProjetoRepositoryMock;
+
+import java.util.*;
+
+public class CriarProjetoMock {
+    private final ProjetoRepositoryMock repository;
+
+    public CriarProjetoMock(ProjetoRepositoryMock repository) {
+        this.repository = repository;
+    }
+
+    public Optional<Projeto> criarProjetoAleatorio() {
+        List<Projeto> projetosExistentes = repository.getProjetos();
+
+        if (projetosExistentes.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Random random = new Random();
+        Projeto projetoBase = projetosExistentes.get(random.nextInt(projetosExistentes.size()));
+
+        List<String> tipos = combinarTipos(projetosExistentes, random);
+        if (tipos.size() < 1 || tipos.size() > 2) {
+            return Optional.empty();
+        }
+
+        String nome = gerarNomeDoProjeto(tipos);
+        String criador = projetoBase.getCriador();
+        String dataCriacao = gerarDataAleatoria();
+        String status = random.nextBoolean() ? "Estimado" : "Em andamento";
+        boolean compartilhado = random.nextBoolean();
+        String compartilhadoPor = compartilhado ? projetoBase.getCriador() : null;
+        Map<String, Integer> funcionalidades = combinarFuncionalidades(projetosExistentes, random);
+
+        return Optional.of(new Projeto(nome, criador, dataCriacao, status, compartilhado, compartilhadoPor, tipos, funcionalidades));
+    }
+
+    private String gerarNomeDoProjeto(List<String> tipos) {
+        StringBuilder nomeBuilder = new StringBuilder("Projeto ");
+
+        for (int i = 0; i < tipos.size(); i++) {
+            nomeBuilder.append(tipos.get(i));
+            if (i < tipos.size() - 2) {
+                nomeBuilder.append(", ");
+            } else if (i == tipos.size() - 2) {
+                nomeBuilder.append(" e ");
+            }
+        }
+
+        nomeBuilder.append(" - ").append(UUID.randomUUID().toString().substring(0, 5));
+        return nomeBuilder.toString();
+    }
+
+    private String gerarDataAleatoria() {
+        Random random = new Random();
+        int dia = random.nextInt(28) + 1;
+        int mes = random.nextInt(12) + 1;
+        int ano = 2023 + random.nextInt(3);
+        return String.format("%02d/%02d/%d", dia, mes, ano);
+    }
+
+    private List<String> combinarTipos(List<Projeto> projetos, Random random) {
+        Set<String> tiposCombinados = new HashSet<>();
+        List<String> todosOsTipos = new ArrayList<>();
+
+        for (Projeto projeto : projetos) {
+            todosOsTipos.addAll(projeto.getPerfis());
+        }
+
+        Collections.shuffle(todosOsTipos, random);
+        int quantidadeDeTipos = 1 + random.nextInt(2);
+
+        for (int i = 0; i < quantidadeDeTipos && i < todosOsTipos.size(); i++) {
+            tiposCombinados.add(todosOsTipos.get(i));
+        }
+
+        return new ArrayList<>(tiposCombinados);
+    }
+
+    private Map<String, Integer> combinarFuncionalidades(List<Projeto> projetos, Random random) {
+        Map<String, Integer> funcionalidadesCombinadas = new HashMap<>();
+        int numProjetosParaCombinar = 1 + random.nextInt(projetos.size());
+
+        for (int i = 0; i < numProjetosParaCombinar; i++) {
+            Projeto projeto = projetos.get(random.nextInt(projetos.size()));
+            Map<String, Integer> funcionalidades = projeto.getFuncionalidadesEscolhidas();
+
+            int numFuncionalidades = 1 + random.nextInt(funcionalidades.size());
+            List<String> chaves = new ArrayList<>(funcionalidades.keySet());
+            Collections.shuffle(chaves, random);
+
+            for (int j = 0; j < numFuncionalidades; j++) {
+                String chave = chaves.get(j);
+                funcionalidadesCombinadas.putIfAbsent(chave, funcionalidades.get(chave));
+            }
+        }
+
+        return funcionalidadesCombinadas;
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\service\EstimaProjetoService.java
+
+package br.projeto.service;
+
+import br.projeto.model.Projeto;
+
+import java.util.Map;
+
+public class EstimaProjetoService {
+    private static final double VALOR_DIARIA_DESENVOLVIMENTO = 450.0;
+    private static final double VALOR_DIARIA_GERENCIA = 300.0;
+    private static final double VALOR_DIARIA_UI_UX = 550.0;
+
+    public int calcularDiasTotais(Projeto projeto) {
+        return calcularDiasFuncionalidades(projeto.getFuncionalidadesEscolhidas());
+    }
+
+    public double calcularCusto(Projeto projeto) {
+        int diasTotais = calcularDiasTotais(projeto);
+        return diasTotais * VALOR_DIARIA_DESENVOLVIMENTO;
+    }
+
+    public double calcularValorUnitario(String tipoProjeto, int dias) {
+        switch (tipoProjeto) {
+            case "Web/Back-end":
+            case "Android":
+                return dias * VALOR_DIARIA_DESENVOLVIMENTO;
+            case "iOS":
+                return dias * VALOR_DIARIA_UI_UX;
+            default:
+                throw new IllegalArgumentException("Tipo de projeto desconhecido: " + tipoProjeto);
+        }
+    }
+
+    public int calcularDiasFuncionalidades(Map<String, Integer> funcionalidadesEscolhidas) {
+        int totalDias = 0;
+        for (Integer dias : funcionalidadesEscolhidas.values()) {
+            totalDias += dias;
+        }
+        return totalDias;
+    }
+
+    public double calcularCustosAdicionais(double custoHardware, double custoSoftware, double custoRiscos, double custoGarantia, double fundoReserva, double outrosCustos) {
+        return custoHardware + custoSoftware + custoRiscos + custoGarantia + fundoReserva + outrosCustos;
+    }
+
+    public double calcularImpostos(double subtotal, double percentualImpostos) {
+        return subtotal * (percentualImpostos / 100);
+    }
+
+    public double calcularLucro(double subtotalComImpostos, double percentualLucro) {
+        return subtotalComImpostos * (percentualLucro / 100);
+    }
+
+    public double calcularPrecoFinal(double subtotalComImpostos, double lucro) {
+        return subtotalComImpostos + lucro;
+    }
+
+    public double calcularMediaPorMes(double precoFinal, double meses) {
+        return precoFinal / meses;
+    }
+}
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\service\IconService.java
+
+package br.projeto.service;
+
+import javax.swing.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+
+public class IconService {
+    private static final Map<String, ImageIcon> icons = new HashMap<>();
+
+    static {
+        icons.put("principal", loadIcon("principal-icon.png"));
+        icons.put("usuario", loadIcon("usuario-icon.png"));
+        icons.put("perfil", loadIcon("perfil-icon.png"));
+        icons.put("projeto", loadIcon("projeto-icon-tree.png"));
+        icons.put("action", loadIcon("action-icon.png"));
+    }
+
+    private static ImageIcon loadIcon(String path) {
+        return new ImageIcon(
+                Objects.requireNonNull(IconService.class.getClassLoader().getResource(path))
+        );
+    }
+
+    public static ImageIcon getIcon(String key) {
+        return icons.get(key);
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\service\NoArvoreComposite.java
+
+package br.projeto.service;
+
+import br.projeto.command.ProjetoCommand;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class NoArvoreComposite implements ComponenteNoArvore {
+    private final String texto;
+    private final String chaveIcone;
+    private final ProjetoCommand comando;
+    private final List<ComponenteNoArvore> filhos = new ArrayList<>();
+    private ProvedorMenuContextual menuContextual;
+
+    public NoArvoreComposite(String texto, String chaveIcone, ProjetoCommand comando) {
+        this.texto = texto;
+        this.chaveIcone = chaveIcone;
+        this.comando = comando;
+    }
+
+    @Override
+    public String obterTexto() {
+        return texto;
+    }
+
+    @Override
+    public String obterChaveIcone() {
+        return chaveIcone;
+    }
+
+    @Override
+    public ProjetoCommand obterComando() {
+        return comando;
+    }
+
+    @Override
+    public List<ComponenteNoArvore> obterFilhos() {
+        return filhos;
+    }
+
+    public void adicionarFilho(ComponenteNoArvore filho) {
+        filhos.add(filho);
+    }
+
+    public ProvedorMenuContextual getMenuContextual() {
+        return menuContextual;
+    }
+
+    public void setMenuContextual(ProvedorMenuContextual menuContextual) {
+        this.menuContextual = menuContextual;
+    }
+
+    @Override
+    public String toString() {
+        return obterTexto();
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\service\ProvedorMenuContextual.java
+
+package br.projeto.service;
+
+import javax.swing.*;
+
+public interface ProvedorMenuContextual {
+    JPopupMenu criarMenuContextual();
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\view\DashBoardProjetoView.java
+
+package br.projeto.view;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.data.general.DefaultPieDataset;
+
+import javax.swing.*;
+import java.awt.*;
+import java.text.DecimalFormat;
+
+public class DashBoardProjetoView extends JInternalFrame {
+    private JLabel lblTotalProjetosValor;
+    private JLabel lblDiasTotaisValor;
+    private JLabel lblCustoTotalValor;
+    private JPanel painelGraficos;
+
+    public DashBoardProjetoView() {
+        setTitle("Dashboard de Projetos");
+        setClosable(true);
+        setMaximizable(true);
+        setIconifiable(false);
+        setResizable(true);
+        setSize(1000, 700);
+
+        JPanel painelPrincipal = new JPanel(new BorderLayout());
+        add(painelPrincipal);
+
+        JPanel painelMetricas = new JPanel(new GridLayout(1, 3, 20, 10));
+        painelMetricas.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        painelMetricas.add(criarPainelMetrica("Total de Projetos", "0"));
+        painelMetricas.add(criarPainelMetrica("Dias Totais", "0"));
+        painelMetricas.add(criarPainelMetrica("Custo Total", "R$ 0,00"));
+
+        painelPrincipal.add(painelMetricas, BorderLayout.NORTH);
+
+        painelGraficos = new JPanel(new GridLayout(1, 2, 20, 10));
+        painelGraficos.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        painelPrincipal.add(painelGraficos, BorderLayout.CENTER);
+    }
+
+    private JPanel criarPainelMetrica(String titulo, String valor) {
+        JPanel painel = new JPanel(new BorderLayout());
+        JLabel lblTitulo = new JLabel(titulo, JLabel.CENTER);
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 16));
+        JLabel lblValor = new JLabel(valor, JLabel.CENTER);
+        lblValor.setFont(new Font("Arial", Font.BOLD, 20));
+
+        painel.add(lblTitulo, BorderLayout.NORTH);
+        painel.add(lblValor, BorderLayout.CENTER);
+        painel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+
+        if (titulo.equals("Total de Projetos")) {
+            lblTotalProjetosValor = lblValor;
+        } else if (titulo.equals("Dias Totais")) {
+            lblDiasTotaisValor = lblValor;
+        } else if (titulo.equals("Custo Total")) {
+            lblCustoTotalValor = lblValor;
+        }
+
+        return painel;
+    }
+
+    public void exibirDadosConsolidados(int totalProjetos, int diasTotais, double custoTotal) {
+        lblTotalProjetosValor.setText(String.valueOf(totalProjetos));
+        lblDiasTotaisValor.setText(String.valueOf(diasTotais));
+        lblCustoTotalValor.setText("R$ " + new DecimalFormat("#,##0.00").format(custoTotal));
+    }
+
+    public void atualizarGraficos(DefaultPieDataset datasetCustos, DefaultPieDataset datasetProjetos) {
+        painelGraficos.removeAll();
+
+        JFreeChart graficoCustos = ChartFactory.createPieChart("DistribuiÃ§Ã£o de Custos", datasetCustos, true, true, false);
+        JFreeChart graficoProjetos = ChartFactory.createPieChart("Tipos de Projetos", datasetProjetos, true, true, false);
+
+        painelGraficos.add(new ChartPanel(graficoCustos));
+        painelGraficos.add(new ChartPanel(graficoProjetos));
+
+        painelGraficos.revalidate();
+        painelGraficos.repaint();
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\view\DetalheProjetoView.java
+
+package br.projeto.view;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.awt.*;
+import java.text.DecimalFormat;
+
+public class DetalheProjetoView extends JInternalFrame {
+    private JLabel lblNome, lblCriador, lblData, lblTipoProjeto, lblStatus, lblValorTotal;
+    private JTable tabelaDetalhes;
+    private DefaultTableModel modeloTabela;
+
+    public DetalheProjetoView() {
+        setTitle("Detalhes do Projeto");
+        setClosable(true);
+        setMaximizable(true);
+        setIconifiable(false);
+        setResizable(true);
+        setSize(1000, 700);
+
+        JPanel painelPrincipal = new JPanel(new BorderLayout());
+        add(painelPrincipal);
+
+        JPanel painelCabecalho = new JPanel();
+        painelCabecalho.setLayout(new GridLayout(3, 2, 10, 15));
+        painelCabecalho.setBorder(BorderFactory.createTitledBorder("InformaÃ§Ãµes do Projeto"));
+
+        lblNome = new JLabel("Nome: ");
+        lblCriador = new JLabel("Criador: ");
+        lblData = new JLabel("Data de CriaÃ§Ã£o: ");
+        lblTipoProjeto = new JLabel("Tipo de Projeto: ");
+        lblStatus = new JLabel("Status: ");
+
+        painelCabecalho.add(lblNome);
+        painelCabecalho.add(lblCriador);
+        painelCabecalho.add(lblData);
+        painelCabecalho.add(lblTipoProjeto);
+        painelCabecalho.add(lblStatus);
+
+        painelPrincipal.add(painelCabecalho, BorderLayout.NORTH);
+
+        JPanel painelTabela = new JPanel(new BorderLayout());
+        painelTabela.setBorder(BorderFactory.createTitledBorder("Funcionalidades do Projeto"));
+
+        modeloTabela = new DefaultTableModel(new Object[]{"Nome", "Dias", "Valor"}, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        tabelaDetalhes = new JTable(modeloTabela);
+        tabelaDetalhes.setFillsViewportHeight(true);
+
+        JScrollPane scrollTabela = new JScrollPane(tabelaDetalhes);
+        painelTabela.add(scrollTabela, BorderLayout.CENTER);
+
+        JPanel painelValorTotal = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        lblValorTotal = new JLabel("Valor Total: R$ 0,00");
+        lblValorTotal.setFont(new Font("Arial", Font.BOLD, 14));
+        painelValorTotal.add(lblValorTotal);
+
+        painelTabela.add(painelValorTotal, BorderLayout.SOUTH);
+        painelPrincipal.add(painelTabela, BorderLayout.CENTER);
+    }
+
+    public void atualizarCabecalho(String nome, String criador, String data, String tipoProjeto, String status) {
+        lblNome.setText("Nome: " + nome);
+        lblCriador.setText("Criador: " + criador);
+        lblData.setText("Data de CriaÃ§Ã£o: " + data);
+        lblTipoProjeto.setText("Tipo de Projeto: " + tipoProjeto);
+        lblStatus.setText("Status: " + status);
+    }
+
+    public void atualizarTabela(Object[][] dados, double valorTotal) {
+        modeloTabela.setRowCount(0);
+        for (Object[] linha : dados) {
+            modeloTabela.addRow(linha);
+        }
+        DecimalFormat df = new DecimalFormat("R$ #,##0.00");
+        lblValorTotal.setText("Valor Total: " + df.format(valorTotal));
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\view\GlobalWindowManager.java
+
+package br.projeto.view;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.AWTEventListener;
+import java.awt.event.WindowEvent;
+
+public class GlobalWindowManager {
+
+    private static JFrame mainWindow;
+
+    public static void initialize(JFrame main) {
+        mainWindow = main;
+        mainWindow.setExtendedState(JFrame.MAXIMIZED_BOTH);
+
+        Toolkit.getDefaultToolkit().addAWTEventListener(new AWTEventListener() {
+            @Override
+            public void eventDispatched(AWTEvent event) {
+                if (event.getID() == WindowEvent.WINDOW_OPENED) {
+                    Window window = (Window) event.getSource();
+
+
+                    if (window.getClass().getName().contains("Popup") ||
+                            window.getClass().getName().contains("Menu")) {
+                        return;
+                    }
+
+                    if (window != mainWindow) {
+                        setLocationOnCurrentMonitor(window);
+                    }
+                }
+            }
+        }, AWTEvent.WINDOW_EVENT_MASK);
+    }
+
+    private static void setLocationOnCurrentMonitor(Window window) {
+        if (mainWindow != null) {
+            GraphicsConfiguration currentConfig = mainWindow.getGraphicsConfiguration();
+            Rectangle bounds = currentConfig.getBounds();
+
+            int x = bounds.x + (bounds.width - window.getWidth()) / 2;
+            int y = bounds.y + (bounds.height - window.getHeight()) / 2;
+
+            window.setLocation(x, y);
+        }
+    }
+}
+
+
+
+File: C:\Users\clayt\Dropbox\UFES\Disciplinas ministradas\Exemplos - Java\projecttreeMDI\src\main\java\br\projeto\view\PrincipalView.java
+
+package br.projeto.view;
+
+import javax.swing.*;
+import java.awt.*;
+
+public final class PrincipalView extends JFrame {
+    private JDesktopPane desktop;
+    private JTree tree;
+    private JScrollPane treeScrollPane;
+
+    public PrincipalView() {
+        setTitle("Sistema de Estimativa de Projetos");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(1200, 800);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setLocationRelativeTo(null);
+
+        treeScrollPane = new JScrollPane();
+        desktop = new JDesktopPane();
+
+        JSplitPane divisoriaPainel = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, getTreeScrollPane(), getDesktop());
+        divisoriaPainel.setDividerLocation(300);
+        divisoriaPainel.setResizeWeight(0.0);
+        divisoriaPainel.setContinuousLayout(true);
+        divisoriaPainel.setOneTouchExpandable(true);
+
+        add(divisoriaPainel, BorderLayout.CENTER);
+    }
+
+    public void setMainComponents(JToolBar toolBar) {
+        add(toolBar, BorderLayout.NORTH);
+    }
+
+    public JDesktopPane getDesktop() {
+        return desktop;
+    }
+
+    public JTree getTree() {
+        return tree;
+    }
+
+    public void setTree(JTree tree) {
+        this.tree = tree;
+        treeScrollPane.setViewportView(tree);
+    }
+
+    public JScrollPane getTreeScrollPane() {
+        return treeScrollPane;
+    }
+
+
+}
+

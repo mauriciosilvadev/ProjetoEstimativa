@@ -1,6 +1,7 @@
 package br.projeto.command;
 
 import br.projeto.presenter.DashBoardProjetoPresenter;
+import br.projeto.presenter.helpers.WindowManager;
 import br.projeto.repository.ProjetoRepositoryMock;
 import br.projeto.view.DashBoardProjetoView;
 
@@ -17,13 +18,21 @@ public class AbrirDashboardProjetoCommand implements ProjetoCommand {
 
     @Override
     public void execute() {
-        DashBoardProjetoView dashboardView = new DashBoardProjetoView();
-        new DashBoardProjetoPresenter(dashboardView, repository);
-        desktop.add(dashboardView);
-        dashboardView.setVisible(true);
-        try {
-            dashboardView.setMaximum(true);
-        } catch (Exception ignored) {
+        String tituloJanela = "Dashboard de Projetos";
+        WindowManager windowManager = WindowManager.getInstance();
+
+        if (windowManager.isFrameAberto(tituloJanela)) {
+            windowManager.bringToFront(tituloJanela);
+        } else {
+            DashBoardProjetoView dashboardView = new DashBoardProjetoView();
+            new DashBoardProjetoPresenter(dashboardView, repository);
+            dashboardView.setTitle(tituloJanela);
+            desktop.add(dashboardView);
+            dashboardView.setVisible(true);
+            try {
+                dashboardView.setMaximum(true);
+            } catch (Exception ignored) {
+            }
         }
     }
 }

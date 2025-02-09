@@ -2,6 +2,7 @@ package br.projeto.presenter;
 
 import br.projeto.command.*;
 import br.projeto.model.Projeto;
+import br.projeto.presenter.helpers.WindowManager;
 import br.projeto.presenter.window_command.*;
 import br.projeto.repository.ProjetoRepositoryMock;
 import br.projeto.service.ConstrutorDeArvoreNavegacaoService;
@@ -87,9 +88,14 @@ public final class PrincipalPresenter implements Observer {
             AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(repository, view.getDesktop()) {
                 @Override
                 public void execute() {
-                    if (!isFrameAberto("Detalhes do Projeto: " + projeto.getNome())) {
+                    String tituloJanela = "Detalhes do Projeto: " + projeto.getNome();
+                    WindowManager windowManager = WindowManager.getInstance();
+
+                    if (!windowManager.isFrameAberto(tituloJanela)) {
                         super.execute();
-                        bloquearMinimizacao("Detalhes do Projeto: " + projeto.getNome());
+                        bloquearMinimizacao(tituloJanela);
+                    } else {
+                        windowManager.bringToFront(tituloJanela);
                     }
                 }
             };
@@ -133,17 +139,6 @@ public final class PrincipalPresenter implements Observer {
         });
     }
 
-
-    private boolean isFrameAberto(String titulo) {
-        JInternalFrame[] frames = view.getDesktop().getAllFrames();
-        for (JInternalFrame frame : frames) {
-            if (frame.getTitle().equals(titulo)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void bloquearMinimizacao(String titulo) {
         JInternalFrame[] frames = view.getDesktop().getAllFrames();
         for (JInternalFrame frame : frames) {
@@ -168,7 +163,6 @@ public final class PrincipalPresenter implements Observer {
     public Map<String, ProjetoCommand> getComandos() {
         return comandos;
     }
-
 
     public ProjetoRepositoryMock getRepository() {
         return repository;
