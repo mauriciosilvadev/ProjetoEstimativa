@@ -1,7 +1,5 @@
 package br.projeto.model;
 
-import java.time.LocalDateTime;
-
 public class Usuario {
     private String nome;
     private String email;

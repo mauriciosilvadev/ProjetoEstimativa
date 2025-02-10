@@ -12,4 +12,6 @@ public interface UsuarioRepository {
     void deletar(int id);
 
     List<Usuario> listar();
+
+    Usuario buscarPorEmail(String email);
 }

@@ -4,47 +4,41 @@ import br.projeto.model.Projeto;
 import br.projeto.model.Subject;
 import br.projeto.presenter.Observer;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
 
 public class ProjetoRepositoryImpl implements Subject, ProjetoRepository {
     private final List<Projeto> projetos;
-    private final Connection connection;
     private final List<Observer> observers;
 
     public ProjetoRepositoryImpl() {
         projetos = new ArrayList<>();
         observers = new ArrayList<>();
-        try {
-            connection = DriverManager.getConnection("jdbc:sqlite:banco.db");
-            Statement statement = connection.createStatement();
-            String sql = "CREATE TABLE IF NOT EXISTS projetos (\n"
-                    + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-                    + " nome TEXT NOT NULL,\n"
-                    + " usuario TEXT NOT NULL,\n"
-                    + " data_inicio TEXT NOT NULL,\n"
-                    + " status TEXT NOT NULL,\n"
-                    + " concluido BOOLEAN NOT NULL,\n"
-                    + " data_conclusao TEXT,\n"
-                    + " categorias TEXT NOT NULL\n"
-                    + ");";
-            statement.execute(sql);
 
-            sql = "CREATE TABLE IF NOT EXISTS funcionalidades (\n"
-                    + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-                    + " projeto_id INTEGER NOT NULL,\n"
-                    + " nome TEXT NOT NULL,\n"
-                    + " peso INTEGER NOT NULL,\n"
-                    + " FOREIGN KEY (projeto_id) REFERENCES projetos(id)\n"
-                    + ");";
-            statement.execute(sql);
+        Map<String, Integer> funcionalidades1 = new HashMap<>();
+        funcionalidades1.put("Tamanho do App: Médio", 30);
+        funcionalidades1.put("Cadastro por E-mail e Senha", 1);
+        funcionalidades1.put("Painel (Dashboard)", 5);
+        funcionalidades1.put("Contas Multi-tenant", 3);
+        funcionalidades1.put("Subdomínios", 4);
+        funcionalidades1.put("E-mails Transacionais", 2);
+        funcionalidades1.put("Gerente de Projeto", 10);
+        funcionalidades1.put("Nível de UI: Básico", 50);
+        funcionalidades1.put("Integração com CMS", 7);
+        funcionalidades1.put("Monitoramento de Performance", 1);
+        funcionalidades1.put("Relatórios de Erros", 1);
 
-        } catch (SQLException e) {
-            throw new IllegalArgumentException("Não foi possível conectar ao banco");
-        }
+        projetos.add(new Projeto(
+                "Gerenciamento Corporativo",
+                "Usuario 1",
+                "01/01/2023",
+                "Estimado",
+                false,
+                null,
+                Arrays.asList("Web/Back-end"),
+                funcionalidades1
+        ));
+
 
     }
 
@@ -69,6 +63,7 @@ public class ProjetoRepositoryImpl implements Subject, ProjetoRepository {
                 compartilhadoPor, tipos, funcionalidadesEscolhidas);
         projetos.add(novoProjeto);
         notifyObservers();
+
     }
 
     @Override

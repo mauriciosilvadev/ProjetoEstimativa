@@ -95,4 +95,26 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
         }
         return usuarios;
     }
+
+    @Override
+    public Usuario buscarPorEmail(String email) {
+        String sql = "SELECT nome, senha, email FROM usuarios WHERE email = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String nome = rs.getString("nome");
+                String senha = rs.getString("senha");
+                return new Usuario.Builder()
+                        .nome(nome)
+                        .senha(senha)
+                        .email(email)
+                        .build();
+            }
+        } catch (SQLException e) {
+            throw new IllegalArgumentException("Não foi possível buscar o usuário", e);
+        }
+        return null;
+    }
 }
