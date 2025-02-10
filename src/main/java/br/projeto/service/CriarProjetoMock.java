@@ -1,14 +1,14 @@
 package br.projeto.service;
 
 import br.projeto.model.Projeto;
-import br.projeto.repository.ProjetoRepositoryMock;
+import br.projeto.repository.ProjetoRepositoryImpl;
 
 import java.util.*;
 
 public class CriarProjetoMock {
-    private final ProjetoRepositoryMock repository;
+    private final ProjetoRepositoryImpl repository;
 
-    public CriarProjetoMock(ProjetoRepositoryMock repository) {
+    public CriarProjetoMock(ProjetoRepositoryImpl repository) {
         this.repository = repository;
     }
 

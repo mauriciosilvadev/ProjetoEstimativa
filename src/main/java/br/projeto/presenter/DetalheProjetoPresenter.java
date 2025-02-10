@@ -1,7 +1,7 @@
 package br.projeto.presenter;
 
 import br.projeto.model.Projeto;
-import br.projeto.repository.ProjetoRepositoryMock;
+import br.projeto.repository.ProjetoRepositoryImpl;
 import br.projeto.service.EstimaProjetoService;
 import br.projeto.view.DetalheProjetoView;
 
@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
 public class DetalheProjetoPresenter implements Observer {
     private final DetalheProjetoView view;
     private final EstimaProjetoService estimaService;
-    private final ProjetoRepositoryMock repository;
+    private final ProjetoRepositoryImpl repository;
     private final String projetoNome;
 
-    public DetalheProjetoPresenter(DetalheProjetoView view, ProjetoRepositoryMock repository, String projetoNome) {
+    public DetalheProjetoPresenter(DetalheProjetoView view, ProjetoRepositoryImpl repository, String projetoNome) {
         this.view = view;
         this.repository = repository;
         this.projetoNome = projetoNome;

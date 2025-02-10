@@ -1,7 +1,7 @@
 package br.projeto.presenter;
 
 import br.projeto.model.Projeto;
-import br.projeto.repository.ProjetoRepositoryMock;
+import br.projeto.repository.ProjetoRepositoryImpl;
 import br.projeto.service.EstimaProjetoService;
 import br.projeto.view.DashBoardProjetoView;
 import org.jfree.data.general.DefaultPieDataset;
@@ -13,9 +13,9 @@ import java.util.stream.Collectors;
 public class DashBoardProjetoPresenter implements Observer {
     private final DashBoardProjetoView view;
     private final EstimaProjetoService estimaService;
-    private final ProjetoRepositoryMock repository;
+    private final ProjetoRepositoryImpl repository;
 
-    public DashBoardProjetoPresenter(DashBoardProjetoView view, ProjetoRepositoryMock repository) {
+    public DashBoardProjetoPresenter(DashBoardProjetoView view, ProjetoRepositoryImpl repository) {
         this.view = view;
         this.repository = repository;
         this.estimaService = new EstimaProjetoService();

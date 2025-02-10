@@ -4,7 +4,7 @@ import br.projeto.command.*;
 import br.projeto.model.Projeto;
 import br.projeto.presenter.helpers.WindowManager;
 import br.projeto.presenter.window_command.*;
-import br.projeto.repository.ProjetoRepositoryMock;
+import br.projeto.repository.ProjetoRepositoryImpl;
 import br.projeto.service.ConstrutorDeArvoreNavegacaoService;
 import br.projeto.service.NoArvoreComposite;
 import br.projeto.view.GlobalWindowManager;
@@ -16,12 +16,12 @@ import java.util.*;
 
 public final class PrincipalPresenter implements Observer {
     private final PrincipalView view;
-    private final ProjetoRepositoryMock repository;
+    private final ProjetoRepositoryImpl repository;
     private final ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService;
     private final Map<String, ProjetoCommand> comandos;
     private final List<WindowCommand> windowCommands = new ArrayList<>();
 
-    public PrincipalPresenter(ProjetoRepositoryMock repository) {
+    public PrincipalPresenter(ProjetoRepositoryImpl repository) {
         this.view = new PrincipalView();
         this.repository = repository;
         this.repository.addObserver(this);
@@ -164,7 +164,7 @@ public final class PrincipalPresenter implements Observer {
         return comandos;
     }
 
-    public ProjetoRepositoryMock getRepository() {
+    public ProjetoRepositoryImpl getRepository() {
         return repository;
     }
 

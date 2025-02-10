@@ -2,16 +2,16 @@ package br.projeto.command;
 
 import br.projeto.presenter.DashBoardProjetoPresenter;
 import br.projeto.presenter.helpers.WindowManager;
-import br.projeto.repository.ProjetoRepositoryMock;
+import br.projeto.repository.ProjetoRepositoryImpl;
 import br.projeto.view.DashBoardProjetoView;
 
 import javax.swing.*;
 
 public class AbrirDashboardProjetoCommand implements ProjetoCommand {
     private final JDesktopPane desktop;
-    private final ProjetoRepositoryMock repository;
+    private final ProjetoRepositoryImpl repository;
 
-    public AbrirDashboardProjetoCommand(JDesktopPane desktop, ProjetoRepositoryMock repository) {
+    public AbrirDashboardProjetoCommand(JDesktopPane desktop, ProjetoRepositoryImpl repository) {
         this.desktop = desktop;
         this.repository = repository;
     }

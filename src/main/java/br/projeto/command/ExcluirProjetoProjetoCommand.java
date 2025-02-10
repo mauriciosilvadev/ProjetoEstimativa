@@ -1,18 +1,18 @@
 package br.projeto.command;
 
-import br.projeto.repository.ProjetoRepositoryMock;
+import br.projeto.repository.ProjetoRepositoryImpl;
 
 import javax.swing.*;
 
 public class ExcluirProjetoProjetoCommand implements ProjetoCommand {
-    private final ProjetoRepositoryMock repository;
+    private final ProjetoRepositoryImpl repository;
     private String projetoNome;
 
-    public ExcluirProjetoProjetoCommand(ProjetoRepositoryMock repository) {
+    public ExcluirProjetoProjetoCommand(ProjetoRepositoryImpl repository) {
         this.repository = repository;
     }
 
-    public ExcluirProjetoProjetoCommand(ProjetoRepositoryMock repository, String projetoNome) {
+    public ExcluirProjetoProjetoCommand(ProjetoRepositoryImpl repository, String projetoNome) {
         this.repository = repository;
         this.projetoNome = projetoNome;
     }

@@ -1,18 +1,18 @@
 package br.projeto.command;
 
 import br.projeto.model.Projeto;
-import br.projeto.repository.ProjetoRepositoryMock;
+import br.projeto.repository.ProjetoRepositoryImpl;
 import br.projeto.service.CriarProjetoMock;
 
 import javax.swing.*;
 import java.util.Optional;
 
 public class CriarProjetoProjetoCommand implements ProjetoCommand {
-    private final ProjetoRepositoryMock repository;
+    private final ProjetoRepositoryImpl repository;
     private final JDesktopPane desktop;
     private final CriarProjetoMock criarProjetoMock;
 
-    public CriarProjetoProjetoCommand(ProjetoRepositoryMock repository, JDesktopPane desktop) {
+    public CriarProjetoProjetoCommand(ProjetoRepositoryImpl repository, JDesktopPane desktop) {
         this.repository = repository;
         this.desktop = desktop;
         this.criarProjetoMock = new CriarProjetoMock(repository);
