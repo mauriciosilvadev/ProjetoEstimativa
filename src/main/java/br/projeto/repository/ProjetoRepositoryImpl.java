@@ -4,7 +4,6 @@ import br.projeto.model.Projeto;
 import br.projeto.model.Subject;
 import br.projeto.presenter.Observer;
 
-import java.sql.*;
 import java.util.*;
 
 public class ProjetoRepositoryImpl implements Subject, ProjetoRepository {

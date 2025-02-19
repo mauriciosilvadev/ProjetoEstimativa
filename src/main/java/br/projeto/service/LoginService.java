@@ -3,6 +3,8 @@ package br.projeto.service;
 import br.projeto.model.Usuario;
 import br.projeto.repository.UsuarioRepository;
 
+import java.util.Optional;
+
 public class LoginService {
     private final UsuarioRepository repository;
 
@@ -12,7 +14,7 @@ public class LoginService {
 
 
     // Criar um chain of responsibility para autenticar
-    public Usuario autenticar(String email, String senha) {
+    public Boolean autenticar(String email, String senha) {
 
         Usuario usuario = repository.buscarPorEmail(email);
         if (usuario == null) {
@@ -21,8 +23,7 @@ public class LoginService {
         if (!usuario.getSenha().equals(senha)) {
             throw new IllegalArgumentException("Senha inválida");
         }
-
-        return usuario;
+        return Optional.ofNullable(usuario.getNome()).isPresent();
     }
 
 
