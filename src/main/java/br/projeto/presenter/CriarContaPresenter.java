@@ -17,7 +17,7 @@ public class CriarContaPresenter {
         this.loginPresenter = loginPresenter;
         view.getBtnCriar().addActionListener(e -> criarConta());
         view.getBtnCancelar().addActionListener(e -> voltar());
-        view.setVisible(true);
+
     }
 
 
