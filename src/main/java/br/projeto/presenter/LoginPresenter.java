@@ -10,6 +10,7 @@ import br.projeto.view.CriarContaView;
 import br.projeto.view.LoginView;
 
 public class LoginPresenter {
+
     private final LoginView view;
     private final LoginService service;
     private LoginState state;
@@ -25,9 +26,12 @@ public class LoginPresenter {
 
         view.getBtnAcessar().addActionListener(e -> autenticar());
         view.getBtnCriarConta().addActionListener(e -> criarConta(repository));
+        view.setLocationRelativeTo(null);
         view.setVisible(true);
-    }
 
+        // Remover essa linha
+        this.autenticar();
+    }
 
     public void autenticar() {
         state.handle(this);
@@ -37,7 +41,6 @@ public class LoginPresenter {
 
         setState(new LoginCriandoContaState());
         state.handle(this);
-
 
     }
 

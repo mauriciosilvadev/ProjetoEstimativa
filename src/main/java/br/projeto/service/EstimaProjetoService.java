@@ -1,16 +1,17 @@
 package br.projeto.service;
 
-import br.projeto.model.Projeto;
-
 import java.util.Map;
 
+import br.projeto.model.Projeto;
+
 public class EstimaProjetoService {
+
     private static final double VALOR_DIARIA_DESENVOLVIMENTO = 450.0;
     private static final double VALOR_DIARIA_GERENCIA = 300.0;
     private static final double VALOR_DIARIA_UI_UX = 550.0;
 
     public int calcularDiasTotais(Projeto projeto) {
-        return calcularDiasFuncionalidades(projeto.getFuncionalidadesEscolhidas());
+        return 100;
     }
 
     public double calcularCusto(Projeto projeto) {
