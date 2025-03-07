@@ -29,7 +29,6 @@ public class CustomCellRenderer extends DefaultTableCellRenderer {
         RowData rowData = model.getRowDataAt(row);
         RowType rowType = rowData.getRowType();
 
-        // Se for cabeçalho de categoria, exibimos em bold, centralizado
         if (rowType == RowType.CATEGORY_HEADER) {
             JLabel label = new JLabel(value == null ? "" : value.toString());
             label.setFont(label.getFont().deriveFont(Font.BOLD));
@@ -43,7 +42,6 @@ public class CustomCellRenderer extends DefaultTableCellRenderer {
             return label;
         }
 
-        // Se o valor for Boolean, retornamos um JCheckBox
         if (value instanceof Boolean) {
             JCheckBox checkBox = new JCheckBox();
             checkBox.setSelected((Boolean) value);
@@ -59,14 +57,12 @@ public class CustomCellRenderer extends DefaultTableCellRenderer {
             return checkBox;
         }
 
-        // Caso contrário, deixamos o comportamento padrão do JLabel
         Component c = super.getTableCellRendererComponent(
                 table, value, isSelected, hasFocus, row, column
         );
 
         ((JLabel) c).setHorizontalAlignment(SwingConstants.CENTER);
 
-        // Exemplo: linha 0 (PLATFORM_SELECTION) em itálico
         if (rowType == RowType.PLATFORM_SELECTION) {
             c.setFont(c.getFont().deriveFont(Font.ITALIC));
         }

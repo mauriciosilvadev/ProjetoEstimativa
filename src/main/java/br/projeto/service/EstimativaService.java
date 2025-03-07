@@ -23,14 +23,9 @@ public class EstimativaService {
         double valorTotal = 0.0;
         double diasTotais = 0.0;
 
-        // Primeiro, para cada plataforma, calculamos a soma de dias e de valor monetário.
-        // O exemplo a seguir reproduz a mesma lógica que estava na View anteriormente.
-        // Mapas intermediários (dias e valor fixo por plataforma)
-        // MAS, ao invés de usar Map, podemos somar direto conforme vamos percorrendo.
         double[] diasPorPlataforma = new double[plataformasSelecionadas.size()];
         double[] valorPorPlataforma = new double[plataformasSelecionadas.size()];
 
-        // Para não ter aninhamento complexo, vamos só iterar e acumular:
         for (int i = 0; i < plataformasSelecionadas.size(); i++) {
             Plataforma plataforma = plataformasSelecionadas.get(i);
 
@@ -45,9 +40,6 @@ public class EstimativaService {
                         break;
 
                     case "percentual":
-                        // Busca a funcionalidade do núcleo (ex. "Tamanho do App")
-                        // No seu código, era calculado algo do tipo:
-                        // dias += (valorPercentual/100) * valorDoNucleo
                         Funcionalidade funcionalidadeDoNucleo = funcionalidadesSelecionadas.stream()
                                 .filter(f -> "Tamanho do App".equals(f.getCategoria().getNome()))
                                 .findFirst()
@@ -64,7 +56,6 @@ public class EstimativaService {
                         break;
 
                     default:
-                        // Caso não previsto
                         break;
                 }
             }
@@ -73,7 +64,7 @@ public class EstimativaService {
             valorPorPlataforma[i] = valorMonetario;
         }
 
-        // Agora calculamos o valor total a partir de dias e valor da equipe (monetário) para cada plataforma
+        // Calcular valores totais
         double somaDias = 0;
         for (int i = 0; i < plataformasSelecionadas.size(); i++) {
             somaDias += diasPorPlataforma[i];
@@ -82,6 +73,7 @@ public class EstimativaService {
 
         diasTotais = somaDias;
 
+        // Retorna um objeto com os valores estimados
         return new EstimativaResultado(diasTotais, valorTotal);
     }
 }

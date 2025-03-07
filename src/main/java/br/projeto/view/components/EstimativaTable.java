@@ -19,7 +19,6 @@ public class EstimativaTable extends JTable {
     public EstimativaTable(EstimativaTableModel model) {
         super(model);
 
-        // Poderíamos definir um renderer customizado para todas as colunas:
         for (int i = 0; i < model.getColumnCount(); i++) {
             getColumnModel().getColumn(i).setCellRenderer(new CustomCellRenderer());
         }

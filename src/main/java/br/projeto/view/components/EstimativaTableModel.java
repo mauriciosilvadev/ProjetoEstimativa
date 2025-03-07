@@ -34,7 +34,7 @@ public class EstimativaTableModel extends AbstractTableModel {
     private final List<String> colunasPlataformas = new ArrayList<>();
     private Perfil perfil;
 
-    // Mantemos referência ao Presenter para chamá-lo quando algo mudar
+    // Referência ao Presenter para notificar mudanças
     private final CriarProjetoPresenter presenter;
 
     public EstimativaTableModel(Perfil perfil, CriarProjetoPresenter presenter) {
@@ -179,7 +179,6 @@ public class EstimativaTableModel extends AbstractTableModel {
                     } else if ("monetario".equals(tipo)) {
                         return "R$" + val;
                     } else {
-                        // dia
                         return val + " dias";
                     }
                 }
@@ -209,24 +208,17 @@ public class EstimativaTableModel extends AbstractTableModel {
                     boolean novoValor = (Boolean) value;
 
                     if (novoValor) {
-                        // Tentando marcar a funcionalidade
-                        // Montar lista temporária (jáSelecionadas + esta)
+                        // Tentando marcar a funcionalidade e montando lista temporária (jáSelecionadas + esta)
                         List<Funcionalidade> jaSelecionadas = getFuncionalidadesSelecionadas();
                         jaSelecionadas.add(f);
 
                         try {
-                            // Validação (pode disparar exceção se não for permitido)
-                            // Observação: poderíamos delegar ao Presenter.
-                            // Mas se quiser a popup imediata, podemos manter aqui.
-                            // De qualquer modo, iremos notificar o Presenter após.
                             ValidaFuncionalidadeService.getInstance()
                                     .validaFuncionalidades(jaSelecionadas);
 
-                            // Se OK, podemos setar
                             f.setFoiSelecionada(true);
-
                         } catch (IllegalArgumentException ex) {
-                            // Exibe popup e reverte
+                            // Exibe popup
                             SwingUtilities.invokeLater(() -> {
                                 JOptionPane.showMessageDialog(
                                         null,
@@ -269,7 +261,7 @@ public class EstimativaTableModel extends AbstractTableModel {
         // Informa ao TableModel que a célula mudou
         fireTableCellUpdated(rowIndex, columnIndex);
 
-        // Notifica o Presenter para que ele recalcule e atualize a View
+        // Notifica o Presenter para que ele atualize a view com a estimativa
         presenter.onTableDataChanged();
     }
 
@@ -281,7 +273,7 @@ public class EstimativaTableModel extends AbstractTableModel {
     }
 
     /**
-     * Retorna TODAS as funcionalidades selecionadas atualmente.
+     * Retorna as funcionalidades selecionadas atualmente.
      */
     public List<Funcionalidade> getFuncionalidadesSelecionadas() {
         List<Funcionalidade> selecionadas = new ArrayList<>();
@@ -297,7 +289,7 @@ public class EstimativaTableModel extends AbstractTableModel {
     }
 
     /**
-     * Retorna TODAS as plataformas marcadas.
+     * Retorna as plataformas marcadas.
      */
     public List<Plataforma> getPlataformasSelecionadas() {
         List<Plataforma> lista = new ArrayList<>();

@@ -29,7 +29,8 @@ public class ValidaFuncionalidadeService {
 
     /**
      * Verifica se não há conflito de funcionalidades selecionadas. Exemplo: só
-     * pode haver 1 funcionalidade da categoria "Tamanho do App".
+     * pode haver 1 funcionalidade da categoria "Tamanho do App" (regra de
+     * negócio do sistema).
      */
     public void validaFuncionalidades(List<Funcionalidade> funcionalidades) {
         for (String categoria : categoriasComSelecaoUnicaDeFuncionalidade) {

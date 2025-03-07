@@ -2,7 +2,6 @@ package br.projeto.command;
 
 import javax.swing.JDesktopPane;
 
-import br.projeto.model.Perfil;
 import br.projeto.presenter.CriarProjetoPresenter;
 import br.projeto.presenter.helpers.WindowManager;
 import br.projeto.repository.PerfilRepository;
@@ -28,8 +27,6 @@ public class AbrirCriarProjetoCommand implements ProjetoCommand {
             windowManager.bringToFront(tituloJanela);
             return;
         }
-
-        Perfil perfil = repository.buscarPorId(1);
 
         CriarProjetoView criarProjetoView = new CriarProjetoView();
         criarProjetoView.setTitle(tituloJanela);
