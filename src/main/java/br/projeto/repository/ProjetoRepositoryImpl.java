@@ -1,12 +1,16 @@
 package br.projeto.repository;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import br.projeto.model.Projeto;
 import br.projeto.model.Subject;
 import br.projeto.presenter.Observer;
 
-import java.util.*;
-
 public class ProjetoRepositoryImpl implements Subject, ProjetoRepository {
+
     private final List<Projeto> projetos;
     private final List<Observer> observers;
 
@@ -27,18 +31,16 @@ public class ProjetoRepositoryImpl implements Subject, ProjetoRepository {
         funcionalidades1.put("Monitoramento de Performance", 1);
         funcionalidades1.put("Relatórios de Erros", 1);
 
-        projetos.add(new Projeto(
-                "Gerenciamento Corporativo",
-                "Usuario 1",
-                "01/01/2023",
-                "Estimado",
-                false,
-                null,
-                Arrays.asList("Web/Back-end"),
-                funcionalidades1
-        ));
-
-
+        // projetos.add(new Projeto(
+        //         "Gerenciamento Corporativo",
+        //         "Usuario 1",
+        //         "01/01/2023",
+        //         "Estimado",
+        //         false,
+        //         null,
+        //         Arrays.asList("Web/Back-end"),
+        //         funcionalidades1
+        // ));
     }
 
     @Override
@@ -56,11 +58,11 @@ public class ProjetoRepositoryImpl implements Subject, ProjetoRepository {
 
     @Override
     public void adicionarProjeto(String nome, String criador, String dataCriacao, String status,
-                                 boolean compartilhado, String compartilhadoPor,
-                                 List<String> tipos, Map<String, Integer> funcionalidadesEscolhidas) {
-        Projeto novoProjeto = new Projeto(nome, criador, dataCriacao, status, compartilhado,
-                compartilhadoPor, tipos, funcionalidadesEscolhidas);
-        projetos.add(novoProjeto);
+            boolean compartilhado, String compartilhadoPor,
+            List<String> tipos, Map<String, Integer> funcionalidadesEscolhidas) {
+        // Projeto novoProjeto = new Projeto(nome, criador, dataCriacao, status, compartilhado,
+        //         compartilhadoPor, tipos, funcionalidadesEscolhidas);
+        // projetos.add(novoProjeto);
         notifyObservers();
 
     }

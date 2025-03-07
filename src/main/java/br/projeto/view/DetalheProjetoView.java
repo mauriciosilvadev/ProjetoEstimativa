@@ -1,11 +1,22 @@
 package br.projeto.view;
 
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.text.DecimalFormat;
 
+import javax.swing.BorderFactory;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
+
 public class DetalheProjetoView extends JInternalFrame {
+
     private JLabel lblNome, lblCriador, lblData, lblTipoProjeto, lblStatus, lblValorTotal;
     private JTable tabelaDetalhes;
     private DefaultTableModel modeloTabela;
@@ -26,12 +37,14 @@ public class DetalheProjetoView extends JInternalFrame {
         painelCabecalho.setBorder(BorderFactory.createTitledBorder("Informações do Projeto"));
 
         lblNome = new JLabel("Nome: ");
+        JTextField txtNome = new JTextField(20);
         lblCriador = new JLabel("Criador: ");
         lblData = new JLabel("Data de Criação: ");
         lblTipoProjeto = new JLabel("Tipo de Projeto: ");
         lblStatus = new JLabel("Status: ");
 
         painelCabecalho.add(lblNome);
+        painelCabecalho.add(txtNome);
         painelCabecalho.add(lblCriador);
         painelCabecalho.add(lblData);
         painelCabecalho.add(lblTipoProjeto);

@@ -1,16 +1,16 @@
 package br.projeto.presenter;
 
+import java.util.List;
+
+import org.jfree.data.general.DefaultPieDataset;
+
 import br.projeto.model.Projeto;
 import br.projeto.repository.ProjetoRepositoryImpl;
 import br.projeto.service.EstimaProjetoService;
 import br.projeto.view.DashBoardProjetoView;
-import org.jfree.data.general.DefaultPieDataset;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class DashBoardProjetoPresenter implements Observer {
+
     private final DashBoardProjetoView view;
     private final EstimaProjetoService estimaService;
     private final ProjetoRepositoryImpl repository;
@@ -38,9 +38,6 @@ public class DashBoardProjetoPresenter implements Observer {
         view.exibirDadosConsolidados(totalProjetos, diasTotais, custoTotal);
 
         DefaultPieDataset datasetCustos = gerarDatasetCustos(projetos);
-        DefaultPieDataset datasetProjetos = gerarDatasetProjetos(projetos);
-
-        view.atualizarGraficos(datasetCustos, datasetProjetos);
     }
 
     private DefaultPieDataset gerarDatasetCustos(List<Projeto> projetos) {
@@ -48,18 +45,6 @@ public class DashBoardProjetoPresenter implements Observer {
         for (Projeto projeto : projetos) {
             double custo = estimaService.calcularCusto(projeto);
             dataset.setValue(projeto.getNome(), custo);
-        }
-        return dataset;
-    }
-
-    private DefaultPieDataset gerarDatasetProjetos(List<Projeto> projetos) {
-        DefaultPieDataset dataset = new DefaultPieDataset();
-        Map<String, Long> tipos = projetos.stream()
-                .flatMap(projeto -> projeto.getPerfis().stream())
-                .collect(Collectors.groupingBy(tipo -> tipo, Collectors.counting()));
-
-        for (Map.Entry<String, Long> entry : tipos.entrySet()) {
-            dataset.setValue(entry.getKey(), entry.getValue());
         }
         return dataset;
     }

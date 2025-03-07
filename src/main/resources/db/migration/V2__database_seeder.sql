@@ -1,3 +1,5 @@
+INSERT INTO usuarios (nome, email, senha) VALUES ('Mauricio', 'mauricio.s.dev@gmail.com', 'secret');
+
 INSERT INTO perfis (nome) VALUES ('Perfil Default');
 
 INSERT INTO plataformas (nome) VALUES ('Web e Back-end'), ('iOS'), ('Android');
@@ -21,7 +23,7 @@ INSERT INTO funcionalidades (categoria_id, nome)
 VALUES 
     ((SELECT id FROM categorias WHERE nome = 'Tamanho do App'), 'Pequeno'),
     ((SELECT id FROM categorias WHERE nome = 'Tamanho do App'), 'Médio'),
-    ((SELECT id FROM categorias WHERE nome = 'Tamanho do App'), 'Médio'),
+    ((SELECT id FROM categorias WHERE nome = 'Tamanho do App'), 'Grande'),
 
     ((SELECT id FROM categorias WHERE nome = 'Nível de UI'), 'MVP'),
     ((SELECT id FROM categorias WHERE nome = 'Nível de UI'), 'Básico'),
@@ -138,9 +140,9 @@ SELECT
         WHEN fi.funcionalidade_nome = 'Médio' THEN 30
         WHEN fi.funcionalidade_nome = 'Grande' THEN 50
 
-        WHEN fi.funcionalidade_nome = 'MVP' THEN 0.3
-        WHEN fi.funcionalidade_nome = 'Básico' THEN 0.5
-        WHEN fi.funcionalidade_nome = 'Profissional' THEN 0.7
+        WHEN fi.funcionalidade_nome = 'MVP' THEN 30
+        WHEN fi.funcionalidade_nome = 'Básico' THEN 50
+        WHEN fi.funcionalidade_nome = 'Profissional' THEN 70
 
         WHEN fi.funcionalidade_nome = 'Cadastro por e-mail e senha' THEN 1
         WHEN fi.funcionalidade_nome = 'Cadastro pelo Facebook' THEN 2

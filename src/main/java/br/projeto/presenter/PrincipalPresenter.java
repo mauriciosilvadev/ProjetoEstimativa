@@ -1,29 +1,52 @@
 package br.projeto.presenter;
 
-import br.projeto.command.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JInternalFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JTree;
+import javax.swing.SwingUtilities;
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import br.projeto.command.AbrirCriarProjetoCommand;
+import br.projeto.command.AbrirDashboardProjetoCommand;
+import br.projeto.command.AbrirDetalhesProjetoProjetoCommand;
+import br.projeto.command.AbrirInternalFrameGenericoProjetoCommand;
+import br.projeto.command.ExcluirProjetoProjetoCommand;
+import br.projeto.command.MostrarMensagemProjetoCommand;
+import br.projeto.command.ProjetoCommand;
 import br.projeto.model.Projeto;
 import br.projeto.presenter.helpers.WindowManager;
-import br.projeto.presenter.window_command.*;
+import br.projeto.presenter.window_command.ConfigurarMenuJanelaCommand;
+import br.projeto.presenter.window_command.ConfigurarViewCommand;
+import br.projeto.presenter.window_command.FecharJanelasRelacionadasCommand;
+import br.projeto.presenter.window_command.SetLookAndFeelCommand;
+import br.projeto.presenter.window_command.WindowCommand;
+import br.projeto.repository.PerfilRepository;
 import br.projeto.repository.ProjetoRepositoryImpl;
 import br.projeto.service.ConstrutorDeArvoreNavegacaoService;
 import br.projeto.service.NoArvoreComposite;
 import br.projeto.view.GlobalWindowManager;
 import br.projeto.view.PrincipalView;
 
-import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import java.util.*;
-
 public final class PrincipalPresenter implements Observer {
+
     private final PrincipalView view;
     private final ProjetoRepositoryImpl repository;
+    private final PerfilRepository perfilRepository;
     private final ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService;
     private final Map<String, ProjetoCommand> comandos;
     private final List<WindowCommand> windowCommands = new ArrayList<>();
 
-    public PrincipalPresenter(ProjetoRepositoryImpl repository) {
+    public PrincipalPresenter(ProjetoRepositoryImpl repository, PerfilRepository perfilRepository) {
         this.view = new PrincipalView();
         this.repository = repository;
+        this.perfilRepository = perfilRepository;
         this.repository.addObserver(this);
 
         this.construtorDeArvoreNavegacaoService = new ConstrutorDeArvoreNavegacaoService();
@@ -44,7 +67,6 @@ public final class PrincipalPresenter implements Observer {
         ).forEach(WindowCommand::execute);
     }
 
-
     private Map<String, ProjetoCommand> inicializarComandos() {
         Map<String, ProjetoCommand> comandos = new HashMap<>();
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), repository));
@@ -54,7 +76,7 @@ public final class PrincipalPresenter implements Observer {
         comandos.put("Visualizar estimativa", new MostrarMensagemProjetoCommand("Visualizar estimativa ainda não implementada"));
         comandos.put("Compartilhar projeto de estimativa", new MostrarMensagemProjetoCommand("Compartilhar ainda não implementado"));
         comandos.put("Exportar projeto de estimativa", new MostrarMensagemProjetoCommand("Exportar ainda não implementado"));
-        comandos.put("Novo projeto", new CriarProjetoProjetoCommand(repository, view.getDesktop()));
+        comandos.put("Novo projeto", new AbrirCriarProjetoCommand(perfilRepository, view.getDesktop()));
         comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(repository));
         comandos.put("Abrir detalhes", new AbrirDetalhesProjetoProjetoCommand(repository, view.getDesktop()));
         return comandos;
@@ -129,7 +151,6 @@ public final class PrincipalPresenter implements Observer {
         });
     }
 
-
     @Override
     public void update(final List<Projeto> listaProjetos) {
         SwingUtilities.invokeLater(() -> {
@@ -158,7 +179,6 @@ public final class PrincipalPresenter implements Observer {
             new MostrarMensagemProjetoCommand("Nenhum estado anterior salvo para restaurar.").execute();
         }
     }
-
 
     public Map<String, ProjetoCommand> getComandos() {
         return comandos;

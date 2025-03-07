@@ -1,33 +1,24 @@
 package br.projeto.repository;
 
-import br.projeto.model.Usuario;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.projeto.dbConnection.connections.IDatabaseConnection;
+import br.projeto.model.Usuario;
+
 public class UsuarioRepositoryImpl implements UsuarioRepository {
-    private final Connection connection;
+
+    private final IDatabaseConnection connection;
     private final List<Usuario> usuarios = new ArrayList<>();
 
-    public UsuarioRepositoryImpl() {
-        try {
-            connection = DriverManager.getConnection("jdbc:sqlite:banco.db");
-            Statement statement = connection.createStatement();
-
-            String sql =
-                    "CREATE TABLE IF NOT EXISTS usuarios (\n"
-                            + "	id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-                            + "	nome text NOT NULL,\n"
-                            + "	senha text NOT NULL,\n"
-                            + " email text NOT NULL\n"
-                            + ");";
-
-            statement.execute(sql);
-        } catch (SQLException e) {
-            throw new IllegalArgumentException("Não foi possível conectar ao banco");
-        }
-
+    public UsuarioRepositoryImpl(IDatabaseConnection connection) {
+        this.connection = connection;
     }
 
     @Override
@@ -77,8 +68,7 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
     @Override
     public List<Usuario> listar() {
         String sql = "SELECT nome, senha, email FROM usuarios";
-        try (Statement stmt = connection.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 String nome = rs.getString("nome");
                 String senha = rs.getString("senha");

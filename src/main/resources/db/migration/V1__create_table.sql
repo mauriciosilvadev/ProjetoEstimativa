@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS categorias (
     tipo TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS estimativas (
+CREATE TABLE IF NOT EXISTS projetos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     usuario_id INTEGER NOT NULL,
     perfil_id INTEGER NOT NULL,
@@ -73,28 +73,28 @@ CREATE TABLE IF NOT EXISTS funcionalidade_perfil_plataforma (
     FOREIGN KEY (funcionalidade_id) REFERENCES funcionalidades(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS estimativas_plataformas (
+CREATE TABLE IF NOT EXISTS projetos_plataformas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    estimativa_id INTEGER NOT NULL,
+    projeto_id INTEGER NOT NULL,
     plataforma_id INTEGER NOT NULL,
-    FOREIGN KEY (estimativa_id) REFERENCES estimativas(id) ON DELETE CASCADE,
+    FOREIGN KEY (projeto_id) REFERENCES projetos(id) ON DELETE CASCADE,
     FOREIGN KEY (plataforma_id) REFERENCES plataformas(id) ON DELETE CASCADE
 );
 
 
-CREATE TABLE IF NOT EXISTS funcionalidade_estimativa_plataforma (
+CREATE TABLE IF NOT EXISTS funcionalidade_projeto_plataforma (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     funcionalidade_id INTEGER NOT NULL,
-    estimativa_plataforma_id INTEGER NOT NULL,
+    projeto_plataforma_id INTEGER NOT NULL,
     valor REAL NOT NULL DEFAULT 0,
     FOREIGN KEY (funcionalidade_id) REFERENCES funcionalidades(id) ON DELETE CASCADE,
-    FOREIGN KEY (estimativa_plataforma_id) REFERENCES estimativas_plataformas(id) ON DELETE CASCADE
+    FOREIGN KEY (projeto_plataforma_id) REFERENCES projetos_plataformas(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS estimativas_compartilhadas (
+CREATE TABLE IF NOT EXISTS projetos_compartilhadas (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    estimativa_id INTEGER NOT NULL,
+    projeto_id INTEGER NOT NULL,
     usuario_id INTEGER NOT NULL,
-    FOREIGN KEY (estimativa_id) REFERENCES estimativas(id) ON DELETE CASCADE,
+    FOREIGN KEY (projeto_id) REFERENCES projetos(id) ON DELETE CASCADE,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE
 );
