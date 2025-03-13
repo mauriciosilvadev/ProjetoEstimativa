@@ -11,7 +11,7 @@ public class LoginAutenticadoState implements LoginState {
 
     @Override
     public void handle(LoginPresenter presenter) {
-        PrincipalPresenter principalPresenter = new PrincipalPresenter(new ProjetoRepositoryImpl(), new PerfilRepositoryImpl(ConnectionFactory.getInstance().getConnection()));
+        PrincipalPresenter principalPresenter = new PrincipalPresenter(new ProjetoRepositoryImpl(), new PerfilRepositoryImpl(ConnectionFactory.getInstance().getConnection()), presenter);
         WindowManager.getInstance().initialize(principalPresenter);
         presenter.getView().dispose();
     }

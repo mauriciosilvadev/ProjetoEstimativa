@@ -15,17 +15,22 @@ public class LoginNaoAutenticadoState implements LoginState {
             //presenter.getView().getLblMensagem().setText("Senha fora do padrão");
             //return;
         }
-        boolean isAuthenticated = presenter.getService().autenticar(
+
+        boolean isAuthenticated = false;
+        try {
+            isAuthenticated = presenter.getService().autenticar(
                 presenter.getView().getTxtEmail().getText(),
                 presenter.getView().getTxtSenha().getText()
-        );
+            );
+        } catch (IllegalArgumentException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Erro de Autenticação", JOptionPane.ERROR_MESSAGE);
+        }
 
         if (isAuthenticated) {
             presenter.setState(new LoginAutenticadoState());
             presenter.getState().handle(presenter);
         } else {
             System.out.println("Authentication failed");
-            //presenter.getView().getLblMensagem().setText("Authentication failed");
         }
     }
 

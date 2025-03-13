@@ -36,6 +36,7 @@ import br.projeto.view.PrincipalView;
 
 public final class PrincipalPresenter implements Observer {
 
+    private final LoginPresenter presenter;
     private final PrincipalView view;
     private final ProjetoRepositoryImpl repository;
     private final PerfilRepository perfilRepository;
@@ -43,7 +44,7 @@ public final class PrincipalPresenter implements Observer {
     private final Map<String, ProjetoCommand> comandos;
     private final List<WindowCommand> windowCommands = new ArrayList<>();
 
-    public PrincipalPresenter(ProjetoRepositoryImpl repository, PerfilRepository perfilRepository) {
+    public PrincipalPresenter(ProjetoRepositoryImpl repository, PerfilRepository perfilRepository, LoginPresenter presenter) {
         this.view = new PrincipalView();
         this.repository = repository;
         this.perfilRepository = perfilRepository;
@@ -79,6 +80,7 @@ public final class PrincipalPresenter implements Observer {
         comandos.put("Novo projeto", new AbrirCriarProjetoCommand(perfilRepository, view.getDesktop()));
         comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(repository));
         comandos.put("Abrir detalhes", new AbrirDetalhesProjetoProjetoCommand(repository, view.getDesktop()));
+        comandos.put("Sair", new SairCommand(this, presenter));
         return comandos;
     }
 
