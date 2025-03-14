@@ -1,11 +1,15 @@
 package br.projeto.service;
 
-import br.projeto.command.ProjetoCommand;
-
-import javax.swing.*;
 import java.util.Map;
 
+import javax.swing.JButton;
+import javax.swing.JToolBar;
+
+import br.projeto.command.ProjetoCommand;
+import br.projeto.session.UsuarioSession;
+
 public class CriarBarraBotaoService {
+
     private final Map<String, ProjetoCommand> comandos;
 
     public CriarBarraBotaoService(Map<String, ProjetoCommand> comandos) {
@@ -18,7 +22,7 @@ public class CriarBarraBotaoService {
 
         adicionarBotao(toolBar, "Dashboard", "principal", "Principal");
         adicionarBotao(toolBar, "Novo Projeto", "projeto", "Novo projeto");
-        adicionarBotao(toolBar, "Usuário", "usuario", "Usuário");
+        adicionarBotao(toolBar, UsuarioSession.getInstance().getUsuarioLogado().getNome(), "usuario", "Usuário");
 
         return toolBar;
     }

@@ -4,11 +4,9 @@
  */
 package br.projeto.service;
 
-import java.util.List;
-
-import br.projeto.model.EstimativaResultado;
 import br.projeto.model.Funcionalidade;
 import br.projeto.model.Plataforma;
+import br.projeto.model.ProjetoEstimativa;
 
 /**
  *
@@ -16,31 +14,31 @@ import br.projeto.model.Plataforma;
  */
 public class EstimativaService {
 
-    public EstimativaResultado calcularEstimativa(
-            List<Plataforma> plataformasSelecionadas,
-            List<Funcionalidade> funcionalidadesSelecionadas
-    ) {
+    public ProjetoEstimativa calcularEstimativa(ProjetoEstimativa projetoEstimativa) {
         double valorTotal = 0.0;
-        double diasTotais = 0.0;
 
-        double[] diasPorPlataforma = new double[plataformasSelecionadas.size()];
-        double[] valorPorPlataforma = new double[plataformasSelecionadas.size()];
+        double[] diasPorPlataforma = new double[projetoEstimativa.getPlatafomasSelecionadas().size()];
+        double[] valorPorPlataforma = new double[projetoEstimativa.getFuncionalidadesSelecionadas().size()];
 
-        for (int i = 0; i < plataformasSelecionadas.size(); i++) {
-            Plataforma plataforma = plataformasSelecionadas.get(i);
+        for (int i = 0; i < projetoEstimativa.getPlatafomasSelecionadas().size(); i++) {
+            Plataforma plataforma = projetoEstimativa.getPlatafomasSelecionadas().get(i);
 
             double dias = 0;
             double valorMonetario = 0;
 
-            for (Funcionalidade funcionalidade : funcionalidadesSelecionadas) {
+            for (Funcionalidade funcionalidade : projetoEstimativa.getFuncionalidadesSelecionadas()) {
 
                 switch (funcionalidade.getCategoria().getTipo()) {
                     case "dia":
-                        dias += funcionalidade.getValorPorPlataforma(plataforma);
+                        try {
+                            dias += funcionalidade.getValorPorPlataforma(plataforma);
+                        } catch (Exception e) {
+                            System.out.println("Erro ao calcular dias: " + e.getMessage());
+                        }
                         break;
 
                     case "percentual":
-                        Funcionalidade funcionalidadeDoNucleo = funcionalidadesSelecionadas.stream()
+                        Funcionalidade funcionalidadeDoNucleo = projetoEstimativa.getFuncionalidadesSelecionadas().stream()
                                 .filter(f -> "Tamanho do App".equals(f.getCategoria().getNome()))
                                 .findFirst()
                                 .orElse(null);
@@ -66,14 +64,17 @@ public class EstimativaService {
 
         // Calcular valores totais
         double somaDias = 0;
-        for (int i = 0; i < plataformasSelecionadas.size(); i++) {
+        for (int i = 0; i < projetoEstimativa.getPlatafomasSelecionadas().size(); i++) {
             somaDias += diasPorPlataforma[i];
             valorTotal += (diasPorPlataforma[i] * valorPorPlataforma[i]);
         }
 
-        diasTotais = somaDias;
+        projetoEstimativa.setTotalDias(somaDias);
 
-        // Retorna um objeto com os valores estimados
-        return new EstimativaResultado(diasTotais, valorTotal);
+        valorTotal += projetoEstimativa.getCustoHardware() + projetoEstimativa.getCustoSoftware() + projetoEstimativa.getCustosRiscos() + projetoEstimativa.getCustoGarantia() + projetoEstimativa.getFundoReserva() + projetoEstimativa.getOutrosCustos();
+
+        projetoEstimativa.setValorTotal(valorTotal);
+
+        return projetoEstimativa;
     }
 }

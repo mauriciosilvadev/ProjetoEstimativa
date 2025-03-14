@@ -7,12 +7,15 @@ import br.projeto.view.DetalheProjetoView;
 
 import javax.swing.*;
 
+import br.projeto.repository.ProjetoRepository;
+
 public class AbrirDetalhesProjetoProjetoCommand implements ProjetoCommand {
-    private final ProjetoRepositoryImpl repository;
+
+    private final ProjetoRepository repository;
     private final JDesktopPane desktop;
     private String projetoNome;
 
-    public AbrirDetalhesProjetoProjetoCommand(ProjetoRepositoryImpl repository, JDesktopPane desktop) {
+    public AbrirDetalhesProjetoProjetoCommand(ProjetoRepository repository, JDesktopPane desktop) {
         this.repository = repository;
         this.desktop = desktop;
     }

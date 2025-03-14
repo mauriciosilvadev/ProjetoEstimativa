@@ -1,12 +1,14 @@
 package br.projeto.model;
 
 public class Usuario {
-    private String id;
+
+    private int id;
     private String nome;
     private String email;
     private String senha;
 
     public Usuario(Builder builder) {
+        this.id = builder.id;
         this.nome = builder.nome;
         this.senha = builder.senha;
         this.email = builder.email;
@@ -36,8 +38,17 @@ public class Usuario {
         this.email = email;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
     public static class Builder {
 
+        private int id;
         private String nome;
         private String senha;
         private String email;
@@ -57,10 +68,14 @@ public class Usuario {
             return this;
         }
 
+        public Builder id(int id) {
+            this.id = id;
+            return this;
+        }
+
         public Usuario build() {
             return new Usuario(this);
         }
     }
-
 
 }

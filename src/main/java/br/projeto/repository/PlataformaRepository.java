@@ -4,23 +4,13 @@
  */
 package br.projeto.repository;
 
-import java.util.List;
-
-import br.projeto.model.Perfil;
+import br.projeto.model.Plataforma;
 
 /**
  *
  * @author Maurício Silva <mauricio.s.dev@gmail.com>
  */
-public interface PerfilRepository {
+public interface PlataformaRepository {
 
-    void inserir(Perfil perfil);
-
-    void atualizar(Perfil perfil, int id);
-
-    void deletar(int id);
-
-    List<Perfil> getPerfis();
-
-    Perfil buscarPorId(int id);
+    Plataforma buscarPorId(int id);
 }

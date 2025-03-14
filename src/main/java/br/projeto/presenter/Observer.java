@@ -1,9 +1,10 @@
 package br.projeto.presenter;
 
-import br.projeto.model.Projeto;
-
 import java.util.List;
 
+import br.projeto.model.ProjetoEstimativa;
+
 public interface Observer {
-    void update(List<Projeto> projetos);
+
+    void update(List<ProjetoEstimativa> projetos);
 }

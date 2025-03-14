@@ -5,15 +5,19 @@ import javax.swing.JDesktopPane;
 import br.projeto.presenter.CriarProjetoPresenter;
 import br.projeto.presenter.helpers.WindowManager;
 import br.projeto.repository.PerfilRepository;
+import br.projeto.repository.ProjetoRepository;
 import br.projeto.view.CriarProjetoView;
 
 public class AbrirCriarProjetoCommand implements ProjetoCommand {
 
-    private final PerfilRepository repository;
+    private final PerfilRepository perfilRepository;
+    private final ProjetoRepository projetoRepository;
     private final JDesktopPane desktop;
 
-    public AbrirCriarProjetoCommand(PerfilRepository repository, JDesktopPane desktop) {
-        this.repository = repository;
+    public AbrirCriarProjetoCommand(PerfilRepository perfilRepository, ProjetoRepository projetoRepository,
+            JDesktopPane desktop) {
+        this.perfilRepository = perfilRepository;
+        this.projetoRepository = projetoRepository;
         this.desktop = desktop;
     }
 
@@ -30,7 +34,7 @@ public class AbrirCriarProjetoCommand implements ProjetoCommand {
 
         CriarProjetoView criarProjetoView = new CriarProjetoView();
         criarProjetoView.setTitle(tituloJanela);
-        new CriarProjetoPresenter(criarProjetoView, repository);
+        new CriarProjetoPresenter(criarProjetoView, perfilRepository, projetoRepository);
         desktop.add(criarProjetoView);
         criarProjetoView.setVisible(true);
         try {
