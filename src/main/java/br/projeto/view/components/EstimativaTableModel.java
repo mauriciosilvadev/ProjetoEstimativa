@@ -262,7 +262,7 @@ public class EstimativaTableModel extends AbstractTableModel {
         fireTableCellUpdated(rowIndex, columnIndex);
 
         // Notifica o Presenter para que ele atualize a view com a estimativa
-        presenter.onTableDataChanged();
+        presenter.onMudancaNaTabela();
     }
 
     // -----------------------------

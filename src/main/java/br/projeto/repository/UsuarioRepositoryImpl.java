@@ -1,7 +1,5 @@
 package br.projeto.repository;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,15 +20,31 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
     }
 
     @Override
-    public void inserir(Usuario usuario) {
-        String sql = "INSERT INTO usuarios (nome, senha, email) VALUES (?, ?, ?)";
+    public Usuario inserir(String nome, String email, String senha) {
+        String sql = "INSERT INTO usuarios (nome, email, senha) VALUES (?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, usuario.getNome());
-            pstmt.setString(2, usuario.getSenha());
-            pstmt.setString(3, usuario.getEmail());
+            pstmt.setString(1, nome);
+            pstmt.setString(2, email);
+            pstmt.setString(3, senha);
+
             pstmt.executeUpdate();
+
+            // Recupera o ID gerado utilizando o método próprio do SQLite
+            try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery("SELECT last_insert_rowid()")) {
+                if (rs.next()) {
+                    int id = rs.getInt(1);
+                    return new Usuario.Builder()
+                            .id(id)
+                            .nome(nome)
+                            .email(email)
+                            .senha(senha)
+                            .build();
+                } else {
+                    throw new SQLException("Falha ao obter o ID gerado.");
+                }
+            }
         } catch (SQLException e) {
-            throw new IllegalArgumentException("Não foi possível inserir o usuário", e);
+            throw new RuntimeException("Não foi possível inserir o usuário", e);
         }
     }
 
@@ -88,15 +102,17 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
 
     @Override
     public Usuario buscarPorEmail(String email) {
-        String sql = "SELECT nome, senha, email FROM usuarios WHERE email = ?";
+        String sql = "SELECT id, nome, senha, email FROM usuarios WHERE email = ?";
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, email);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
+                int id = rs.getInt("id");
                 String nome = rs.getString("nome");
                 String senha = rs.getString("senha");
                 return new Usuario.Builder()
+                        .id(id)
                         .nome(nome)
                         .senha(senha)
                         .email(email)

@@ -1,6 +1,6 @@
 INSERT INTO usuarios (nome, email, senha) VALUES ('Mauricio', 'mauricio.s.dev@gmail.com', 'secret');
 
-INSERT INTO perfis (nome) VALUES ('Perfil Default');
+INSERT INTO perfis (nome) VALUES ('Perfil Default'), ('Perfil Web e Back-end');
 
 INSERT INTO plataformas (nome) VALUES ('Web e Back-end'), ('iOS'), ('Android');
 
@@ -113,13 +113,19 @@ VALUES
     ((SELECT id FROM perfis WHERE nome = 'Perfil Default'), (SELECT id FROM categorias WHERE nome = 'API externas e integrações')),
     ((SELECT id FROM perfis WHERE nome = 'Perfil Default'), (SELECT id FROM categorias WHERE nome = 'Segurança')),
     ((SELECT id FROM perfis WHERE nome = 'Perfil Default'), (SELECT id FROM categorias WHERE nome = 'Desenvolvimento específico do app')),
-    ((SELECT id FROM perfis WHERE nome = 'Perfil Default'), (SELECT id FROM categorias WHERE nome = 'Equipe'));
+    ((SELECT id FROM perfis WHERE nome = 'Perfil Default'), (SELECT id FROM categorias WHERE nome = 'Equipe')),
+    ((SELECT id FROM perfis WHERE nome = 'Perfil Web e Back-end'), (SELECT id FROM categorias WHERE nome = 'Tamanho do App')),
+    ((SELECT id FROM perfis WHERE nome = 'Perfil Web e Back-end'), (SELECT id FROM categorias WHERE nome = 'Nível de UI')),
+    ((SELECT id FROM perfis WHERE nome = 'Perfil Web e Back-end'), (SELECT id FROM categorias WHERE nome = 'Equipe'));
 
 INSERT INTO perfis_plataformas (perfil_id, plataforma_id)
 VALUES 
     ((SELECT id FROM perfis WHERE nome = 'Perfil Default'), (SELECT id FROM plataformas WHERE nome = 'Web e Back-end')),
     ((SELECT id FROM perfis WHERE nome = 'Perfil Default'), (SELECT id FROM plataformas WHERE nome = 'iOS')),
-    ((SELECT id FROM perfis WHERE nome = 'Perfil Default'), (SELECT id FROM plataformas WHERE nome = 'Android'));
+    ((SELECT id FROM perfis WHERE nome = 'Perfil Default'), (SELECT id FROM plataformas WHERE nome = 'Android')),
+    ((SELECT id FROM perfis WHERE nome = 'Perfil Web e Back-end'), (SELECT id FROM plataformas WHERE nome = 'Web e Back-end'));
+
+-- Iniciando perfil 1
 
 WITH perfil_plataforma_ids AS (
     SELECT pp.id AS perfil_plataforma_id, pl.nome AS plataforma_nome
@@ -370,4 +376,51 @@ ON fi.funcionalidade_nome IN (
     'Taxa Diária de Desenvolvimento (Developer Day Rate)'
 )
 WHERE ppi.plataforma_nome IN ('Web e Back-end', 'iOS', 'Android');
+
+-- Iniciando perfil 2
+
+WITH perfil_plataforma_ids AS (
+    SELECT pp.id AS perfil_plataforma_id, pl.nome AS plataforma_nome
+    FROM perfis_plataformas pp
+    JOIN perfis p ON pp.perfil_id = p.id
+    JOIN plataformas pl ON pp.plataforma_id = pl.id
+    WHERE p.nome = 'Perfil Web e Back-end'
+),
+funcionalidades_ids AS (
+    SELECT id AS funcionalidade_id, nome AS funcionalidade_nome FROM funcionalidades
+)
+INSERT INTO funcionalidade_perfil_plataforma (perfil_plataforma_id, funcionalidade_id, valor)
+SELECT 
+    ppi.perfil_plataforma_id, 
+    fi.funcionalidade_id, 
+    CASE 
+        WHEN fi.funcionalidade_nome = 'Pequeno' THEN 10
+        WHEN fi.funcionalidade_nome = 'Médio' THEN 30
+        WHEN fi.funcionalidade_nome = 'Grande' THEN 50
+
+        WHEN fi.funcionalidade_nome = 'MVP' THEN 30
+        WHEN fi.funcionalidade_nome = 'Básico' THEN 50
+        WHEN fi.funcionalidade_nome = 'Profissional' THEN 70
+
+        WHEN fi.funcionalidade_nome = 'Taxa Diária de Design (Design Day Rate)' AND ppi.plataforma_nome = 'Web e Back-end' THEN 450
+        WHEN fi.funcionalidade_nome = 'Taxa Diária de Gerência de Projeto (Developer Day Rate)' AND ppi.plataforma_nome = 'Web e Back-end' THEN 300
+        WHEN fi.funcionalidade_nome = 'Taxa Diária de Desenvolvimento (Developer Day Rate)' AND ppi.plataforma_nome = 'Web e Back-end' THEN 450
+
+        WHEN fi.funcionalidade_nome = 'Gerente de projeto' THEN 10
+    END AS valor
+FROM perfil_plataforma_ids ppi
+JOIN funcionalidades_ids fi 
+ON fi.funcionalidade_nome IN (
+    'Pequeno', 
+    'Médio', 
+    'Grande', 
+    'MVP', 
+    'Básico', 
+    'Profissional', 
+    'Gerente de projeto',
+    'Taxa Diária de Design (Design Day Rate)',
+    'Taxa Diária de Gerência de Projeto (Developer Day Rate)',
+    'Taxa Diária de Desenvolvimento (Developer Day Rate)'
+)
+WHERE ppi.plataforma_nome IN ('Web e Back-end');
 

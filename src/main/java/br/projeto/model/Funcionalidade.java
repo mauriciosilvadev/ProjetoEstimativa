@@ -27,6 +27,16 @@ public class Funcionalidade {
         this.nome = nome;
     }
 
+    public Funcionalidade(int id, Categoria categoria, String nome) {
+        this.id = id;
+        this.categoria = categoria;
+        this.nome = nome;
+    }
+
+    public void setPerfil(Perfil perfil) {
+        this.perfil = perfil;
+    }
+
     public int getId() {
         return id;
     }

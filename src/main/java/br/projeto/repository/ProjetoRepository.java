@@ -1,15 +1,23 @@
 package br.projeto.repository;
 
-import br.projeto.model.Projeto;
-
 import java.util.List;
-import java.util.Map;
+
+import br.projeto.model.ProjetoEstimativa;
+import br.projeto.presenter.Observer;
 
 public interface ProjetoRepository {
-    List<Projeto> getProjetos();
-    Projeto getProjetoPorNome(String nome);
-    void adicionarProjeto(String nome, String criador, String dataCriacao, String status,
-                          boolean compartilhado, String compartilhadoPor,
-                          List<String> tipos, Map<String, Integer> funcionalidadesEscolhidas);
+
+    List<ProjetoEstimativa> getProjetos();
+
+    ProjetoEstimativa getProjetoPorNome(String nome);
+
+    void adicionarProjeto(ProjetoEstimativa projetoEstimativa);
+
     boolean removerProjetoPorNome(String nome);
+
+    void addObserver(Observer observer);
+
+    void removeObserver(Observer observer);
+
+    void notifyObservers(List<ProjetoEstimativa> projetos);
 }

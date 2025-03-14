@@ -23,9 +23,17 @@ import br.projeto.model.Plataforma;
 public class PerfilRepositoryImpl implements PerfilRepository {
 
     private final IDatabaseConnection connection;
+    private static PerfilRepository instance;
 
-    public PerfilRepositoryImpl(IDatabaseConnection connection) {
+    private PerfilRepositoryImpl(IDatabaseConnection connection) {
         this.connection = connection;
+    }
+
+    public static PerfilRepository getInstance(IDatabaseConnection connection) {
+        if (instance == null) {
+            return new PerfilRepositoryImpl(connection);
+        }
+        return instance;
     }
 
     @Override
@@ -44,8 +52,28 @@ public class PerfilRepositoryImpl implements PerfilRepository {
     }
 
     @Override
-    public List<Perfil> listar() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<Perfil> getPerfis() {
+        // Query para buscar os perfis
+        String queryPerfil = "SELECT id, nome FROM perfis";
+
+        try {
+            PreparedStatement stmtPerfil = connection.prepareStatement(queryPerfil);
+            ResultSet rsPerfil = stmtPerfil.executeQuery();
+
+            List<Perfil> perfis = new ArrayList<>();
+
+            while (rsPerfil.next()) {
+                Perfil perfil = new Perfil(rsPerfil.getInt("id"), rsPerfil.getString("nome"));
+                perfis.add(perfil);
+            }
+
+            return perfis;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return new ArrayList<>();
     }
 
     @Override

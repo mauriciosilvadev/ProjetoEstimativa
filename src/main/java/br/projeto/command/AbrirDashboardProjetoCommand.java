@@ -1,19 +1,20 @@
 package br.projeto.command;
 
+import javax.swing.JDesktopPane;
+
 import br.projeto.presenter.DashBoardProjetoPresenter;
 import br.projeto.presenter.helpers.WindowManager;
-import br.projeto.repository.ProjetoRepositoryImpl;
+import br.projeto.repository.ProjetoRepository;
 import br.projeto.view.DashBoardProjetoView;
 
-import javax.swing.*;
-
 public class AbrirDashboardProjetoCommand implements ProjetoCommand {
-    private final JDesktopPane desktop;
-    private final ProjetoRepositoryImpl repository;
 
-    public AbrirDashboardProjetoCommand(JDesktopPane desktop, ProjetoRepositoryImpl repository) {
+    private final JDesktopPane desktop;
+    private final ProjetoRepository projetoRepository;
+
+    public AbrirDashboardProjetoCommand(JDesktopPane desktop, ProjetoRepository repository) {
         this.desktop = desktop;
-        this.repository = repository;
+        this.projetoRepository = repository;
     }
 
     @Override
@@ -25,7 +26,7 @@ public class AbrirDashboardProjetoCommand implements ProjetoCommand {
             windowManager.bringToFront(tituloJanela);
         } else {
             DashBoardProjetoView dashboardView = new DashBoardProjetoView();
-            new DashBoardProjetoPresenter(dashboardView, repository);
+            new DashBoardProjetoPresenter(dashboardView, projetoRepository);
             dashboardView.setTitle(tituloJanela);
             desktop.add(dashboardView);
             dashboardView.setVisible(true);

@@ -1,18 +1,19 @@
 package br.projeto.command;
 
-import br.projeto.repository.ProjetoRepositoryImpl;
+import javax.swing.JOptionPane;
 
-import javax.swing.*;
+import br.projeto.repository.ProjetoRepository;
 
 public class ExcluirProjetoProjetoCommand implements ProjetoCommand {
-    private final ProjetoRepositoryImpl repository;
+
+    private final ProjetoRepository repository;
     private String projetoNome;
 
-    public ExcluirProjetoProjetoCommand(ProjetoRepositoryImpl repository) {
+    public ExcluirProjetoProjetoCommand(ProjetoRepository repository) {
         this.repository = repository;
     }
 
-    public ExcluirProjetoProjetoCommand(ProjetoRepositoryImpl repository, String projetoNome) {
+    public ExcluirProjetoProjetoCommand(ProjetoRepository repository, String projetoNome) {
         this.repository = repository;
         this.projetoNome = projetoNome;
     }

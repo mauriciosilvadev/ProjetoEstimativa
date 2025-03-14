@@ -1,17 +1,19 @@
 package br.projeto.presenter.window_command;
 
-import br.projeto.command.ProjetoCommand;
-import br.projeto.model.Projeto;
-
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FecharJanelasRelacionadasCommand implements WindowCommand {
-    private final JDesktopPane desktop;
-    private final List<Projeto> listaProjetos;
+import javax.swing.JDesktopPane;
+import javax.swing.JInternalFrame;
 
-    public FecharJanelasRelacionadasCommand(JDesktopPane desktop, List<Projeto> listaProjetos) {
+import br.projeto.model.ProjetoEstimativa;
+
+public class FecharJanelasRelacionadasCommand implements WindowCommand {
+
+    private final JDesktopPane desktop;
+    private final List<ProjetoEstimativa> listaProjetos;
+
+    public FecharJanelasRelacionadasCommand(JDesktopPane desktop, List<ProjetoEstimativa> listaProjetos) {
         this.desktop = desktop;
         this.listaProjetos = listaProjetos;
     }
@@ -19,7 +21,7 @@ public class FecharJanelasRelacionadasCommand implements WindowCommand {
     @Override
     public void execute() {
         List<String> nomesProjetos = new ArrayList<>();
-        for (Projeto projeto : listaProjetos) {
+        for (ProjetoEstimativa projeto : listaProjetos) {
             nomesProjetos.add(projeto.getNome());
         }
 

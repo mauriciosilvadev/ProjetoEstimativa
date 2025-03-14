@@ -1,13 +1,15 @@
 package br.projeto.service;
 
-import br.projeto.model.Usuario;
-import br.projeto.repository.UsuarioRepository;
-import com.pss.senha.validacao.ValidadorSenha;
-
-import java.util.Collections;
 import java.util.List;
 
+import com.pss.senha.validacao.ValidadorSenha;
+
+import br.projeto.model.Usuario;
+import br.projeto.repository.UsuarioRepository;
+import br.projeto.session.UsuarioSession;
+
 public class CriarContaService {
+
     private final UsuarioRepository repository;
 
     public CriarContaService(UsuarioRepository repository) {
@@ -15,12 +17,6 @@ public class CriarContaService {
     }
 
     public void criarConta(String nome, String email, String senha) throws IllegalArgumentException {
-
-        Usuario usuario = new Usuario.Builder()
-                .nome(nome)
-                .senha(senha)
-                .email(email)
-                .build();
 
         repository.buscarPorEmail(email);
         if (repository.buscarPorEmail(email) != null) {
@@ -35,9 +31,9 @@ public class CriarContaService {
             throw new IllegalArgumentException("Senha inválida:\n" + mensagemErro);
         }
 
-        repository.inserir(usuario);
+        Usuario usuario = repository.inserir(nome, email, senha);
 
+        UsuarioSession.getInstance().setUsuarioLogado(usuario);
     }
-
 
 }

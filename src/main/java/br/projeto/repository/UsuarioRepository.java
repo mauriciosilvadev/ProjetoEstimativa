@@ -1,11 +1,12 @@
 package br.projeto.repository;
 
-import br.projeto.model.Usuario;
-
 import java.util.List;
 
+import br.projeto.model.Usuario;
+
 public interface UsuarioRepository {
-    void inserir(Usuario usuario);
+
+    Usuario inserir(String nome, String email, String senha);
 
     void atualizar(Usuario usuario, int id);
 
