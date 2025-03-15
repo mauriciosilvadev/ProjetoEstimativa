@@ -137,6 +137,11 @@ public class CriarProjetoPresenter {
             return;
         }
 
+        if (projetoRepository.hasProjeto(view.getNomeProjeto())) {
+            JOptionPane.showMessageDialog(view, "Já existe um projeto com esse nome", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         resultado.setNome(view.getNomeProjeto());
         resultado.setPerfilId(perfilAtual.getId());
         resultado.setUserId(UsuarioSession.getInstance().getUsuarioLogado().getId());

@@ -5,7 +5,9 @@ import java.util.List;
 import br.projeto.model.Funcionalidade;
 import br.projeto.model.Plataforma;
 import br.projeto.model.ProjetoEstimativa;
+import br.projeto.model.Usuario;
 import br.projeto.repository.ProjetoRepository;
+import br.projeto.repository.UsuarioRepository;
 import br.projeto.service.EstimativaService;
 import br.projeto.view.DetalheProjetoView;
 
@@ -13,21 +15,23 @@ public class DetalheProjetoPresenter implements Observer {
 
     private final DetalheProjetoView view;
     private final EstimativaService estimativaService;
-    private final ProjetoRepository repository;
+    private final ProjetoRepository projetoRepository;
+    private final UsuarioRepository usuarioRepository;
     private final String projetoNome;
 
-    public DetalheProjetoPresenter(DetalheProjetoView view, ProjetoRepository repository, String projetoNome) {
+    public DetalheProjetoPresenter(DetalheProjetoView view, ProjetoRepository projetoRepository, String projetoNome, UsuarioRepository usuarioRepository) {
         this.view = view;
-        this.repository = repository;
+        this.projetoRepository = projetoRepository;
+        this.usuarioRepository = usuarioRepository;
         this.projetoNome = projetoNome;
         this.estimativaService = new EstimativaService();
 
-        this.repository.addObserver(this);
+        this.projetoRepository.addObserver(this);
         carregarDetalhesProjeto();
     }
 
     private void carregarDetalhesProjeto() {
-        ProjetoEstimativa projeto = repository.getProjetoPorNome(projetoNome);
+        ProjetoEstimativa projeto = projetoRepository.getProjetoPorNome(projetoNome);
         if (projeto != null) {
             carregarCabecalho(projeto);
             carregarDetalhes(projeto);
@@ -35,14 +39,16 @@ public class DetalheProjetoPresenter implements Observer {
     }
 
     private void carregarCabecalho(ProjetoEstimativa projeto) {
-        String tiposConcatenados = projeto.getPerfilId() + " perfil id";
-        String criador = projeto.getUserId() + " usuario id";
+        String perfilUtilizado = projeto.getPerfil().getNome();
+        Usuario usuario = usuarioRepository.buscarPorId(projeto.getUserId());
+
+        String criador = usuario.getNome() + " (" + usuario.getEmail() + ")";
 
         view.atualizarCabecalho(
                 projeto.getNome(),
                 criador,
                 "Data de criação ainda precisa adicionar",
-                tiposConcatenados,
+                perfilUtilizado,
                 "Criado"
         );
     }

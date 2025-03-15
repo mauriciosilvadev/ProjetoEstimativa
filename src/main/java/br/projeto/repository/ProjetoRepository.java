@@ -15,6 +15,8 @@ public interface ProjetoRepository {
 
     boolean removerProjetoPorNome(String nome);
 
+    boolean hasProjeto(String nome);
+
     void addObserver(Observer observer);
 
     void removeObserver(Observer observer);
