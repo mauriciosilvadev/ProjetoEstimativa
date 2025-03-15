@@ -56,6 +56,8 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
                         rs.getString("nome")
                 );
 
+                projeto.setDataCriacao(rs.getString("data_criacao"));
+
                 projeto = populaProjetoEstimativa(projeto);
 
                 projetos.add(projeto);
@@ -107,6 +109,8 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
                             rs.getString("nome")
                     );
 
+                    projeto.setDataCriacao(rs.getString("data_criacao"));
+
                     projeto = populaProjetoEstimativa(projeto);
 
                     return projeto;
@@ -121,8 +125,8 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
 
     @Override
     public void adicionarProjeto(ProjetoEstimativa projetoEstimativa) {
-
-        projetoEstimativa.setDataCriacao(new java.util.Date());
+        projetoEstimativa.setDataCriacao((new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss"))
+                .format(new java.util.Date()));
 
         String projetoSql = "INSERT INTO projetos "
                 + "(usuario_id, perfil_id, nome, custo_hardware, custo_software, "
@@ -148,7 +152,7 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
                 pstmt.setDouble(11, projetoEstimativa.getPercentualLucro());
                 pstmt.setDouble(12, projetoEstimativa.getTotalDias());
                 pstmt.setDouble(13, projetoEstimativa.getValorTotal());
-                pstmt.setDate(14, new java.sql.Date(projetoEstimativa.getDataCriacao().getTime()));
+                pstmt.setString(14, projetoEstimativa.getDataCriacao());
 
                 pstmt.executeUpdate();
             }

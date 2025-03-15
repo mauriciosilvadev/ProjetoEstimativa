@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS projetos (
     percentual_lucro REAL NOT NULL DEFAULT 0,
     total_dias INTEGER NOT NULL DEFAULT 0,
     valor_total REAL NOT NULL DEFAULT 0,
-    data_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data_criacao TEXT NOT NULL,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
     FOREIGN KEY (perfil_id) REFERENCES perfis(id) ON DELETE CASCADE
 );
