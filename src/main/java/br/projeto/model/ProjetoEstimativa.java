@@ -4,7 +4,6 @@
  */
 package br.projeto.model;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,7 +29,7 @@ public class ProjetoEstimativa {
     private double outrosCustos;
     private List<Plataforma> platafomasSelecionadas;
     private List<Funcionalidade> funcionalidadesSelecionadas;
-    private Date dataCriacao;
+    private String dataCriacao;
 
     public ProjetoEstimativa(double totalDias, double valorTotal, double percentualImposto, double percentualLucro, double custoHardware, double custoSoftware, double custosRiscos, double custoGarantia, double fundoReserva, double outrosCustos, List<Plataforma> platafomasSelecionadas, List<Funcionalidade> funcionalidadesSelecionadas) {
         this.totalDias = totalDias;
@@ -138,10 +137,13 @@ public class ProjetoEstimativa {
     }
 
     public double getMeses() {
-        return totalDias / 30.0;
+        return Math.round((totalDias / 30.0) * 100.0) / 100.0;
     }
 
     public double getMediaPorMes() {
+        if (getMeses() < 1) {
+            return getValorFinalDoCliente();
+        }
         return getValorFinalDoCliente() / getMeses();
     }
 
@@ -201,11 +203,11 @@ public class ProjetoEstimativa {
         return id;
     }
 
-    public void setDataCriacao(Date dataCriacao) {
+    public void setDataCriacao(String dataCriacao) {
         this.dataCriacao = dataCriacao;
     }
 
-    public Date getDataCriacao() {
+    public String getDataCriacao() {
         return dataCriacao;
     }
 }
