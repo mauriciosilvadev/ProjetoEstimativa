@@ -1,56 +1,69 @@
 package br.projeto.presenter;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.jfree.data.general.DefaultPieDataset;
 
-import br.projeto.model.Projeto;
-import br.projeto.repository.ProjetoRepositoryImpl;
-import br.projeto.service.EstimaProjetoService;
+import br.projeto.model.ProjetoEstimativa;
+import br.projeto.repository.ProjetoRepository;
+import br.projeto.service.EstimativaService;
 import br.projeto.view.DashBoardProjetoView;
 
 public class DashBoardProjetoPresenter implements Observer {
 
     private final DashBoardProjetoView view;
-    private final EstimaProjetoService estimaService;
-    private final ProjetoRepositoryImpl repository;
+    private final EstimativaService estimativaService;
+    private final ProjetoRepository repository;
 
-    public DashBoardProjetoPresenter(DashBoardProjetoView view, ProjetoRepositoryImpl repository) {
+    public DashBoardProjetoPresenter(DashBoardProjetoView view, ProjetoRepository repository) {
         this.view = view;
         this.repository = repository;
-        this.estimaService = new EstimaProjetoService();
+        this.estimativaService = new EstimativaService();
 
         this.repository.addObserver(this);
         carregarDashboard();
     }
 
     private void carregarDashboard() {
-        List<Projeto> projetos = repository.getProjetos();
+        List<ProjetoEstimativa> projetos = repository.getProjetos();
 
         int totalProjetos = projetos.size();
-        int diasTotais = projetos.stream()
-                .mapToInt(estimaService::calcularDiasTotais)
-                .sum();
-        double custoTotal = projetos.stream()
-                .mapToDouble(estimaService::calcularCusto)
-                .sum();
+
+        double diasTotais = projetos.stream().mapToDouble(p -> p.getTotalDias()).sum();
+        double custoTotal = projetos.stream().mapToDouble(p -> (estimativaService.calcularEstimativa(p)).getValorFinalDoCliente()).sum();
 
         view.exibirDadosConsolidados(totalProjetos, diasTotais, custoTotal);
 
         DefaultPieDataset datasetCustos = gerarDatasetCustos(projetos);
+        DefaultPieDataset datasetProjetos = gerarDatasetProjetos(projetos);
+
+        view.atualizarGraficos(datasetCustos, datasetProjetos);
     }
 
-    private DefaultPieDataset gerarDatasetCustos(List<Projeto> projetos) {
+    private DefaultPieDataset gerarDatasetCustos(List<ProjetoEstimativa> projetos) {
         DefaultPieDataset dataset = new DefaultPieDataset();
-        for (Projeto projeto : projetos) {
-            double custo = estimaService.calcularCusto(projeto);
+        for (ProjetoEstimativa projeto : projetos) {
+            double custo = projeto.getTotalCusto();
             dataset.setValue(projeto.getNome(), custo);
         }
         return dataset;
     }
 
+    private DefaultPieDataset gerarDatasetProjetos(List<ProjetoEstimativa> projetos) {
+        DefaultPieDataset dataset = new DefaultPieDataset();
+        Map<String, Long> tipos = projetos.stream()
+                .collect(Collectors.groupingBy(ProjetoEstimativa::getNome, Collectors.counting()));
+
+        for (Map.Entry<String, Long> entry : tipos.entrySet()) {
+            dataset.setValue(entry.getKey(), entry.getValue());
+        }
+        return dataset;
+    }
+
     @Override
-    public void update(List<Projeto> projetos) {
+    public void update(List<ProjetoEstimativa> projetos) {
         carregarDashboard();
     }
 }

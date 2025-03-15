@@ -1,15 +1,23 @@
 package br.projeto.view;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.text.DecimalFormat;
+
+import javax.swing.BorderFactory;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;
 
-import javax.swing.*;
-import java.awt.*;
-import java.text.DecimalFormat;
-
 public class DashBoardProjetoView extends JInternalFrame {
+
     private JLabel lblTotalProjetosValor;
     private JLabel lblDiasTotaisValor;
     private JLabel lblCustoTotalValor;
@@ -62,7 +70,7 @@ public class DashBoardProjetoView extends JInternalFrame {
         return painel;
     }
 
-    public void exibirDadosConsolidados(int totalProjetos, int diasTotais, double custoTotal) {
+    public void exibirDadosConsolidados(int totalProjetos, double diasTotais, double custoTotal) {
         lblTotalProjetosValor.setText(String.valueOf(totalProjetos));
         lblDiasTotaisValor.setText(String.valueOf(diasTotais));
         lblCustoTotalValor.setText("R$ " + new DecimalFormat("#,##0.00").format(custoTotal));

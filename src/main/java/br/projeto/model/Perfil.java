@@ -85,4 +85,9 @@ public class Perfil {
     public void setFuncionalidades(List<Funcionalidade> funcionalidades) {
         this.funcionalidades = funcionalidades;
     }
+
+    @Override
+    public String toString() {
+        return nome;
+    }
 }

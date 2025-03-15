@@ -1,12 +1,12 @@
 package br.projeto.presenter;
 
-import br.projeto.repository.UsuarioRepositoryImpl;
+import javax.swing.JOptionPane;
+
 import br.projeto.service.CriarContaService;
 import br.projeto.view.CriarContaView;
 
-import javax.swing.*;
-
 public class CriarContaPresenter {
+
     private final CriarContaView view;
     private final CriarContaService service;
     private final LoginPresenter loginPresenter;
@@ -15,11 +15,11 @@ public class CriarContaPresenter {
         this.view = view;
         this.service = service;
         this.loginPresenter = loginPresenter;
+        view.setLocationRelativeTo(null);
         view.getBtnCriar().addActionListener(e -> criarConta());
         view.getBtnCancelar().addActionListener(e -> voltar());
 
     }
-
 
     public CriarContaView getView() {
         return view;

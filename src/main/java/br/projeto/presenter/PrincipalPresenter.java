@@ -20,7 +20,8 @@ import br.projeto.command.AbrirInternalFrameGenericoProjetoCommand;
 import br.projeto.command.ExcluirProjetoProjetoCommand;
 import br.projeto.command.MostrarMensagemProjetoCommand;
 import br.projeto.command.ProjetoCommand;
-import br.projeto.model.Projeto;
+import br.projeto.dbConnection.connections.IDatabaseConnection;
+import br.projeto.model.ProjetoEstimativa;
 import br.projeto.presenter.helpers.WindowManager;
 import br.projeto.presenter.window_command.ConfigurarMenuJanelaCommand;
 import br.projeto.presenter.window_command.ConfigurarViewCommand;
@@ -28,9 +29,12 @@ import br.projeto.presenter.window_command.FecharJanelasRelacionadasCommand;
 import br.projeto.presenter.window_command.SetLookAndFeelCommand;
 import br.projeto.presenter.window_command.WindowCommand;
 import br.projeto.repository.PerfilRepository;
+import br.projeto.repository.PerfilRepositoryImpl;
+import br.projeto.repository.ProjetoRepository;
 import br.projeto.repository.ProjetoRepositoryImpl;
 import br.projeto.service.ConstrutorDeArvoreNavegacaoService;
 import br.projeto.service.NoArvoreComposite;
+import br.projeto.session.UsuarioSession;
 import br.projeto.view.GlobalWindowManager;
 import br.projeto.view.PrincipalView;
 
@@ -38,17 +42,19 @@ public final class PrincipalPresenter implements Observer {
 
     private final LoginPresenter presenter;
     private final PrincipalView view;
-    private final ProjetoRepositoryImpl repository;
+    private final ProjetoRepository projetoRepository;
     private final PerfilRepository perfilRepository;
     private final ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService;
     private final Map<String, ProjetoCommand> comandos;
     private final List<WindowCommand> windowCommands = new ArrayList<>();
 
-    public PrincipalPresenter(ProjetoRepositoryImpl repository, PerfilRepository perfilRepository, LoginPresenter presenter) {
+    public PrincipalPresenter(IDatabaseConnection connection, LoginPresenter presenter) {
         this.view = new PrincipalView();
-        this.repository = repository;
-        this.perfilRepository = perfilRepository;
-        this.repository.addObserver(this);
+
+        this.projetoRepository = ProjetoRepositoryImpl.getInstance(connection);
+        this.projetoRepository.addObserver(this);
+
+        this.perfilRepository = PerfilRepositoryImpl.getInstance(connection);
 
         this.construtorDeArvoreNavegacaoService = new ConstrutorDeArvoreNavegacaoService();
 
@@ -70,23 +76,23 @@ public final class PrincipalPresenter implements Observer {
 
     private Map<String, ProjetoCommand> inicializarComandos() {
         Map<String, ProjetoCommand> comandos = new HashMap<>();
-        comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), repository));
+        comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), projetoRepository));
         comandos.put("Usuário", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Usuário"));
         comandos.put("Ver perfis de projeto", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Ver Perfis de Projetos"));
         comandos.put("Elaborar estimativa", new MostrarMensagemProjetoCommand("Elaborar estimativa ainda não implementada"));
         comandos.put("Visualizar estimativa", new MostrarMensagemProjetoCommand("Visualizar estimativa ainda não implementada"));
         comandos.put("Compartilhar projeto de estimativa", new MostrarMensagemProjetoCommand("Compartilhar ainda não implementado"));
         comandos.put("Exportar projeto de estimativa", new MostrarMensagemProjetoCommand("Exportar ainda não implementado"));
-        comandos.put("Novo projeto", new AbrirCriarProjetoCommand(perfilRepository, view.getDesktop()));
-        comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(repository));
-        comandos.put("Abrir detalhes", new AbrirDetalhesProjetoProjetoCommand(repository, view.getDesktop()));
         comandos.put("Sair", new SairCommand(this, presenter));
+        comandos.put("Novo projeto", new AbrirCriarProjetoCommand(perfilRepository, projetoRepository, view.getDesktop()));
+        comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(projetoRepository));
+        comandos.put("Abrir detalhes", new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()));
         return comandos;
     }
 
     public void configurarArvore() {
         NoArvoreComposite raiz = construtorDeArvoreNavegacaoService.criarNo("Principal", "principal", comandos.get("Principal"));
-        NoArvoreComposite noUsuario = construtorDeArvoreNavegacaoService.criarNo("Usuário", "usuario", comandos.get("Usuário"));
+        NoArvoreComposite noUsuario = construtorDeArvoreNavegacaoService.criarNo(UsuarioSession.getInstance().getUsuarioLogado().getNome(), "usuario", comandos.get("Usuário"));
         NoArvoreComposite noPerfis = construtorDeArvoreNavegacaoService.criarNo("Ver perfis de projeto", "perfil", comandos.get("Ver perfis de projeto"));
         NoArvoreComposite noProjetos = construtorDeArvoreNavegacaoService.criarNo("Projetos", "projeto", null);
 
@@ -107,9 +113,9 @@ public final class PrincipalPresenter implements Observer {
         raiz.adicionarFilho(noPerfis);
         raiz.adicionarFilho(noProjetos);
 
-        List<Projeto> listaProjetos = repository.getProjetos();
-        for (final Projeto projeto : listaProjetos) {
-            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(repository, view.getDesktop()) {
+        List<ProjetoEstimativa> listaProjetos = projetoRepository.getProjetos();
+        for (final ProjetoEstimativa projeto : listaProjetos) {
+            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()) {
                 @Override
                 public void execute() {
                     String tituloJanela = "Detalhes do Projeto: " + projeto.getNome();
@@ -140,12 +146,12 @@ public final class PrincipalPresenter implements Observer {
         view.setTree(arvore);
     }
 
-    private void adicionarMenuContextual(Projeto projeto, NoArvoreComposite noProjeto) {
+    private void adicionarMenuContextual(ProjetoEstimativa projeto, NoArvoreComposite noProjeto) {
         noProjeto.setMenuContextual(() -> {
             JPopupMenu menu = new JPopupMenu();
             JMenuItem excluirProjetoItem = new JMenuItem("Excluir Projeto");
             excluirProjetoItem.addActionListener(e -> {
-                ProjetoCommand cmdExcluir = new ExcluirProjetoProjetoCommand(repository, projeto.getNome());
+                ProjetoCommand cmdExcluir = new ExcluirProjetoProjetoCommand(projetoRepository, projeto.getNome());
                 cmdExcluir.execute();
             });
             menu.add(excluirProjetoItem);
@@ -154,7 +160,7 @@ public final class PrincipalPresenter implements Observer {
     }
 
     @Override
-    public void update(final List<Projeto> listaProjetos) {
+    public void update(final List<ProjetoEstimativa> listaProjetos) {
         SwingUtilities.invokeLater(() -> {
             WindowCommand fecharJanelasCommand = new FecharJanelasRelacionadasCommand(view.getDesktop(), listaProjetos);
             fecharJanelasCommand.execute();
@@ -186,8 +192,8 @@ public final class PrincipalPresenter implements Observer {
         return comandos;
     }
 
-    public ProjetoRepositoryImpl getRepository() {
-        return repository;
+    public ProjetoRepository getRepository() {
+        return projetoRepository;
     }
 
     public PrincipalView getView() {
