@@ -39,11 +39,13 @@ public class CriarContaPresenter {
 
         JOptionPane.showMessageDialog(view, "Conta criada com sucesso");
         view.dispose();
+        loginPresenter.setState(new LoginNaoAutenticadoState());
         loginPresenter.getView().setVisible(true);
     }
 
     public void voltar() {
         view.dispose();
+        loginPresenter.setState(new LoginNaoAutenticadoState());
         loginPresenter.getView().setVisible(true);
     }
 }

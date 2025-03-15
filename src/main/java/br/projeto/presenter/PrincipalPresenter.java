@@ -42,6 +42,7 @@ import br.projeto.view.PrincipalView;
 
 public final class PrincipalPresenter implements Observer {
 
+    private final LoginPresenter presenter;
     private final PrincipalView view;
     private final ProjetoRepository projetoRepository;
     private final PerfilRepository perfilRepository;
@@ -50,7 +51,7 @@ public final class PrincipalPresenter implements Observer {
     private final Map<String, ProjetoCommand> comandos;
     private final List<WindowCommand> windowCommands = new ArrayList<>();
 
-    public PrincipalPresenter(IDatabaseConnection connection) {
+    public PrincipalPresenter(IDatabaseConnection connection, LoginPresenter presenter) {
         this.view = new PrincipalView();
 
         this.projetoRepository = ProjetoRepositoryImpl.getInstance(connection);
@@ -86,6 +87,7 @@ public final class PrincipalPresenter implements Observer {
         comandos.put("Elaborar estimativa", new MostrarMensagemProjetoCommand("Elaborar estimativa ainda não implementada"));
         comandos.put("Compartilhar projeto de estimativa", new MostrarMensagemProjetoCommand("Compartilhar ainda não implementado"));
         comandos.put("Exportar projeto de estimativa", new MostrarMensagemProjetoCommand("Exportar ainda não implementado"));
+        comandos.put("Sair", new SairCommand(this, presenter));
         comandos.put("Novo projeto", new AbrirCriarProjetoCommand(perfilRepository, projetoRepository, view.getDesktop()));
         comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(projetoRepository));
 

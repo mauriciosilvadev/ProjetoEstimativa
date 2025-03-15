@@ -18,8 +18,9 @@ public class ConfigurarViewCommand implements WindowCommand {
     @Override
     public void execute() {
         presenter.configurarArvore();
+        JButton botaoSair = new CriarBotaoPowerService(presenter.getComandos()).getPower();
         JToolBar barraDeBotoes = new CriarBarraBotaoService(presenter.getComandos()).criarBarraDeBotoes();
-        presenter.getView().setMainComponents(barraDeBotoes);
+        presenter.getView().setMainComponents(barraDeBotoes, botaoSair);
 
         SwingUtilities.invokeLater(() -> {
             ProjetoCommand comandoPrincipal = presenter.getComandos().get("Principal");
