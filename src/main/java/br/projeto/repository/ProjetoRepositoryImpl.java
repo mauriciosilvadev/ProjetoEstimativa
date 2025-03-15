@@ -67,6 +67,20 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
         return projetos;
     }
 
+    public boolean hasProjeto(String nome) {
+        String sql = "SELECT * FROM projetos WHERE nome = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, nome);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Não foi possível verificar se o projeto de estimativa existe", e);
+        }
+    }
+
     @Override
     public ProjetoEstimativa getProjetoPorNome(String nome) {
         String sql = "SELECT * FROM projetos WHERE nome = ?";
@@ -76,7 +90,7 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-                    return new ProjetoEstimativa(
+                    ProjetoEstimativa projeto = new ProjetoEstimativa(
                             rs.getDouble("total_dias"),
                             rs.getDouble("valor_total"),
                             rs.getDouble("percentual_imposto"),
@@ -92,6 +106,10 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
                             rs.getInt("usuario_id"),
                             rs.getString("nome")
                     );
+
+                    projeto = populaProjetoEstimativa(projeto);
+
+                    return projeto;
                 }
             }
         } catch (SQLException e) {
@@ -103,11 +121,14 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
 
     @Override
     public void adicionarProjeto(ProjetoEstimativa projetoEstimativa) {
+
+        projetoEstimativa.setDataCriacao(new java.util.Date());
+
         String projetoSql = "INSERT INTO projetos "
                 + "(usuario_id, perfil_id, nome, custo_hardware, custo_software, "
                 + "custo_riscos, custo_garantia, fundo_reserva, outros_custos, "
-                + "percentual_imposto, percentual_lucro, total_dias, valor_total) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                + "percentual_imposto, percentual_lucro, total_dias, valor_total, data_criacao) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         String projetoPlataformaSql = "INSERT INTO projetos_plataformas (projeto_id, plataforma_id) VALUES (?, ?)";
         String projetoFuncionalidadeSql = "INSERT INTO funcionalidade_projeto_plataforma (projeto_plataforma_id, funcionalidade_id, valor) VALUES (?, ?, ?)";
@@ -127,6 +148,7 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
                 pstmt.setDouble(11, projetoEstimativa.getPercentualLucro());
                 pstmt.setDouble(12, projetoEstimativa.getTotalDias());
                 pstmt.setDouble(13, projetoEstimativa.getValorTotal());
+                pstmt.setDate(14, new java.sql.Date(projetoEstimativa.getDataCriacao().getTime()));
 
                 pstmt.executeUpdate();
             }
@@ -208,6 +230,8 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
 
     private ProjetoEstimativa populaProjetoEstimativa(ProjetoEstimativa projeto) {
         Perfil perfil = PerfilRepositoryImpl.getInstance(connection).buscarPorId(projeto.getPerfilId());
+
+        projeto.setPerfil(perfil);
 
         String projetosPlataformasSql = "SELECT * FROM projetos_plataformas WHERE projeto_id = ?";
 
