@@ -21,6 +21,7 @@ public class LoginNaoAutenticadoState implements LoginState {
         //         presenter.getView().getTxtSenha().getText()
         // );
         boolean isAuthenticated = presenter.getService().autenticar("mauricio.s.dev@gmail.com", "secret");
+        // boolean isAuthenticated = presenter.getService().autenticar("ana@example.com", "secret");
 
         if (isAuthenticated) {
             presenter.setState(new LoginAutenticadoState());

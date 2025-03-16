@@ -19,12 +19,14 @@ public class DetalheProjetoPresenter implements Observer {
     private final ProjetoRepository projetoRepository;
     private final UsuarioRepository usuarioRepository;
     private final String projetoNome;
+    private final boolean isCompartilhado;
 
-    public DetalheProjetoPresenter(DetalheProjetoView view, ProjetoRepository projetoRepository, String projetoNome, UsuarioRepository usuarioRepository) {
+    public DetalheProjetoPresenter(DetalheProjetoView view, ProjetoRepository projetoRepository, String projetoNome, UsuarioRepository usuarioRepository, boolean isCompartilhado) {
         this.view = view;
         this.projetoRepository = projetoRepository;
         this.usuarioRepository = usuarioRepository;
         this.projetoNome = projetoNome;
+        this.isCompartilhado = isCompartilhado;
         this.estimativaService = new EstimativaService();
 
         this.projetoRepository.addObserver(this);
@@ -50,7 +52,11 @@ public class DetalheProjetoPresenter implements Observer {
                 .orElse("N/A");
 
         view.getLblNome().setText("Nome: " + projeto.getNome());
-        view.getLblCriador().setText("Criador: " + usuario.getNome() + " (" + usuario.getEmail() + ")");
+        if (isCompartilhado) {
+            view.getLblCriador().setText("Compartilhado por: " + usuario.getNome() + " (" + usuario.getEmail() + ")");
+        } else {
+            view.getLblCriador().setText("Criador: " + usuario.getNome() + " (" + usuario.getEmail() + ")");
+        }
         view.getLblData().setText("Data de Criação: " + projeto.getDataCriacao());
         view.getLblPerfilProjeto().setText("Perfil do Projeto: " + projeto.getPerfil().getNome());
         view.getLblPlataformas().setText("Plataformas cotadas: " + plataformaFormatadas);

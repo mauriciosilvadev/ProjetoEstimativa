@@ -93,7 +93,7 @@ CREATE TABLE IF NOT EXISTS funcionalidade_projeto_plataforma (
     FOREIGN KEY (projeto_plataforma_id) REFERENCES projetos_plataformas(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS projetos_compartilhadas (
+CREATE TABLE IF NOT EXISTS projetos_compartilhados (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     projeto_id INTEGER NOT NULL,
     usuario_id INTEGER NOT NULL,

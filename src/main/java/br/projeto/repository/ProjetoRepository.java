@@ -9,6 +9,8 @@ public interface ProjetoRepository {
 
     List<ProjetoEstimativa> getProjetos();
 
+    List<ProjetoEstimativa> getProjetosCompartilhados();
+
     ProjetoEstimativa getProjetoPorNome(String nome);
 
     void adicionarProjeto(ProjetoEstimativa projetoEstimativa);
@@ -22,4 +24,6 @@ public interface ProjetoRepository {
     void removeObserver(Observer observer);
 
     void notifyObservers(List<ProjetoEstimativa> projetos);
+
+    boolean compartilharProjeto(int idProjeto, int idUsuario);
 }

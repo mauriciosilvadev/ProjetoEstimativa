@@ -13,6 +13,7 @@ import br.projeto.model.Perfil;
 import br.projeto.model.Plataforma;
 import br.projeto.model.ProjetoEstimativa;
 import br.projeto.presenter.Observer;
+import br.projeto.session.UsuarioSession;
 
 public class ProjetoRepositoryImpl implements ProjetoRepository {
 
@@ -33,9 +34,53 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
     }
 
     @Override
-    public List<ProjetoEstimativa> getProjetos() {
+    public List<ProjetoEstimativa> getProjetosCompartilhados() {
         List<ProjetoEstimativa> projetos = new ArrayList<>();
-        String sql = "SELECT * FROM projetos";
+        int userId = UsuarioSession.getInstance().getUsuarioLogado().getId();
+
+        String sql = "SELECT p.* FROM projetos p "
+                + "INNER JOIN projetos_compartilhados pc ON p.id = pc.projeto_id "
+                + "WHERE pc.usuario_id = " + userId;
+
+        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                ProjetoEstimativa projeto = new ProjetoEstimativa(
+                        rs.getDouble("total_dias"),
+                        rs.getDouble("valor_total"),
+                        rs.getDouble("percentual_imposto"),
+                        rs.getDouble("percentual_lucro"),
+                        rs.getDouble("custo_hardware"),
+                        rs.getDouble("custo_software"),
+                        rs.getDouble("custo_riscos"),
+                        rs.getDouble("custo_garantia"),
+                        rs.getDouble("fundo_reserva"),
+                        rs.getDouble("outros_custos"),
+                        rs.getInt("id"),
+                        rs.getInt("perfil_id"),
+                        rs.getInt("usuario_id"),
+                        rs.getString("nome")
+                );
+
+                projeto.setDataCriacao(rs.getString("data_criacao"));
+
+                projeto = populaProjetoEstimativa(projeto);
+
+                projetos.add(projeto);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Não foi possível obter os projetos de estimativa compartilhados", e);
+        }
+
+        return projetos;
+    }
+
+    @Override
+    public List<ProjetoEstimativa> getProjetos() {
+
+        List<ProjetoEstimativa> projetos = new ArrayList<>();
+        int userId = UsuarioSession.getInstance().getUsuarioLogado().getId();
+
+        String sql = "SELECT * FROM projetos WHERE usuario_id = " + userId;
 
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -293,6 +338,37 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
         }
 
         return projeto;
+    }
+
+    @Override
+    public boolean compartilharProjeto(int idProjeto, int idUsuario) {
+        String checkSql = "SELECT * FROM projetos_compartilhados WHERE projeto_id = ? AND usuario_id = ?";
+
+        // Verifica se o projeto já foi compartilhado com o mesmo usuário
+        try (PreparedStatement checkPstmt = connection.prepareStatement(checkSql)) {
+            checkPstmt.setInt(1, idProjeto);
+            checkPstmt.setInt(2, idUsuario);
+
+            try (ResultSet rs = checkPstmt.executeQuery()) {
+                if (rs.next()) {
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Não foi possível verificar se o projeto já foi compartilhado", e);
+        }
+
+        String sql = "INSERT INTO projetos_compartilhados (projeto_id, usuario_id) VALUES (?, ?)";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, idProjeto);
+            pstmt.setInt(2, idUsuario);
+            pstmt.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            throw new RuntimeException("Não foi possível compartilhar o projeto de estimativa", e);
+        }
     }
 
 }
