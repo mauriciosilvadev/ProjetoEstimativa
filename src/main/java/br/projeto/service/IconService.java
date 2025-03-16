@@ -1,11 +1,13 @@
 package br.projeto.service;
 
-import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.swing.ImageIcon;
+
 public class IconService {
+
     private static final Map<String, ImageIcon> icons = new HashMap<>();
 
     static {
@@ -14,6 +16,7 @@ public class IconService {
         icons.put("perfil", loadIcon("perfil-icon.png"));
         icons.put("projeto", loadIcon("projeto-icon-tree.png"));
         icons.put("action", loadIcon("action-icon.png"));
+        icons.put("cross", loadIcon("cross-icon.png"));
     }
 
     private static ImageIcon loadIcon(String path) {

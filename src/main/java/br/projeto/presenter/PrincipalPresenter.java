@@ -17,6 +17,7 @@ import br.projeto.command.AbrirCompartilharProjetoEstimativaCommand;
 import br.projeto.command.AbrirCriarProjetoCommand;
 import br.projeto.command.AbrirDashboardProjetoCommand;
 import br.projeto.command.AbrirDetalhesProjetoProjetoCommand;
+import br.projeto.command.AbrirEditarProjetoCommand;
 import br.projeto.command.AbrirInternalFrameGenericoProjetoCommand;
 import br.projeto.command.ExcluirProjetoProjetoCommand;
 import br.projeto.command.MostrarMensagemProjetoCommand;
@@ -84,7 +85,6 @@ public final class PrincipalPresenter implements Observer {
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), projetoRepository));
         comandos.put("Usuário", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Usuário"));
         comandos.put("Ver perfis de projeto", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Ver Perfis de Projetos"));
-        comandos.put("Elaborar estimativa", new MostrarMensagemProjetoCommand("Elaborar estimativa ainda não implementada"));
         comandos.put("Exportar projeto de estimativa", new MostrarMensagemProjetoCommand("Exportar ainda não implementado"));
         comandos.put("Novo projeto", new AbrirCriarProjetoCommand(perfilRepository, projetoRepository, view.getDesktop()));
         comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(projetoRepository));
@@ -172,10 +172,28 @@ public final class PrincipalPresenter implements Observer {
                     }
                 }
             };
+            AbrirEditarProjetoCommand cmdEditar = new AbrirEditarProjetoCommand(perfilRepository, projetoRepository, projeto, view.getDesktop()) {
+                @Override
+                public void execute() {
+                    String tituloJanela = "Editar " + projeto.getNome();
+                    WindowManager windowManager = WindowManager.getInstance();
 
-            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar Detalhes", "action", cmdDetalhes));
-            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Compartilhar projeto de estimativa", "action", cmdCompartilhar));
+                    if (!windowManager.isFrameAberto(tituloJanela)) {
+                        super.execute();
+                        bloquearMinimizacao(tituloJanela);
+                    } else {
+                        windowManager.bringToFront(tituloJanela);
+                    }
+                }
+            };
+
+            ExcluirProjetoProjetoCommand cmdExcluir = new ExcluirProjetoProjetoCommand(projetoRepository, projeto.getNome());
+
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar", "action", cmdDetalhes));
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Editar", "action", cmdEditar));
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Compartilhar", "action", cmdCompartilhar));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Exportar projeto de estimativa", "action", comandos.get("Exportar projeto de estimativa")));
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Excluir", "cross", cmdExcluir));
             noProjetos.adicionarFilho(noProjeto);
         }
 
