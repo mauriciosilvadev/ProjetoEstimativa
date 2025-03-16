@@ -210,4 +210,9 @@ public class ProjetoEstimativa {
     public String getDataCriacao() {
         return dataCriacao;
     }
+
+    @Override
+    public String toString() {
+        return nome;
+    }
 }

@@ -22,4 +22,6 @@ public interface ProjetoRepository {
     void removeObserver(Observer observer);
 
     void notifyObservers(List<ProjetoEstimativa> projetos);
+
+    boolean compartilharProjeto(int idProjeto, int idUsuario);
 }

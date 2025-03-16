@@ -1,4 +1,15 @@
-INSERT INTO usuarios (nome, email, senha) VALUES ('Mauricio', 'mauricio.s.dev@gmail.com', 'secret');
+INSERT INTO usuarios (nome, email, senha) VALUES 
+('Mauricio', 'mauricio.s.dev@gmail.com', 'secret'),
+('Ana', 'ana@example.com', 'secret'),
+('Anabela', 'anabela@example.com', 'secret'),
+('Anastasia', 'anastasia@example.com', 'secret'),
+('Anacleto', 'anacleto@example.com', 'secret'),
+('Anastacio', 'anastacio@example.com', 'secret'),
+('Anabela', 'anabela2@example.com', 'secret'),
+('Anacleto', 'anacleto2@example.com', 'secret'),
+('Anastasia', 'anastasia2@example.com', 'secret'),
+('Anastacio', 'anastacio2@example.com', 'secret'),
+('Ana', 'ana2@example.com', 'secret');
 
 INSERT INTO perfis (nome) VALUES ('Perfil Default'), ('Perfil Web e Back-end');
 

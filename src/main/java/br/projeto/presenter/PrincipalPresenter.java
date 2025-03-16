@@ -13,6 +13,7 @@ import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import br.projeto.command.AbrirCompartilharProjetoEstimativaCommand;
 import br.projeto.command.AbrirCriarProjetoCommand;
 import br.projeto.command.AbrirDashboardProjetoCommand;
 import br.projeto.command.AbrirDetalhesProjetoProjetoCommand;
@@ -84,7 +85,7 @@ public final class PrincipalPresenter implements Observer {
         comandos.put("Usuário", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Usuário"));
         comandos.put("Ver perfis de projeto", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Ver Perfis de Projetos"));
         comandos.put("Elaborar estimativa", new MostrarMensagemProjetoCommand("Elaborar estimativa ainda não implementada"));
-        comandos.put("Compartilhar projeto de estimativa", new MostrarMensagemProjetoCommand("Compartilhar ainda não implementado"));
+        // comandos.put("Compartilhar projeto de estimativa", new AbrirCompartilharProjetoEstimativaCommand(usuarioRepository, projetoRepository, view.getDesktop()));
         comandos.put("Exportar projeto de estimativa", new MostrarMensagemProjetoCommand("Exportar ainda não implementado"));
         comandos.put("Novo projeto", new AbrirCriarProjetoCommand(perfilRepository, projetoRepository, view.getDesktop()));
         comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(projetoRepository));
@@ -131,13 +132,29 @@ public final class PrincipalPresenter implements Observer {
                     }
                 }
             };
+
             cmdDetalhes.setProjetoNome(projeto.getNome());
             NoArvoreComposite noProjeto = construtorDeArvoreNavegacaoService.criarNo(projeto.getNome(), "projeto", cmdDetalhes);
 
             adicionarMenuContextual(projeto, noProjeto);
 
+            AbrirCompartilharProjetoEstimativaCommand cmdCompartilhar = new AbrirCompartilharProjetoEstimativaCommand(usuarioRepository, projetoRepository, projeto, view.getDesktop()) {
+                @Override
+                public void execute() {
+                    String tituloJanela = "Compartilhar Projeto: " + projeto.getNome();
+                    WindowManager windowManager = WindowManager.getInstance();
+
+                    if (!windowManager.isFrameAberto(tituloJanela)) {
+                        super.execute();
+                        bloquearMinimizacao(tituloJanela);
+                    } else {
+                        windowManager.bringToFront(tituloJanela);
+                    }
+                }
+            };
+
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar Detalhes", "action", cmdDetalhes));
-            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Compartilhar projeto de estimativa", "action", comandos.get("Compartilhar projeto de estimativa")));
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Compartilhar projeto de estimativa", "action", cmdCompartilhar));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Exportar projeto de estimativa", "action", comandos.get("Exportar projeto de estimativa")));
             noProjetos.adicionarFilho(noProjeto);
         }

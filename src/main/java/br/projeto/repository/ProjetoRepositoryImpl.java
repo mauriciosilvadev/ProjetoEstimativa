@@ -13,6 +13,7 @@ import br.projeto.model.Perfil;
 import br.projeto.model.Plataforma;
 import br.projeto.model.ProjetoEstimativa;
 import br.projeto.presenter.Observer;
+import br.projeto.session.UsuarioSession;
 
 public class ProjetoRepositoryImpl implements ProjetoRepository {
 
@@ -34,8 +35,11 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
 
     @Override
     public List<ProjetoEstimativa> getProjetos() {
+
         List<ProjetoEstimativa> projetos = new ArrayList<>();
-        String sql = "SELECT * FROM projetos";
+        int userId = UsuarioSession.getInstance().getUsuarioLogado().getId();
+
+        String sql = "SELECT * FROM projetos WHERE usuario_id = " + userId;
 
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
@@ -293,6 +297,37 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
         }
 
         return projeto;
+    }
+
+    @Override
+    public boolean compartilharProjeto(int idProjeto, int idUsuario) {
+        String checkSql = "SELECT * FROM projetos_compartilhados WHERE projeto_id = ? AND usuario_id = ?";
+
+        // Verifica se o projeto já foi compartilhado com o mesmo usuário
+        try (PreparedStatement checkPstmt = connection.prepareStatement(checkSql)) {
+            checkPstmt.setInt(1, idProjeto);
+            checkPstmt.setInt(2, idUsuario);
+
+            try (ResultSet rs = checkPstmt.executeQuery()) {
+                if (rs.next()) {
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Não foi possível verificar se o projeto já foi compartilhado", e);
+        }
+
+        String sql = "INSERT INTO projetos_compartilhados (projeto_id, usuario_id) VALUES (?, ?)";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, idProjeto);
+            pstmt.setInt(2, idUsuario);
+            pstmt.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            throw new RuntimeException("Não foi possível compartilhar o projeto de estimativa", e);
+        }
     }
 
 }
