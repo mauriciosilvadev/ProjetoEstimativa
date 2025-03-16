@@ -26,4 +26,6 @@ public interface ProjetoRepository {
     void notifyObservers(List<ProjetoEstimativa> projetos);
 
     boolean compartilharProjeto(int idProjeto, int idUsuario);
+
+    void atualizarProjeto(ProjetoEstimativa projetoEstimativa);
 }

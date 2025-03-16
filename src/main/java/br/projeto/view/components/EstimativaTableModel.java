@@ -18,7 +18,7 @@ import br.projeto.model.Categoria;
 import br.projeto.model.Funcionalidade;
 import br.projeto.model.Perfil;
 import br.projeto.model.Plataforma;
-import br.projeto.presenter.CriarProjetoPresenter;
+import br.projeto.presenter.ManterProjetoPresenter;
 import br.projeto.service.ValidaFuncionalidadeService;
 
 /**
@@ -34,10 +34,9 @@ public class EstimativaTableModel extends AbstractTableModel {
     private final List<String> colunasPlataformas = new ArrayList<>();
     private Perfil perfil;
 
-    // Referência ao Presenter para notificar mudanças
-    private final CriarProjetoPresenter presenter;
+    private final ManterProjetoPresenter presenter;
 
-    public EstimativaTableModel(Perfil perfil, CriarProjetoPresenter presenter) {
+    public EstimativaTableModel(Perfil perfil, ManterProjetoPresenter presenter) {
         this.perfil = perfil;
         this.presenter = presenter;
         this.plataformas = perfil.getPlataformas();
@@ -265,9 +264,6 @@ public class EstimativaTableModel extends AbstractTableModel {
         presenter.onMudancaNaTabela();
     }
 
-    // -----------------------------
-    // Métodos utilitários
-    // -----------------------------
     public RowData getRowDataAt(int row) {
         return rows.get(row);
     }
@@ -299,5 +295,13 @@ public class EstimativaTableModel extends AbstractTableModel {
             }
         }
         return lista;
+    }
+
+    public void setPlataformaSelecionada(Plataforma plataformaSelecionada) {
+        for (Map.Entry<Plataforma, Boolean> entry : plataformasSelecionadas.entrySet()) {
+            if (entry.getKey().getId() == plataformaSelecionada.getId()) {
+                entry.setValue(true);
+            }
+        }
     }
 }

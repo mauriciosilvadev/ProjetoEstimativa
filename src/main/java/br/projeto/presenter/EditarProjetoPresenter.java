@@ -17,7 +17,7 @@ import br.projeto.repository.PerfilRepository;
 import br.projeto.repository.ProjetoRepository;
 import br.projeto.service.EstimativaService;
 import br.projeto.session.UsuarioSession;
-import br.projeto.state.projetoEstimativa.CriarProjetoState;
+import br.projeto.state.projetoEstimativa.EditarProjetoState;
 import br.projeto.state.projetoEstimativa.ProjetoState;
 import br.projeto.view.ProjetoEstimativaView;
 import br.projeto.view.components.EstimativaTableModel;
@@ -26,42 +26,86 @@ import br.projeto.view.components.EstimativaTableModel;
  *
  * @author Maurício Silva <mauricio.s.dev@gmail.com>
  */
-public class CriarProjetoPresenter implements ManterProjetoPresenter {
+public class EditarProjetoPresenter implements ManterProjetoPresenter {
 
     private final ProjetoEstimativaView view;
     private final PerfilRepository perfilRepository;
     private final ProjetoRepository projetoRepository;
+    private final ProjetoEstimativa projetoEstimativa;
     private final EstimativaService estimativaService;
     private EstimativaTableModel tableModel;
-    private List<Perfil> perfis;
     private Perfil perfilAtual;
     private ProjetoEstimativa resultado;
-
-    // Campo para o estado atual (criação)
     private ProjetoState state;
+    private final int projetoEstimativaId;
 
-    public CriarProjetoPresenter(ProjetoEstimativaView view,
+    public EditarProjetoPresenter(ProjetoEstimativaView view,
             PerfilRepository perfilRepository,
-            ProjetoRepository projetoRepository) {
+            ProjetoRepository projetoRepository,
+            ProjetoEstimativa projetoEstimativa) {
         this.view = view;
         this.perfilRepository = perfilRepository;
         this.projetoRepository = projetoRepository;
+        this.projetoEstimativa = projetoEstimativa;
+        this.projetoEstimativaId = projetoEstimativa.getId();
         this.estimativaService = new EstimativaService();
+        this.perfilAtual = perfilRepository.buscarPorId(projetoEstimativa.getPerfilId());
 
-        // Carregar perfis
-        this.perfis = perfilRepository.getPerfis();
+        configuraValores();
+        preencherCampos();
+        notificaView(processaEstimativa());
 
-        // Configura a view
+        // Inicializa o state para edição
+        this.state = new EditarProjetoState(projetoRepository, view, projetoEstimativa);
+    }
+
+    private void configuraValores() {
+        List<Funcionalidade> funcionalidadesPerfil = this.perfilAtual.getFuncionalidades();
+        List<Funcionalidade> funcionalidadesProjeto = this.projetoEstimativa.getFuncionalidadesSelecionadas();
+
+        for (int i = 0; i < funcionalidadesPerfil.size(); i++) {
+            Funcionalidade funcOriginal = funcionalidadesPerfil.get(i);
+            for (Funcionalidade funcProjeto : funcionalidadesProjeto) {
+                if (funcOriginal.getId() == funcProjeto.getId()) {
+                    for (Plataforma plataforma : this.perfilAtual.getPlataformas()) {
+                        if (Math.abs(funcProjeto.getValorPorPlataforma(plataforma)) < 1e-6) {
+                            funcProjeto.addValorPlataforma(plataforma, funcOriginal.getValorPorPlataforma(plataforma));
+                        }
+                    }
+                    funcionalidadesPerfil.set(i, funcProjeto);
+                    break;
+                }
+            }
+        }
+
+        this.perfilAtual.setFuncionalidades(funcionalidadesPerfil);
+
+        List<Perfil> perfis = List.of(this.perfilAtual);
+
+        // Configura a View
         this.view.setPresenter(this);
         this.view.initComboPerfis(perfis);
+        this.onPerfilSelecionado(this.perfilAtual);
 
-        // Inicializa o state para criação
-        this.state = new CriarProjetoState(projetoRepository, view);
+        for (Plataforma plataforma : this.projetoEstimativa.getPlatafomasSelecionadas()) {
+            this.tableModel.setPlataformaSelecionada(plataforma);
+        }
+    }
+
+    private void preencherCampos() {
+        view.getTxtNomeProjeto().setText(projetoEstimativa.getNome());
+        view.getTxtPercentualImposto().setText(Integer.toString((int) projetoEstimativa.getPercentualImposto()));
+        view.getTxtPercentualLucro().setText(Integer.toString((int) projetoEstimativa.getPercentualLucro()));
+        view.getTxtCustoHardware().setText(Integer.toString((int) projetoEstimativa.getCustoHardware()));
+        view.getTxtCustoSoftware().setText(Integer.toString((int) projetoEstimativa.getCustoSoftware()));
+        view.getTxtCustoRiscos().setText(Integer.toString((int) projetoEstimativa.getCustosRiscos()));
+        view.getTxtCustoGarantia().setText(Integer.toString((int) projetoEstimativa.getCustoGarantia()));
+        view.getTxtFundoReserva().setText(Integer.toString((int) projetoEstimativa.getFundoReserva()));
+        view.getTxtOutrosCustos().setText(Integer.toString((int) projetoEstimativa.getOutrosCustos()));
     }
 
     @Override
     public void onPerfilSelecionado(Perfil perfilSelecionado) {
-        this.perfilAtual = perfilRepository.buscarPorId(perfilSelecionado.getId());
         this.tableModel = new EstimativaTableModel(perfilAtual, this);
         view.initComponents(perfilAtual, tableModel);
         view.getBntSalvar().addActionListener(e -> salvarProjetoEstimativa());
@@ -133,15 +177,13 @@ public class CriarProjetoPresenter implements ManterProjetoPresenter {
             JOptionPane.showMessageDialog(view, "Selecione pelo menos uma plataforma", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        if (projetoRepository.hasProjeto(view.getNomeProjeto())) {
-            JOptionPane.showMessageDialog(view, "Já existe um projeto com esse nome", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
 
         resultado.setNome(view.getNomeProjeto());
         resultado.setPerfilId(perfilAtual.getId());
         resultado.setUserId(UsuarioSession.getInstance().getUsuarioLogado().getId());
+        resultado.setId(projetoEstimativaId);
 
+        // Delegar a operação de salvar para o state de edição
         state.salvarProjeto(resultado);
     }
 }

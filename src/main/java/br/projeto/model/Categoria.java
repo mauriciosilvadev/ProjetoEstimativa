@@ -4,6 +4,8 @@
  */
 package br.projeto.model;
 
+import java.util.Objects;
+
 /**
  *
  * @author Maurício Silva <mauricio.s.dev@gmail.com>
@@ -42,5 +44,22 @@ public class Categoria {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Categoria)) {
+            return false;
+        }
+        Categoria categoria = (Categoria) o;
+        return Objects.equals(id, categoria.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

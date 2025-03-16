@@ -58,7 +58,12 @@ public class Funcionalidade {
     }
 
     public Double getValorPorPlataforma(Plataforma plataforma) {
-        return valoresPlataformas.get(plataforma);
+        for (Plataforma p : valoresPlataformas.keySet()) {
+            if (p.getId() == plataforma.getId()) {
+                return valoresPlataformas.get(p);
+            }
+        }
+        return 0.0;
     }
 
     public void addValorPlataforma(Plataforma plataforma, Double valor) {
