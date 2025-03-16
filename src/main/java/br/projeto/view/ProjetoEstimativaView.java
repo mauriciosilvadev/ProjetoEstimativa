@@ -33,12 +33,13 @@ import br.projeto.model.Funcionalidade;
 import br.projeto.model.Perfil;
 import br.projeto.model.Plataforma;
 import br.projeto.presenter.CriarProjetoPresenter;
+import br.projeto.presenter.ManterProjetoPresenter;
 import br.projeto.view.components.EstimativaTable;
 import br.projeto.view.components.EstimativaTableModel;
 
-public class CriarProjetoView extends JInternalFrame {
+public class ProjetoEstimativaView extends JInternalFrame {
 
-    private CriarProjetoPresenter presenter;
+    private ManterProjetoPresenter presenter;
 
     private JComboBox<Perfil> comboPerfis;   // Combo de perfis
 
@@ -65,7 +66,7 @@ public class CriarProjetoView extends JInternalFrame {
     private EstimativaTable tabela;
     private EstimativaTableModel modeloTabela;
 
-    public CriarProjetoView() {
+    public ProjetoEstimativaView() {
         // Configurações iniciais da tela
         setTitle("Criar Projeto");
         setClosable(true);
@@ -75,7 +76,7 @@ public class CriarProjetoView extends JInternalFrame {
         setSize(1000, 700);
     }
 
-    public void setPresenter(CriarProjetoPresenter presenter) {
+    public void setPresenter(ManterProjetoPresenter presenter) {
         this.presenter = presenter;
     }
 

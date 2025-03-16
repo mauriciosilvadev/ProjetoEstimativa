@@ -2,22 +2,24 @@ package br.projeto.command;
 
 import javax.swing.JDesktopPane;
 
-import br.projeto.presenter.CriarProjetoPresenter;
+import br.projeto.model.ProjetoEstimativa;
+import br.projeto.presenter.EditarProjetoPresenter;
 import br.projeto.presenter.helpers.WindowManager;
 import br.projeto.repository.PerfilRepository;
 import br.projeto.repository.ProjetoRepository;
 import br.projeto.view.ProjetoEstimativaView;
 
-public class AbrirCriarProjetoCommand implements ProjetoCommand {
+public class AbrirEditarProjetoCommand implements ProjetoCommand {
 
     private final PerfilRepository perfilRepository;
     private final ProjetoRepository projetoRepository;
+    private final ProjetoEstimativa projeto;
     private final JDesktopPane desktop;
 
-    public AbrirCriarProjetoCommand(PerfilRepository perfilRepository, ProjetoRepository projetoRepository,
-            JDesktopPane desktop) {
+    public AbrirEditarProjetoCommand(PerfilRepository perfilRepository, ProjetoRepository projetoRepository, ProjetoEstimativa projeto, JDesktopPane desktop) {
         this.perfilRepository = perfilRepository;
         this.projetoRepository = projetoRepository;
+        this.projeto = projeto;
         this.desktop = desktop;
     }
 
@@ -25,7 +27,7 @@ public class AbrirCriarProjetoCommand implements ProjetoCommand {
     public void execute() {
         WindowManager windowManager = WindowManager.getInstance();
 
-        String tituloJanela = "Criar Projeto";
+        String tituloJanela = "Editar " + projeto.getNome();
 
         if (windowManager.isFrameAberto(tituloJanela)) {
             windowManager.bringToFront(tituloJanela);
@@ -34,7 +36,7 @@ public class AbrirCriarProjetoCommand implements ProjetoCommand {
 
         ProjetoEstimativaView projetoEstimativaView = new ProjetoEstimativaView();
         projetoEstimativaView.setTitle(tituloJanela);
-        new CriarProjetoPresenter(projetoEstimativaView, perfilRepository, projetoRepository);
+        new EditarProjetoPresenter(projetoEstimativaView, perfilRepository, projetoRepository, projeto);
         desktop.add(projetoEstimativaView);
         projetoEstimativaView.setVisible(true);
         try {

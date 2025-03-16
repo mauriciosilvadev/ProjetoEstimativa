@@ -230,6 +230,77 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
         }
     }
 
+    @Override
+    public void atualizarProjeto(ProjetoEstimativa projetoEstimativa) {
+        String projetoSql = "UPDATE projetos SET "
+                + "usuario_id = ?, perfil_id = ?, nome = ?, custo_hardware = ?, custo_software = ?, "
+                + "custo_riscos = ?, custo_garantia = ?, fundo_reserva = ?, outros_custos = ?, "
+                + "percentual_imposto = ?, percentual_lucro = ?, total_dias = ?, valor_total = ? "
+                + "WHERE id = ?";
+
+        // Remove as associações antigas
+        String deleteProjetoFuncionalidadeSql = "DELETE FROM funcionalidade_projeto_plataforma "
+                + "WHERE projeto_plataforma_id IN (SELECT id FROM projetos_plataformas WHERE projeto_id = ?)";
+        String deleteProjetoPlataformaSql = "DELETE FROM projetos_plataformas WHERE projeto_id = ?";
+
+        // Insere as novas associações
+        String projetoPlataformaSql = "INSERT INTO projetos_plataformas (projeto_id, plataforma_id) VALUES (?, ?)";
+        String projetoFuncionalidadeSql = "INSERT INTO funcionalidade_projeto_plataforma (projeto_plataforma_id, funcionalidade_id, valor) VALUES (?, ?, ?)";
+
+        try {
+            try (PreparedStatement pstmt = connection.prepareStatement(projetoSql)) {
+                pstmt.setInt(1, projetoEstimativa.getUserId());
+                pstmt.setInt(2, projetoEstimativa.getPerfilId());
+                pstmt.setString(3, projetoEstimativa.getNome());
+                pstmt.setDouble(4, projetoEstimativa.getCustoHardware());
+                pstmt.setDouble(5, projetoEstimativa.getCustoSoftware());
+                pstmt.setDouble(6, projetoEstimativa.getCustosRiscos());
+                pstmt.setDouble(7, projetoEstimativa.getCustoGarantia());
+                pstmt.setDouble(8, projetoEstimativa.getFundoReserva());
+                pstmt.setDouble(9, projetoEstimativa.getOutrosCustos());
+                pstmt.setDouble(10, projetoEstimativa.getPercentualImposto());
+                pstmt.setDouble(11, projetoEstimativa.getPercentualLucro());
+                pstmt.setDouble(12, projetoEstimativa.getTotalDias());
+                pstmt.setDouble(13, projetoEstimativa.getValorTotal());
+                pstmt.setInt(14, projetoEstimativa.getId());
+
+                System.out.println(pstmt.executeUpdate());
+            }
+
+            try (PreparedStatement pstmt = connection.prepareStatement(deleteProjetoFuncionalidadeSql)) {
+                pstmt.setInt(1, projetoEstimativa.getId());
+                System.out.println(pstmt.executeUpdate());
+            }
+
+            try (PreparedStatement pstmt = connection.prepareStatement(deleteProjetoPlataformaSql)) {
+                pstmt.setInt(1, projetoEstimativa.getId());
+                System.out.println(pstmt.executeUpdate());
+            }
+
+            try (PreparedStatement pstmtPlataforma = connection.prepareStatement(projetoPlataformaSql)) {
+                for (Plataforma plataforma : projetoEstimativa.getPlatafomasSelecionadas()) {
+                    pstmtPlataforma.setInt(1, projetoEstimativa.getId());
+                    pstmtPlataforma.setInt(2, plataforma.getId());
+                    pstmtPlataforma.executeUpdate();
+
+                    int idProjetoPlataforma = obterUltimoIdInserido(connection);
+                    for (Funcionalidade funcionalidade : projetoEstimativa.getFuncionalidadesSelecionadas()) {
+                        try (PreparedStatement pstmtFuncionalidade = connection.prepareStatement(projetoFuncionalidadeSql)) {
+                            pstmtFuncionalidade.setInt(1, idProjetoPlataforma);
+                            pstmtFuncionalidade.setInt(2, funcionalidade.getId());
+                            pstmtFuncionalidade.setDouble(3, funcionalidade.getValorPorPlataforma(plataforma));
+                            pstmtFuncionalidade.executeUpdate();
+                        }
+                    }
+                }
+            }
+
+            notifyObservers(getProjetos());
+        } catch (SQLException e) {
+            throw new RuntimeException("Não foi possível atualizar o projeto de estimativa", e);
+        }
+    }
+
     /**
      * Método auxiliar para obter o último ID inserido
      */
@@ -323,6 +394,7 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
                                 Funcionalidade funcionalidade = FuncionalidadeRepositoryImpl.getInstance(connection).buscarPorId(funcionalidadeId);
                                 funcionalidade.addValorPlataforma(plataforma, valor);
                                 funcionalidade.setPerfil(perfil);
+                                funcionalidade.setFoiSelecionada(true);
 
                                 funcionalidades.add(funcionalidade);
                             }
