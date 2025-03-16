@@ -27,8 +27,8 @@ public final class PrincipalView extends JFrame {
         add(divisoriaPainel, BorderLayout.CENTER);
     }
 
-    public void setMainComponents(JToolBar toolBar) {
-        add(toolBar, BorderLayout.NORTH);
+    public void setMainComponents(JPanel painelSuperior) {
+        add(painelSuperior, BorderLayout.NORTH);
     }
 
     public JDesktopPane getDesktop() {
