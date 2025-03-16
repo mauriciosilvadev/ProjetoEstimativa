@@ -2,6 +2,7 @@ package br.projeto.command;
 
 import javax.swing.JDesktopPane;
 
+import br.projeto.model.ProjetoEstimativa;
 import br.projeto.presenter.DetalheProjetoPresenter;
 import br.projeto.presenter.helpers.WindowManager;
 import br.projeto.repository.ProjetoRepository;
@@ -13,25 +14,20 @@ public class AbrirDetalhesProjetoProjetoCommand implements ProjetoCommand {
     private final ProjetoRepository projetoRepository;
     private final UsuarioRepository usuarioRepository;
     private final JDesktopPane desktop;
-    private String projetoNome;
+    private final ProjetoEstimativa projeto;
+    private final boolean isCompartilhado;
 
-    public AbrirDetalhesProjetoProjetoCommand(ProjetoRepository projetoRepository, JDesktopPane desktop, UsuarioRepository usuarioRepository) {
+    public AbrirDetalhesProjetoProjetoCommand(ProjetoRepository projetoRepository, JDesktopPane desktop, UsuarioRepository usuarioRepository, ProjetoEstimativa projeto, boolean isCompartilhado) {
         this.projetoRepository = projetoRepository;
         this.usuarioRepository = usuarioRepository;
+        this.isCompartilhado = isCompartilhado;
+        this.projeto = projeto;
         this.desktop = desktop;
-    }
-
-    public void setProjetoNome(String projetoNome) {
-        this.projetoNome = projetoNome;
     }
 
     @Override
     public void execute() {
-        if (projetoNome == null || projetoNome.isEmpty()) {
-            throw new IllegalStateException("O nome do projeto não foi definido para este comando.");
-        }
-
-        String tituloJanela = "Detalhes do Projeto: " + projetoNome;
+        String tituloJanela = "Detalhes do Projeto: " + projeto.getNome();
         WindowManager windowManager = WindowManager.getInstance();
 
         if (windowManager.isFrameAberto(tituloJanela)) {
@@ -39,7 +35,7 @@ public class AbrirDetalhesProjetoProjetoCommand implements ProjetoCommand {
         } else {
             DetalheProjetoView detalheView = new DetalheProjetoView();
             detalheView.setTitle(tituloJanela);
-            new DetalheProjetoPresenter(detalheView, projetoRepository, projetoNome, usuarioRepository);
+            new DetalheProjetoPresenter(detalheView, projetoRepository, projeto.getNome(), usuarioRepository, isCompartilhado);
             desktop.add(detalheView);
             detalheView.setVisible(true);
             try {

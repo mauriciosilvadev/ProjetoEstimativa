@@ -9,6 +9,8 @@ public interface ProjetoRepository {
 
     List<ProjetoEstimativa> getProjetos();
 
+    List<ProjetoEstimativa> getProjetosCompartilhados();
+
     ProjetoEstimativa getProjetoPorNome(String nome);
 
     void adicionarProjeto(ProjetoEstimativa projetoEstimativa);

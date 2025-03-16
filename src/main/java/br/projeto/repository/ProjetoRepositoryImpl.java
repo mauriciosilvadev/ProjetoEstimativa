@@ -34,6 +34,47 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
     }
 
     @Override
+    public List<ProjetoEstimativa> getProjetosCompartilhados() {
+        List<ProjetoEstimativa> projetos = new ArrayList<>();
+        int userId = UsuarioSession.getInstance().getUsuarioLogado().getId();
+
+        String sql = "SELECT p.* FROM projetos p "
+                + "INNER JOIN projetos_compartilhados pc ON p.id = pc.projeto_id "
+                + "WHERE pc.usuario_id = " + userId;
+
+        try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                ProjetoEstimativa projeto = new ProjetoEstimativa(
+                        rs.getDouble("total_dias"),
+                        rs.getDouble("valor_total"),
+                        rs.getDouble("percentual_imposto"),
+                        rs.getDouble("percentual_lucro"),
+                        rs.getDouble("custo_hardware"),
+                        rs.getDouble("custo_software"),
+                        rs.getDouble("custo_riscos"),
+                        rs.getDouble("custo_garantia"),
+                        rs.getDouble("fundo_reserva"),
+                        rs.getDouble("outros_custos"),
+                        rs.getInt("id"),
+                        rs.getInt("perfil_id"),
+                        rs.getInt("usuario_id"),
+                        rs.getString("nome")
+                );
+
+                projeto.setDataCriacao(rs.getString("data_criacao"));
+
+                projeto = populaProjetoEstimativa(projeto);
+
+                projetos.add(projeto);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Não foi possível obter os projetos de estimativa compartilhados", e);
+        }
+
+        return projetos;
+    }
+
+    @Override
     public List<ProjetoEstimativa> getProjetos() {
 
         List<ProjetoEstimativa> projetos = new ArrayList<>();
