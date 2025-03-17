@@ -18,6 +18,8 @@ import br.projeto.command.AbrirDashboardProjetoCommand;
 import br.projeto.command.AbrirDetalhesProjetoProjetoCommand;
 import br.projeto.command.AbrirInternalFrameGenericoProjetoCommand;
 import br.projeto.command.ExcluirProjetoProjetoCommand;
+import br.projeto.command.ExportarProjetoEstimativaCSVCommand;
+import br.projeto.command.ExportarProjetoEstimativaJSONCommand;
 import br.projeto.command.MostrarMensagemProjetoCommand;
 import br.projeto.command.ProjetoCommand;
 import br.projeto.dbConnection.connections.IDatabaseConnection;
@@ -81,7 +83,7 @@ public final class PrincipalPresenter implements Observer {
         comandos.put("Elaborar estimativa", new MostrarMensagemProjetoCommand("Elaborar estimativa ainda não implementada"));
         comandos.put("Visualizar estimativa", new MostrarMensagemProjetoCommand("Visualizar estimativa ainda não implementada"));
         comandos.put("Compartilhar projeto de estimativa", new MostrarMensagemProjetoCommand("Compartilhar ainda não implementado"));
-        comandos.put("Exportar projeto de estimativa", new MostrarMensagemProjetoCommand("Exportar ainda não implementado"));
+        /*comandos.put("Exportar projeto de estimativa", new ExportarProjetoEstimativaJSONCommand(projetoRepository, "NomeDoProjeto"));*/
         comandos.put("Novo projeto", new AbrirCriarProjetoCommand(perfilRepository, projetoRepository, view.getDesktop()));
         comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(projetoRepository));
         comandos.put("Abrir detalhes", new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()));
@@ -135,7 +137,16 @@ public final class PrincipalPresenter implements Observer {
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Elaborar estimativa", "action", comandos.get("Elaborar estimativa")));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar estimativa", "action", comandos.get("Visualizar estimativa")));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Compartilhar projeto de estimativa", "action", comandos.get("Compartilhar projeto de estimativa")));
-            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Exportar projeto de estimativa", "action", comandos.get("Exportar projeto de estimativa")));
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo(
+                "Exportar projeto para JSON",
+                "action",
+                new ExportarProjetoEstimativaJSONCommand(projetoRepository, projeto.getNome())
+            ));
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo(
+                "Exportar projeto para CSV",
+                "action",
+                new ExportarProjetoEstimativaCSVCommand(projetoRepository, projeto.getNome())
+            ));
             noProjetos.adicionarFilho(noProjeto);
         }
 
