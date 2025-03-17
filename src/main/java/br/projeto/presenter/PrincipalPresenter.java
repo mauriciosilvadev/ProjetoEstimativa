@@ -11,6 +11,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import br.projeto.command.AbrirCompartilharProjetoEstimativaCommand;
@@ -18,7 +19,6 @@ import br.projeto.command.AbrirCriarProjetoCommand;
 import br.projeto.command.AbrirDashboardProjetoCommand;
 import br.projeto.command.AbrirDetalhesProjetoProjetoCommand;
 import br.projeto.command.AbrirEditarProjetoCommand;
-import br.projeto.command.AbrirInternalFrameGenericoProjetoCommand;
 import br.projeto.command.ExcluirProjetoProjetoCommand;
 import br.projeto.command.MostrarMensagemProjetoCommand;
 import br.projeto.command.ProjetoCommand;
@@ -72,7 +72,23 @@ public final class PrincipalPresenter implements Observer {
         this.comandos = inicializarComandos();
 
         inicializarEExecutarWindowCommands();
+
+        configuraFooter();
+
         view.setVisible(true);
+    }
+
+    private void configuraFooter() {
+        var usuario = UsuarioSession.getInstance().getUsuarioLogado();
+        final long loginTime = System.currentTimeMillis();
+
+        view.getFooterLabel().setText("Usuário Logado: " + usuario.getNome() + " (" + usuario.getEmail() + ") | Tempo logado: 0s");
+
+        Timer timer = new Timer(1000, e -> {
+            long segundos = (System.currentTimeMillis() - loginTime) / 1000;
+            view.getFooterLabel().setText("Usuário Logado: " + usuario.getNome() + " (" + usuario.getEmail() + ") | Tempo logado: " + segundos + "s");
+        });
+        timer.start();
     }
 
     private void inicializarEExecutarWindowCommands() {
@@ -86,22 +102,18 @@ public final class PrincipalPresenter implements Observer {
     private Map<String, ProjetoCommand> inicializarComandos() {
         Map<String, ProjetoCommand> comandos = new HashMap<>();
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), projetoRepository));
-        comandos.put("Usuário", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Usuário"));
-        comandos.put("Ver perfis de projeto", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Ver Perfis de Projetos"));
         comandos.put("Exportar projeto de estimativa", new MostrarMensagemProjetoCommand("Exportar ainda não implementado"));
         comandos.put("Novo projeto", new AbrirCriarProjetoCommand(perfilRepository, projetoRepository, view.getDesktop()));
         comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(projetoRepository));
         comandos.put("Sair", new SairCommand(this, presenter));
-        
+
         return comandos;
     }
 
     public void configurarArvore() {
         NoArvoreComposite raiz = construtorDeArvoreNavegacaoService.criarNo("Principal", "principal", comandos.get("Principal"));
-        NoArvoreComposite noUsuario = construtorDeArvoreNavegacaoService.criarNo(UsuarioSession.getInstance().getUsuarioLogado().getNome(), "usuario", comandos.get("Usuário"));
-        NoArvoreComposite noPerfis = construtorDeArvoreNavegacaoService.criarNo("Ver perfis de projeto", "perfil", comandos.get("Ver perfis de projeto"));
         NoArvoreComposite noProjetos = construtorDeArvoreNavegacaoService.criarNo("Projetos", "projeto", null);
-        NoArvoreComposite noProjetosCompartilhados = construtorDeArvoreNavegacaoService.criarNo("Projetos Compartilhados", "projeto", null);
+        NoArvoreComposite noProjetosCompartilhados = construtorDeArvoreNavegacaoService.criarNo("Projetos Compartilhados Comigo", "projeto", null);
 
         noProjetos.setMenuContextual(() -> {
             JPopupMenu menu = new JPopupMenu();
@@ -116,8 +128,6 @@ public final class PrincipalPresenter implements Observer {
             return menu;
         });
 
-        // raiz.adicionarFilho(noUsuario);
-        // raiz.adicionarFilho(noPerfis);
         raiz.adicionarFilho(noProjetos);
         raiz.adicionarFilho(noProjetosCompartilhados);
 

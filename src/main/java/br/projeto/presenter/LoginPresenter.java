@@ -28,9 +28,6 @@ public class LoginPresenter {
         view.getBtnCriarConta().addActionListener(e -> criarConta(repository));
         view.setLocationRelativeTo(null);
         view.setVisible(true);
-
-        // Remover essa linha
-        this.autenticar();
     }
 
     public void autenticar() {
