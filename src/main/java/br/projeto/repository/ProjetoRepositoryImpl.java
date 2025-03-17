@@ -264,17 +264,17 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
                 pstmt.setDouble(13, projetoEstimativa.getValorTotal());
                 pstmt.setInt(14, projetoEstimativa.getId());
 
-                System.out.println(pstmt.executeUpdate());
+                pstmt.executeUpdate();
             }
 
             try (PreparedStatement pstmt = connection.prepareStatement(deleteProjetoFuncionalidadeSql)) {
                 pstmt.setInt(1, projetoEstimativa.getId());
-                System.out.println(pstmt.executeUpdate());
+                pstmt.executeUpdate();
             }
 
             try (PreparedStatement pstmt = connection.prepareStatement(deleteProjetoPlataformaSql)) {
                 pstmt.setInt(1, projetoEstimativa.getId());
-                System.out.println(pstmt.executeUpdate());
+                pstmt.executeUpdate();
             }
 
             try (PreparedStatement pstmtPlataforma = connection.prepareStatement(projetoPlataformaSql)) {

@@ -106,7 +106,6 @@ public final class PrincipalPresenter implements Observer {
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), projetoRepository));
         comandos.put("Exportar projeto de estimativa", new MostrarMensagemProjetoCommand("Exportar ainda não implementado"));
         comandos.put("Novo projeto", new AbrirCriarProjetoCommand(perfilRepository, projetoRepository, view.getDesktop()));
-        comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(projetoRepository));
         comandos.put("Sair", new SairCommand(this, presenter));
 
         return comandos;
@@ -203,7 +202,7 @@ public final class PrincipalPresenter implements Observer {
                 }
             };
 
-            ExcluirProjetoProjetoCommand cmdExcluir = new ExcluirProjetoProjetoCommand(projetoRepository, projeto.getNome());
+            ExcluirProjetoProjetoCommand cmdExcluir = new ExcluirProjetoProjetoCommand(projetoRepository, projeto.getNome(), view.getDesktop());
 
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar", "action", cmdDetalhes));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Editar", "action", cmdEditar));
