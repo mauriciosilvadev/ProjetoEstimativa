@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS projetos (
     percentual_lucro REAL NOT NULL DEFAULT 0,
     total_dias INTEGER NOT NULL DEFAULT 0,
     valor_total REAL NOT NULL DEFAULT 0,
+    data_criacao TEXT NOT NULL,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id) ON DELETE CASCADE,
     FOREIGN KEY (perfil_id) REFERENCES perfis(id) ON DELETE CASCADE
 );
@@ -92,7 +93,7 @@ CREATE TABLE IF NOT EXISTS funcionalidade_projeto_plataforma (
     FOREIGN KEY (projeto_plataforma_id) REFERENCES projetos_plataformas(id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS projetos_compartilhadas (
+CREATE TABLE IF NOT EXISTS projetos_compartilhados (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     projeto_id INTEGER NOT NULL,
     usuario_id INTEGER NOT NULL,

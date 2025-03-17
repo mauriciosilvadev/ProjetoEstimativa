@@ -9,11 +9,11 @@ import java.util.List;
 
 import br.projeto.dbConnection.connections.IDatabaseConnection;
 import br.projeto.model.Usuario;
+import br.projeto.session.UsuarioSession;
 
 public class UsuarioRepositoryImpl implements UsuarioRepository {
 
     private final IDatabaseConnection connection;
-    private final List<Usuario> usuarios = new ArrayList<>();
 
     public UsuarioRepositoryImpl(IDatabaseConnection connection) {
         this.connection = connection;
@@ -81,7 +81,10 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
 
     @Override
     public List<Usuario> listar() {
-        String sql = "SELECT nome, senha, email FROM usuarios";
+        String sql = "SELECT * FROM usuarios";
+
+        List<Usuario> usuarios = new ArrayList<>();
+
         try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 String nome = rs.getString("nome");
@@ -98,6 +101,65 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
             throw new IllegalArgumentException("Não foi possível listar os usuários", e);
         }
         return usuarios;
+    }
+
+    @Override
+    public List<Usuario> buscarUsuariosByNome(String nomePesquisado) {
+
+        int idUsuarioLogado = UsuarioSession.getInstance().getUsuarioLogado().getId();
+
+        String sql = "SELECT * FROM usuarios WHERE UPPER(nome) LIKE UPPER(?) AND id != ?";
+
+        List<Usuario> usuarios = new ArrayList<>();
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, "%" + nomePesquisado + "%");
+            ps.setInt(2, idUsuarioLogado);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String nome = rs.getString("nome");
+                    String senha = rs.getString("senha");
+                    String email = rs.getString("email");
+                    Usuario usuario = new Usuario.Builder()
+                            .id(id)
+                            .nome(nome)
+                            .senha(senha)
+                            .email(email)
+                            .build();
+                    usuarios.add(usuario);
+                }
+            }
+        } catch (SQLException e) {
+            throw new IllegalArgumentException("Não foi possível listar os usuários", e);
+        }
+
+        return usuarios;
+    }
+
+    @Override
+    public Usuario buscarPorId(int id) {
+        String sql = "SELECT nome, senha, email FROM usuarios WHERE id = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                String nome = rs.getString("nome");
+                String senha = rs.getString("senha");
+                String email = rs.getString("email");
+                return new Usuario.Builder()
+                        .id(id)
+                        .nome(nome)
+                        .senha(senha)
+                        .email(email)
+                        .build();
+            }
+        } catch (SQLException e) {
+            throw new IllegalArgumentException("Não foi possível buscar o usuário", e);
+        }
+        return null;
     }
 
     @Override

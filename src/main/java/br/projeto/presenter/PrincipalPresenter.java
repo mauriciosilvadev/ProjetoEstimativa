@@ -11,17 +11,20 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import br.projeto.command.AbrirCompartilharProjetoEstimativaCommand;
 import br.projeto.command.AbrirCriarProjetoCommand;
 import br.projeto.command.AbrirDashboardProjetoCommand;
 import br.projeto.command.AbrirDetalhesProjetoProjetoCommand;
-import br.projeto.command.AbrirInternalFrameGenericoProjetoCommand;
+import br.projeto.command.AbrirEditarProjetoCommand;
 import br.projeto.command.ExcluirProjetoProjetoCommand;
 import br.projeto.command.ExportarProjetoEstimativaCSVCommand;
 import br.projeto.command.ExportarProjetoEstimativaJSONCommand;
 import br.projeto.command.MostrarMensagemProjetoCommand;
 import br.projeto.command.ProjetoCommand;
+import br.projeto.command.SairCommand;
 import br.projeto.dbConnection.connections.IDatabaseConnection;
 import br.projeto.model.ProjetoEstimativa;
 import br.projeto.presenter.helpers.WindowManager;
@@ -34,6 +37,8 @@ import br.projeto.repository.PerfilRepository;
 import br.projeto.repository.PerfilRepositoryImpl;
 import br.projeto.repository.ProjetoRepository;
 import br.projeto.repository.ProjetoRepositoryImpl;
+import br.projeto.repository.UsuarioRepository;
+import br.projeto.repository.UsuarioRepositoryImpl;
 import br.projeto.service.ConstrutorDeArvoreNavegacaoService;
 import br.projeto.service.NoArvoreComposite;
 import br.projeto.session.UsuarioSession;
@@ -42,18 +47,23 @@ import br.projeto.view.PrincipalView;
 
 public final class PrincipalPresenter implements Observer {
 
+    private final LoginPresenter presenter;
     private final PrincipalView view;
     private final ProjetoRepository projetoRepository;
     private final PerfilRepository perfilRepository;
+    private final UsuarioRepository usuarioRepository;
     private final ConstrutorDeArvoreNavegacaoService construtorDeArvoreNavegacaoService;
     private final Map<String, ProjetoCommand> comandos;
     private final List<WindowCommand> windowCommands = new ArrayList<>();
 
-    public PrincipalPresenter(IDatabaseConnection connection) {
+    public PrincipalPresenter(IDatabaseConnection connection, LoginPresenter presenter) {
+        this.presenter = presenter;
         this.view = new PrincipalView();
 
         this.projetoRepository = ProjetoRepositoryImpl.getInstance(connection);
         this.projetoRepository.addObserver(this);
+
+        this.usuarioRepository = new UsuarioRepositoryImpl(connection);
 
         this.perfilRepository = PerfilRepositoryImpl.getInstance(connection);
 
@@ -64,7 +74,23 @@ public final class PrincipalPresenter implements Observer {
         this.comandos = inicializarComandos();
 
         inicializarEExecutarWindowCommands();
+
+        configuraFooter();
+
         view.setVisible(true);
+    }
+
+    private void configuraFooter() {
+        var usuario = UsuarioSession.getInstance().getUsuarioLogado();
+        final long loginTime = System.currentTimeMillis();
+
+        view.getFooterLabel().setText("Usuário Logado: " + usuario.getNome() + " (" + usuario.getEmail() + ") | Tempo logado: 0s");
+
+        Timer timer = new Timer(1000, e -> {
+            long segundos = (System.currentTimeMillis() - loginTime) / 1000;
+            view.getFooterLabel().setText("Usuário Logado: " + usuario.getNome() + " (" + usuario.getEmail() + ") | Tempo logado: " + segundos + "s");
+        });
+        timer.start();
     }
 
     private void inicializarEExecutarWindowCommands() {
@@ -78,23 +104,18 @@ public final class PrincipalPresenter implements Observer {
     private Map<String, ProjetoCommand> inicializarComandos() {
         Map<String, ProjetoCommand> comandos = new HashMap<>();
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), projetoRepository));
-        comandos.put("Usuário", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Usuário"));
-        comandos.put("Ver perfis de projeto", new AbrirInternalFrameGenericoProjetoCommand(view.getDesktop(), "Ver Perfis de Projetos"));
-        comandos.put("Elaborar estimativa", new MostrarMensagemProjetoCommand("Elaborar estimativa ainda não implementada"));
-        comandos.put("Visualizar estimativa", new MostrarMensagemProjetoCommand("Visualizar estimativa ainda não implementada"));
-        comandos.put("Compartilhar projeto de estimativa", new MostrarMensagemProjetoCommand("Compartilhar ainda não implementado"));
-        /*comandos.put("Exportar projeto de estimativa", new ExportarProjetoEstimativaJSONCommand(projetoRepository, "NomeDoProjeto"));*/
+        comandos.put("Exportar projeto de estimativa", new MostrarMensagemProjetoCommand("Exportar ainda não implementado"));
         comandos.put("Novo projeto", new AbrirCriarProjetoCommand(perfilRepository, projetoRepository, view.getDesktop()));
         comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(projetoRepository));
-        comandos.put("Abrir detalhes", new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()));
+        comandos.put("Sair", new SairCommand(this, presenter));
+
         return comandos;
     }
 
     public void configurarArvore() {
         NoArvoreComposite raiz = construtorDeArvoreNavegacaoService.criarNo("Principal", "principal", comandos.get("Principal"));
-        NoArvoreComposite noUsuario = construtorDeArvoreNavegacaoService.criarNo(UsuarioSession.getInstance().getUsuarioLogado().getNome(), "usuario", comandos.get("Usuário"));
-        NoArvoreComposite noPerfis = construtorDeArvoreNavegacaoService.criarNo("Ver perfis de projeto", "perfil", comandos.get("Ver perfis de projeto"));
         NoArvoreComposite noProjetos = construtorDeArvoreNavegacaoService.criarNo("Projetos", "projeto", null);
+        NoArvoreComposite noProjetosCompartilhados = construtorDeArvoreNavegacaoService.criarNo("Projetos Compartilhados Comigo", "projeto", null);
 
         noProjetos.setMenuContextual(() -> {
             JPopupMenu menu = new JPopupMenu();
@@ -109,13 +130,12 @@ public final class PrincipalPresenter implements Observer {
             return menu;
         });
 
-        raiz.adicionarFilho(noUsuario);
-        raiz.adicionarFilho(noPerfis);
         raiz.adicionarFilho(noProjetos);
+        raiz.adicionarFilho(noProjetosCompartilhados);
 
-        List<ProjetoEstimativa> listaProjetos = projetoRepository.getProjetos();
-        for (final ProjetoEstimativa projeto : listaProjetos) {
-            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop()) {
+        List<ProjetoEstimativa> projetosCompartilhados = projetoRepository.getProjetosCompartilhados();
+        for (final ProjetoEstimativa projeto : projetosCompartilhados) {
+            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop(), usuarioRepository, projeto, true) {
                 @Override
                 public void execute() {
                     String tituloJanela = "Detalhes do Projeto: " + projeto.getNome();
@@ -129,43 +149,82 @@ public final class PrincipalPresenter implements Observer {
                     }
                 }
             };
-            cmdDetalhes.setProjetoNome(projeto.getNome());
+
+            NoArvoreComposite noProjetoCompartilhado = construtorDeArvoreNavegacaoService.criarNo(projeto.getNome(), "projeto", cmdDetalhes);
+
+            noProjetoCompartilhado.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar Detalhes", "action", cmdDetalhes));
+            noProjetosCompartilhados.adicionarFilho(noProjetoCompartilhado);
+        }
+
+        List<ProjetoEstimativa> projetos = projetoRepository.getProjetos();
+        for (final ProjetoEstimativa projeto : projetos) {
+            AbrirDetalhesProjetoProjetoCommand cmdDetalhes = new AbrirDetalhesProjetoProjetoCommand(projetoRepository, view.getDesktop(), usuarioRepository, projeto, false) {
+                @Override
+                public void execute() {
+                    String tituloJanela = "Detalhes do Projeto: " + projeto.getNome();
+                    WindowManager windowManager = WindowManager.getInstance();
+
+                    if (!windowManager.isFrameAberto(tituloJanela)) {
+                        super.execute();
+                        bloquearMinimizacao(tituloJanela);
+                    } else {
+                        windowManager.bringToFront(tituloJanela);
+                    }
+                }
+            };
+
             NoArvoreComposite noProjeto = construtorDeArvoreNavegacaoService.criarNo(projeto.getNome(), "projeto", cmdDetalhes);
+            AbrirCompartilharProjetoEstimativaCommand cmdCompartilhar = new AbrirCompartilharProjetoEstimativaCommand(usuarioRepository, projetoRepository, projeto, view.getDesktop()) {
+                @Override
+                public void execute() {
+                    String tituloJanela = "Compartilhar Projeto: " + projeto.getNome();
+                    WindowManager windowManager = WindowManager.getInstance();
 
-            adicionarMenuContextual(projeto, noProjeto);
+                    if (!windowManager.isFrameAberto(tituloJanela)) {
+                        super.execute();
+                        bloquearMinimizacao(tituloJanela);
+                    } else {
+                        windowManager.bringToFront(tituloJanela);
+                    }
+                }
+            };
+            AbrirEditarProjetoCommand cmdEditar = new AbrirEditarProjetoCommand(perfilRepository, projetoRepository, projeto, view.getDesktop()) {
+                @Override
+                public void execute() {
+                    String tituloJanela = "Editar " + projeto.getNome();
+                    WindowManager windowManager = WindowManager.getInstance();
 
-            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Elaborar estimativa", "action", comandos.get("Elaborar estimativa")));
-            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar estimativa", "action", comandos.get("Visualizar estimativa")));
-            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Compartilhar projeto de estimativa", "action", comandos.get("Compartilhar projeto de estimativa")));
+                    if (!windowManager.isFrameAberto(tituloJanela)) {
+                        super.execute();
+                        bloquearMinimizacao(tituloJanela);
+                    } else {
+                        windowManager.bringToFront(tituloJanela);
+                    }
+                }
+            };
+
+            ExcluirProjetoProjetoCommand cmdExcluir = new ExcluirProjetoProjetoCommand(projetoRepository, projeto.getNome());
+
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar", "action", cmdDetalhes));
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Editar", "action", cmdEditar));
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Compartilhar", "action", cmdCompartilhar));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo(
-                "Exportar projeto para JSON",
-                "action",
-                new ExportarProjetoEstimativaJSONCommand(projetoRepository, projeto.getNome())
+                    "Exportar projeto para JSON",
+                    "action",
+                    new ExportarProjetoEstimativaJSONCommand(projetoRepository, projeto.getNome())
             ));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo(
-                "Exportar projeto para CSV",
-                "action",
-                new ExportarProjetoEstimativaCSVCommand(projetoRepository, projeto.getNome())
+                    "Exportar projeto para CSV",
+                    "action",
+                    new ExportarProjetoEstimativaCSVCommand(projetoRepository, projeto.getNome())
             ));
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Excluir", "cross", cmdExcluir));
             noProjetos.adicionarFilho(noProjeto);
         }
 
         DefaultMutableTreeNode modeloArvore = construtorDeArvoreNavegacaoService.converterParaNoMutavel(raiz);
         JTree arvore = construtorDeArvoreNavegacaoService.criarJTreeDoModelo(modeloArvore);
         view.setTree(arvore);
-    }
-
-    private void adicionarMenuContextual(ProjetoEstimativa projeto, NoArvoreComposite noProjeto) {
-        noProjeto.setMenuContextual(() -> {
-            JPopupMenu menu = new JPopupMenu();
-            JMenuItem excluirProjetoItem = new JMenuItem("Excluir Projeto");
-            excluirProjetoItem.addActionListener(e -> {
-                ProjetoCommand cmdExcluir = new ExcluirProjetoProjetoCommand(projetoRepository, projeto.getNome());
-                cmdExcluir.execute();
-            });
-            menu.add(excluirProjetoItem);
-            return menu;
-        });
     }
 
     @Override

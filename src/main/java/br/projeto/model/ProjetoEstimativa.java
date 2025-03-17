@@ -15,6 +15,7 @@ public class ProjetoEstimativa {
     private String nome;
     private int id;
     private int perfilId;
+    private Perfil perfil;
     private int userId;
     private double totalDias;
     private double valorTotal;
@@ -28,6 +29,7 @@ public class ProjetoEstimativa {
     private double outrosCustos;
     private List<Plataforma> platafomasSelecionadas;
     private List<Funcionalidade> funcionalidadesSelecionadas;
+    private String dataCriacao;
 
     public ProjetoEstimativa(double totalDias, double valorTotal, double percentualImposto, double percentualLucro, double custoHardware, double custoSoftware, double custosRiscos, double custoGarantia, double fundoReserva, double outrosCustos, List<Plataforma> platafomasSelecionadas, List<Funcionalidade> funcionalidadesSelecionadas) {
         this.totalDias = totalDias;
@@ -135,10 +137,13 @@ public class ProjetoEstimativa {
     }
 
     public double getMeses() {
-        return totalDias / 30.0;
+        return Math.round((totalDias / 30.0) * 100.0) / 100.0;
     }
 
     public double getMediaPorMes() {
+        if (getMeses() < 1) {
+            return getValorFinalDoCliente();
+        }
         return getValorFinalDoCliente() / getMeses();
     }
 
@@ -174,6 +179,14 @@ public class ProjetoEstimativa {
         this.perfilId = perfilId;
     }
 
+    public Perfil getPerfil() {
+        return perfil;
+    }
+
+    public void setPerfil(Perfil perfil) {
+        this.perfil = perfil;
+    }
+
     public int getUserId() {
         return userId;
     }
@@ -188,5 +201,18 @@ public class ProjetoEstimativa {
 
     public int getId() {
         return id;
+    }
+
+    public void setDataCriacao(String dataCriacao) {
+        this.dataCriacao = dataCriacao;
+    }
+
+    public String getDataCriacao() {
+        return dataCriacao;
+    }
+
+    @Override
+    public String toString() {
+        return nome;
     }
 }
