@@ -16,6 +16,7 @@ public class IconService {
         icons.put("perfil", loadIcon("perfil-icon.png"));
         icons.put("projeto", loadIcon("projeto-icon-tree.png"));
         icons.put("action", loadIcon("action-icon.png"));
+        icons.put("power", loadIcon("power-icon.png"));
         icons.put("cross", loadIcon("cross-icon.png"));
     }
 

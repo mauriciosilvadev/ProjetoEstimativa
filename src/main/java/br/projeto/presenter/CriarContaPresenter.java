@@ -3,6 +3,7 @@ package br.projeto.presenter;
 import javax.swing.JOptionPane;
 
 import br.projeto.service.CriarContaService;
+import br.projeto.state.login.LoginNaoAutenticadoState;
 import br.projeto.view.CriarContaView;
 
 public class CriarContaPresenter {
@@ -39,11 +40,13 @@ public class CriarContaPresenter {
 
         JOptionPane.showMessageDialog(view, "Conta criada com sucesso");
         view.dispose();
+        loginPresenter.setState(new LoginNaoAutenticadoState());
         loginPresenter.getView().setVisible(true);
     }
 
     public void voltar() {
         view.dispose();
+        loginPresenter.setState(new LoginNaoAutenticadoState());
         loginPresenter.getView().setVisible(true);
     }
 }
