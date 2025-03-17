@@ -6,7 +6,6 @@ import javax.swing.JButton;
 import javax.swing.JToolBar;
 
 import br.projeto.command.ProjetoCommand;
-import br.projeto.session.UsuarioSession;
 
 public class CriarBarraBotaoService {
 
@@ -22,7 +21,6 @@ public class CriarBarraBotaoService {
 
         adicionarBotao(toolBar, "Dashboard", "principal", "Principal");
         adicionarBotao(toolBar, "Novo Projeto", "projeto", "Novo projeto");
-        adicionarBotao(toolBar, UsuarioSession.getInstance().getUsuarioLogado().getNome(), "usuario", "Usuário");
 
         return toolBar;
     }

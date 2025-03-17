@@ -20,6 +20,8 @@ import br.projeto.command.AbrirDashboardProjetoCommand;
 import br.projeto.command.AbrirDetalhesProjetoProjetoCommand;
 import br.projeto.command.AbrirEditarProjetoCommand;
 import br.projeto.command.ExcluirProjetoProjetoCommand;
+import br.projeto.command.ExportarProjetoEstimativaCSVCommand;
+import br.projeto.command.ExportarProjetoEstimativaJSONCommand;
 import br.projeto.command.MostrarMensagemProjetoCommand;
 import br.projeto.command.ProjetoCommand;
 import br.projeto.command.SairCommand;
@@ -206,7 +208,16 @@ public final class PrincipalPresenter implements Observer {
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar", "action", cmdDetalhes));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Editar", "action", cmdEditar));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Compartilhar", "action", cmdCompartilhar));
-            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Exportar projeto de estimativa", "action", comandos.get("Exportar projeto de estimativa")));
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo(
+                    "Exportar projeto para JSON",
+                    "action",
+                    new ExportarProjetoEstimativaJSONCommand(projetoRepository, projeto.getNome())
+            ));
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo(
+                    "Exportar projeto para CSV",
+                    "action",
+                    new ExportarProjetoEstimativaCSVCommand(projetoRepository, projeto.getNome())
+            ));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Excluir", "cross", cmdExcluir));
             noProjetos.adicionarFilho(noProjeto);
         }
