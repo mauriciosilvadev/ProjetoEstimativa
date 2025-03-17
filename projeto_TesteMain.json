@@ -1,0 +1,754 @@
+{
+  "nome" : "TesteMain",
+  "id" : 1,
+  "perfilId" : 1,
+  "perfil" : {
+    "id" : 1,
+    "nome" : "Perfil Default",
+    "categorias" : [ {
+      "id" : 1,
+      "nome" : "Tamanho do App",
+      "tipo" : "dia"
+    }, {
+      "id" : 2,
+      "nome" : "Nível de UI",
+      "tipo" : "percentual"
+    }, {
+      "id" : 3,
+      "nome" : "Usuários & Contas",
+      "tipo" : "dia"
+    }, {
+      "id" : 4,
+      "nome" : "Conteúdo gerado pelo usuário",
+      "tipo" : "dia"
+    }, {
+      "id" : 5,
+      "nome" : "Data de localizações",
+      "tipo" : "dia"
+    }, {
+      "id" : 6,
+      "nome" : "Social e engajamento",
+      "tipo" : "dia"
+    }, {
+      "id" : 7,
+      "nome" : "Faturamento & e-commerce",
+      "tipo" : "dia"
+    }, {
+      "id" : 8,
+      "nome" : "Administração, feedback & análises",
+      "tipo" : "dia"
+    }, {
+      "id" : 9,
+      "nome" : "API externas e integrações",
+      "tipo" : "dia"
+    }, {
+      "id" : 10,
+      "nome" : "Segurança",
+      "tipo" : "dia"
+    }, {
+      "id" : 11,
+      "nome" : "Desenvolvimento específico do app",
+      "tipo" : "dia"
+    }, {
+      "id" : 12,
+      "nome" : "Equipe",
+      "tipo" : "monetario"
+    } ],
+    "plataformas" : [ {
+      "id" : 1,
+      "nome" : "Web e Back-end"
+    }, {
+      "id" : 2,
+      "nome" : "iOS"
+    }, {
+      "id" : 3,
+      "nome" : "Android"
+    } ],
+    "funcionalidades" : [ {
+      "id" : 1,
+      "categoria" : {
+        "id" : 1,
+        "nome" : "Tamanho do App",
+        "tipo" : "dia"
+      },
+      "nome" : "Pequeno",
+      "foiSelecionada" : false
+    }, {
+      "id" : 2,
+      "categoria" : {
+        "id" : 1,
+        "nome" : "Tamanho do App",
+        "tipo" : "dia"
+      },
+      "nome" : "Médio",
+      "foiSelecionada" : false
+    }, {
+      "id" : 3,
+      "categoria" : {
+        "id" : 1,
+        "nome" : "Tamanho do App",
+        "tipo" : "dia"
+      },
+      "nome" : "Grande",
+      "foiSelecionada" : false
+    }, {
+      "id" : 4,
+      "categoria" : {
+        "id" : 2,
+        "nome" : "Nível de UI",
+        "tipo" : "percentual"
+      },
+      "nome" : "MVP",
+      "foiSelecionada" : false
+    }, {
+      "id" : 5,
+      "categoria" : {
+        "id" : 2,
+        "nome" : "Nível de UI",
+        "tipo" : "percentual"
+      },
+      "nome" : "Básico",
+      "foiSelecionada" : false
+    }, {
+      "id" : 6,
+      "categoria" : {
+        "id" : 2,
+        "nome" : "Nível de UI",
+        "tipo" : "percentual"
+      },
+      "nome" : "Profissional",
+      "foiSelecionada" : false
+    }, {
+      "id" : 7,
+      "categoria" : {
+        "id" : 3,
+        "nome" : "Usuários & Contas",
+        "tipo" : "dia"
+      },
+      "nome" : "Cadastro por e-mail e senha",
+      "foiSelecionada" : false
+    }, {
+      "id" : 8,
+      "categoria" : {
+        "id" : 3,
+        "nome" : "Usuários & Contas",
+        "tipo" : "dia"
+      },
+      "nome" : "Cadastro pelo Facebook",
+      "foiSelecionada" : false
+    }, {
+      "id" : 9,
+      "categoria" : {
+        "id" : 3,
+        "nome" : "Usuários & Contas",
+        "tipo" : "dia"
+      },
+      "nome" : "Cadastro pelo Twitter",
+      "foiSelecionada" : false
+    }, {
+      "id" : 10,
+      "categoria" : {
+        "id" : 3,
+        "nome" : "Usuários & Contas",
+        "tipo" : "dia"
+      },
+      "nome" : "Cadastro pelo Google",
+      "foiSelecionada" : false
+    }, {
+      "id" : 11,
+      "categoria" : {
+        "id" : 3,
+        "nome" : "Usuários & Contas",
+        "tipo" : "dia"
+      },
+      "nome" : "Cadastro pelo LinkedIn",
+      "foiSelecionada" : false
+    }, {
+      "id" : 12,
+      "categoria" : {
+        "id" : 3,
+        "nome" : "Usuários & Contas",
+        "tipo" : "dia"
+      },
+      "nome" : "Cadastro pelo Github",
+      "foiSelecionada" : false
+    }, {
+      "id" : 13,
+      "categoria" : {
+        "id" : 3,
+        "nome" : "Usuários & Contas",
+        "tipo" : "dia"
+      },
+      "nome" : "E-mails de convite de usuário",
+      "foiSelecionada" : false
+    }, {
+      "id" : 14,
+      "categoria" : {
+        "id" : 3,
+        "nome" : "Usuários & Contas",
+        "tipo" : "dia"
+      },
+      "nome" : "Contas Multi-tenant",
+      "foiSelecionada" : false
+    }, {
+      "id" : 15,
+      "categoria" : {
+        "id" : 3,
+        "nome" : "Usuários & Contas",
+        "tipo" : "dia"
+      },
+      "nome" : "Subdomínios",
+      "foiSelecionada" : false
+    }, {
+      "id" : 16,
+      "categoria" : {
+        "id" : 3,
+        "nome" : "Usuários & Contas",
+        "tipo" : "dia"
+      },
+      "nome" : "Domínios personalizados",
+      "foiSelecionada" : false
+    }, {
+      "id" : 17,
+      "categoria" : {
+        "id" : 4,
+        "nome" : "Conteúdo gerado pelo usuário",
+        "tipo" : "dia"
+      },
+      "nome" : "Painel (Dashboard)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 18,
+      "categoria" : {
+        "id" : 4,
+        "nome" : "Conteúdo gerado pelo usuário",
+        "tipo" : "dia"
+      },
+      "nome" : "Feed de Atividades (Activity Feed)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 19,
+      "categoria" : {
+        "id" : 4,
+        "nome" : "Conteúdo gerado pelo usuário",
+        "tipo" : "dia"
+      },
+      "nome" : "Upload de Arquivos (File Uploading)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 20,
+      "categoria" : {
+        "id" : 4,
+        "nome" : "Conteúdo gerado pelo usuário",
+        "tipo" : "dia"
+      },
+      "nome" : "Upload de Mídia (Media Uploading)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 22,
+      "categoria" : {
+        "id" : 4,
+        "nome" : "Conteúdo gerado pelo usuário",
+        "tipo" : "dia"
+      },
+      "nome" : "E-mails Transacionais (Transactional Emails)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 23,
+      "categoria" : {
+        "id" : 4,
+        "nome" : "Conteúdo gerado pelo usuário",
+        "tipo" : "dia"
+      },
+      "nome" : "Tags",
+      "foiSelecionada" : false
+    }, {
+      "id" : 24,
+      "categoria" : {
+        "id" : 4,
+        "nome" : "Conteúdo gerado pelo usuário",
+        "tipo" : "dia"
+      },
+      "nome" : "Avaliações ou Comentários (Ratings or Reviews)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 25,
+      "categoria" : {
+        "id" : 4,
+        "nome" : "Conteúdo gerado pelo usuário",
+        "tipo" : "dia"
+      },
+      "nome" : "Processamento de Áudio/Vídeo",
+      "foiSelecionada" : false
+    }, {
+      "id" : 26,
+      "categoria" : {
+        "id" : 4,
+        "nome" : "Conteúdo gerado pelo usuário",
+        "tipo" : "dia"
+      },
+      "nome" : "Pesquisa de Texto Livre (Free text searching)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 27,
+      "categoria" : {
+        "id" : 4,
+        "nome" : "Conteúdo gerado pelo usuário",
+        "tipo" : "dia"
+      },
+      "nome" : "Pesquisa (Searching)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 28,
+      "categoria" : {
+        "id" : 5,
+        "nome" : "Data de localizações",
+        "tipo" : "dia"
+      },
+      "nome" : "Calendário (Calendaring)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 29,
+      "categoria" : {
+        "id" : 5,
+        "nome" : "Data de localizações",
+        "tipo" : "dia"
+      },
+      "nome" : "Exibição de Dados de Mapa / Geolocalização",
+      "foiSelecionada" : false
+    }, {
+      "id" : 30,
+      "categoria" : {
+        "id" : 5,
+        "nome" : "Data de localizações",
+        "tipo" : "dia"
+      },
+      "nome" : "Exibição de Marcadores/Regiões de Mapa Personalizados",
+      "foiSelecionada" : false
+    }, {
+      "id" : 31,
+      "categoria" : {
+        "id" : 5,
+        "nome" : "Data de localizações",
+        "tipo" : "dia"
+      },
+      "nome" : "Reservas (Bookings)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 32,
+      "categoria" : {
+        "id" : 6,
+        "nome" : "Social e engajamento",
+        "tipo" : "dia"
+      },
+      "nome" : "Mensagens (Messaging)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 33,
+      "categoria" : {
+        "id" : 6,
+        "nome" : "Social e engajamento",
+        "tipo" : "dia"
+      },
+      "nome" : "Fóruns ou Comentários",
+      "foiSelecionada" : false
+    }, {
+      "id" : 34,
+      "categoria" : {
+        "id" : 6,
+        "nome" : "Social e engajamento",
+        "tipo" : "dia"
+      },
+      "nome" : "Compartilhamento Social (Social Sharing)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 35,
+      "categoria" : {
+        "id" : 6,
+        "nome" : "Social e engajamento",
+        "tipo" : "dia"
+      },
+      "nome" : "Integração com Facebook Open Graph (Push to Facebook Open Graph)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 37,
+      "categoria" : {
+        "id" : 7,
+        "nome" : "Faturamento & e-commerce",
+        "tipo" : "dia"
+      },
+      "nome" : "Planos de Assinatura (Subscription plans)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 38,
+      "categoria" : {
+        "id" : 7,
+        "nome" : "Faturamento & e-commerce",
+        "tipo" : "dia"
+      },
+      "nome" : "Processamento de Pagamentos (Payment processing)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 39,
+      "categoria" : {
+        "id" : 7,
+        "nome" : "Faturamento & e-commerce",
+        "tipo" : "dia"
+      },
+      "nome" : "Carrinho de Compras (Shopping Cart)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 40,
+      "categoria" : {
+        "id" : 7,
+        "nome" : "Faturamento & e-commerce",
+        "tipo" : "dia"
+      },
+      "nome" : "Marketplace de Usuários (User Marketplace)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 41,
+      "categoria" : {
+        "id" : 7,
+        "nome" : "Faturamento & e-commerce",
+        "tipo" : "dia"
+      },
+      "nome" : "Gerenciamento de Produtos (Product Management)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 42,
+      "categoria" : {
+        "id" : 7,
+        "nome" : "Faturamento & e-commerce",
+        "tipo" : "dia"
+      },
+      "nome" : "Compras dentro do Aplicativo (In-App Purchasing)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 43,
+      "categoria" : {
+        "id" : 7,
+        "nome" : "Faturamento & e-commerce",
+        "tipo" : "dia"
+      },
+      "nome" : "Coleta de Informações de Pagamento",
+      "foiSelecionada" : false
+    }, {
+      "id" : 44,
+      "categoria" : {
+        "id" : 8,
+        "nome" : "Administração, feedback & análises",
+        "tipo" : "dia"
+      },
+      "nome" : "Integração com CMS (CMS Integration)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 45,
+      "categoria" : {
+        "id" : 8,
+        "nome" : "Administração, feedback & análises",
+        "tipo" : "dia"
+      },
+      "nome" : "Páginas de Administração de Usuários (User Admin pages)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 46,
+      "categoria" : {
+        "id" : 8,
+        "nome" : "Administração, feedback & análises",
+        "tipo" : "dia"
+      },
+      "nome" : "Moderação / Aprovação de Conteúdo (Moderation / Content Approval)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 47,
+      "categoria" : {
+        "id" : 8,
+        "nome" : "Administração, feedback & análises",
+        "tipo" : "dia"
+      },
+      "nome" : "Intercom",
+      "foiSelecionada" : false
+    }, {
+      "id" : 48,
+      "categoria" : {
+        "id" : 8,
+        "nome" : "Administração, feedback & análises",
+        "tipo" : "dia"
+      },
+      "nome" : "Análises de Uso (Usage Analytics)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 49,
+      "categoria" : {
+        "id" : 8,
+        "nome" : "Administração, feedback & análises",
+        "tipo" : "dia"
+      },
+      "nome" : "Relatório de Erros (Crash Reporting)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 50,
+      "categoria" : {
+        "id" : 8,
+        "nome" : "Administração, feedback & análises",
+        "tipo" : "dia"
+      },
+      "nome" : "Monitoramento de Performance (Performance Monitoring)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 51,
+      "categoria" : {
+        "id" : 8,
+        "nome" : "Administração, feedback & análises",
+        "tipo" : "dia"
+      },
+      "nome" : "Suporte Multilíngue (Multilingual Support)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 52,
+      "categoria" : {
+        "id" : 9,
+        "nome" : "API externas e integrações",
+        "tipo" : "dia"
+      },
+      "nome" : "Conectar a um ou mais serviços de terceiros",
+      "foiSelecionada" : false
+    }, {
+      "id" : 53,
+      "categoria" : {
+        "id" : 9,
+        "nome" : "API externas e integrações",
+        "tipo" : "dia"
+      },
+      "nome" : "Uma API para que terceiros integrem ao seu app",
+      "foiSelecionada" : false
+    }, {
+      "id" : 54,
+      "categoria" : {
+        "id" : 9,
+        "nome" : "API externas e integrações",
+        "tipo" : "dia"
+      },
+      "nome" : "Envio de SMS (SMS Messaging)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 55,
+      "categoria" : {
+        "id" : 9,
+        "nome" : "API externas e integrações",
+        "tipo" : "dia"
+      },
+      "nome" : "Mascaramento de Número de Telefone (Phone Number Masking)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 56,
+      "categoria" : {
+        "id" : 10,
+        "nome" : "Segurança",
+        "tipo" : "dia"
+      },
+      "nome" : "Segurança baseada em Certificado SSL",
+      "foiSelecionada" : false
+    }, {
+      "id" : 57,
+      "categoria" : {
+        "id" : 10,
+        "nome" : "Segurança",
+        "tipo" : "dia"
+      },
+      "nome" : "Proteção contra DoS (DoS protection)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 58,
+      "categoria" : {
+        "id" : 10,
+        "nome" : "Segurança",
+        "tipo" : "dia"
+      },
+      "nome" : "Autenticação em Duas Etapas (Two Factor Authentication)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 59,
+      "categoria" : {
+        "id" : 11,
+        "nome" : "Desenvolvimento específico do app",
+        "tipo" : "dia"
+      },
+      "nome" : "Apple Watch",
+      "foiSelecionada" : false
+    }, {
+      "id" : 60,
+      "categoria" : {
+        "id" : 11,
+        "nome" : "Desenvolvimento específico do app",
+        "tipo" : "dia"
+      },
+      "nome" : "Dados de Saúde (Health Data)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 61,
+      "categoria" : {
+        "id" : 11,
+        "nome" : "Desenvolvimento específico do app",
+        "tipo" : "dia"
+      },
+      "nome" : "Design de Ícone do App (App Icon Design)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 62,
+      "categoria" : {
+        "id" : 11,
+        "nome" : "Desenvolvimento específico do app",
+        "tipo" : "dia"
+      },
+      "nome" : "Sincronização em Nuvem (Cloud Syncing)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 63,
+      "categoria" : {
+        "id" : 11,
+        "nome" : "Desenvolvimento específico do app",
+        "tipo" : "dia"
+      },
+      "nome" : "Dados de Sensores do Dispositivo (Device Sensor Data)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 64,
+      "categoria" : {
+        "id" : 11,
+        "nome" : "Desenvolvimento específico do app",
+        "tipo" : "dia"
+      },
+      "nome" : "Códigos de Barras ou QR Codes",
+      "foiSelecionada" : false
+    }, {
+      "id" : 65,
+      "categoria" : {
+        "id" : 12,
+        "nome" : "Equipe",
+        "tipo" : "monetario"
+      },
+      "nome" : "Taxa Diária de Design (Design Day Rate)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 66,
+      "categoria" : {
+        "id" : 12,
+        "nome" : "Equipe",
+        "tipo" : "monetario"
+      },
+      "nome" : "Taxa Diária de Gerência de Projeto (Developer Day Rate)",
+      "foiSelecionada" : false
+    }, {
+      "id" : 67,
+      "categoria" : {
+        "id" : 12,
+        "nome" : "Equipe",
+        "tipo" : "monetario"
+      },
+      "nome" : "Taxa Diária de Desenvolvimento (Developer Day Rate)",
+      "foiSelecionada" : false
+    } ]
+  },
+  "userId" : 12,
+  "totalDias" : 60.0,
+  "valorTotal" : 95000.0,
+  "percentualImposto" : 7.0,
+  "percentualLucro" : 15.0,
+  "custoHardware" : 15000.0,
+  "custoSoftware" : 7500.0,
+  "custosRiscos" : 5000.0,
+  "custoGarantia" : 3000.0,
+  "fundoReserva" : 8000.0,
+  "outrosCustos" : 2500.0,
+  "platafomasSelecionadas" : [ {
+    "id" : 3,
+    "nome" : "Android"
+  }, {
+    "id" : 1,
+    "nome" : "Web e Back-end"
+  } ],
+  "funcionalidadesSelecionadas" : [ {
+    "id" : 1,
+    "categoria" : {
+      "id" : 1,
+      "nome" : "Tamanho do App",
+      "tipo" : "dia"
+    },
+    "nome" : "Pequeno",
+    "foiSelecionada" : true
+  }, {
+    "id" : 4,
+    "categoria" : {
+      "id" : 2,
+      "nome" : "Nível de UI",
+      "tipo" : "percentual"
+    },
+    "nome" : "MVP",
+    "foiSelecionada" : true
+  }, {
+    "id" : 17,
+    "categoria" : {
+      "id" : 4,
+      "nome" : "Conteúdo gerado pelo usuário",
+      "tipo" : "dia"
+    },
+    "nome" : "Painel (Dashboard)",
+    "foiSelecionada" : true
+  }, {
+    "id" : 18,
+    "categoria" : {
+      "id" : 4,
+      "nome" : "Conteúdo gerado pelo usuário",
+      "tipo" : "dia"
+    },
+    "nome" : "Feed de Atividades (Activity Feed)",
+    "foiSelecionada" : true
+  }, {
+    "id" : 52,
+    "categoria" : {
+      "id" : 9,
+      "nome" : "API externas e integrações",
+      "tipo" : "dia"
+    },
+    "nome" : "Conectar a um ou mais serviços de terceiros",
+    "foiSelecionada" : true
+  }, {
+    "id" : 61,
+    "categoria" : {
+      "id" : 11,
+      "nome" : "Desenvolvimento específico do app",
+      "tipo" : "dia"
+    },
+    "nome" : "Design de Ícone do App (App Icon Design)",
+    "foiSelecionada" : true
+  }, {
+    "id" : 65,
+    "categoria" : {
+      "id" : 12,
+      "nome" : "Equipe",
+      "tipo" : "monetario"
+    },
+    "nome" : "Taxa Diária de Design (Design Day Rate)",
+    "foiSelecionada" : true
+  }, {
+    "id" : 67,
+    "categoria" : {
+      "id" : 12,
+      "nome" : "Equipe",
+      "tipo" : "monetario"
+    },
+    "nome" : "Taxa Diária de Desenvolvimento (Developer Day Rate)",
+    "foiSelecionada" : true
+  } ],
+  "dataCriacao" : "17/03/2025 13:18:47",
+  "totalCusto" : 41000.0,
+  "valorImposto" : 6650.000000000001,
+  "valorComLucro" : 109250.0,
+  "valorLucro" : 14250.0,
+  "meses" : 2.0,
+  "mediaPorMes" : 57950.0,
+  "valorComImpost" : 101650.0,
+  "valorFinalDoCliente" : 115900.0
+}
