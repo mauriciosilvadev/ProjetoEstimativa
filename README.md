@@ -5,6 +5,11 @@
 git clone https://github.com/mauriciosilvadev/ProjetoEstimativa.git
 ```
 
+## :page_facing_up: Relatório de Requisitos do Sistema
+```sh
+https://docs.google.com/document/d/14_23fhb5NTqCsrfpShahwB-8nYp_LKXhBqA17Oc2sFI/edit?usp=sharing
+```
+
 ## :busts_in_silhouette: Criadores
 - **Maurício da Silva Souza**  
 - **Romerson Medina Nogueira**  
