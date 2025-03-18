@@ -5,6 +5,7 @@
 package br.projeto.view;
 
 import javax.swing.JButton;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 /**
@@ -33,11 +34,11 @@ public class CriarContaView extends javax.swing.JFrame {
         LabelNome = new javax.swing.JLabel();
         txtNome = new javax.swing.JTextField();
         LabelSenha = new javax.swing.JLabel();
-        txtSenha = new javax.swing.JTextField();
         LabelEmail = new javax.swing.JLabel();
         txtEmail = new javax.swing.JTextField();
         btnCriar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
+        txtSenha = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -61,6 +62,12 @@ public class CriarContaView extends javax.swing.JFrame {
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
+            }
+        });
+
+        txtSenha.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtSenhaActionPerformed(evt);
             }
         });
 
@@ -92,7 +99,7 @@ public class CriarContaView extends javax.swing.JFrame {
                                         .addComponent(btnCancelar)
                                         .addGap(90, 90, 90)
                                         .addComponent(btnCriar))
-                                    .addComponent(txtEmail))))))
+                                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE))))))
                 .addContainerGap(77, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -132,6 +139,10 @@ public class CriarContaView extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    private void txtSenhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSenhaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtSenhaActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -146,7 +157,7 @@ public class CriarContaView extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtNome;
-    private javax.swing.JTextField txtSenha;
+    private javax.swing.JPasswordField txtSenha;
     // End of variables declaration//GEN-END:variables
 
     public JButton getBtnCancelar() {
@@ -181,11 +192,11 @@ public class CriarContaView extends javax.swing.JFrame {
         this.txtNome = txtNome;
     }
 
-    public JTextField getTxtSenha() {
+    public JPasswordField getTxtSenha() {
         return txtSenha;
     }
 
-    public void setTxtSenha(JTextField txtSenha) {
+    public void setTxtSenha(JPasswordField txtSenha) {
         this.txtSenha = txtSenha;
     }
 }

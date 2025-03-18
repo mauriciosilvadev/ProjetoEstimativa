@@ -1,6 +1,8 @@
 package br.projeto.adapter;
 
+import br.projeto.session.UsuarioSession;
 import br.ufes.log.*;
+import java.io.File;
 
 public class LoggerAdapterImpl implements LoggerAdapter{
     private final LogFormatter formatter;
@@ -8,7 +10,13 @@ public class LoggerAdapterImpl implements LoggerAdapter{
 
     LoggerAdapterImpl(Builder builder) {
         String logType = builder.logType;
-        String filePath = builder.filePath;
+
+        // Define diretório padrão para salvar os logs
+        String directoryPath = "logs";
+        new File(directoryPath).mkdirs(); // Cria o diretório se não existir
+
+        // Define o nome do arquivo automaticamente baseado no tipo de log
+        String filePath = directoryPath + "/log." + (logType.equalsIgnoreCase("csv") ? "csv" : "json");
 
         if ("csv".equalsIgnoreCase(logType)) {
             this.formatter = new CSVLogFormatter();
@@ -21,23 +29,20 @@ public class LoggerAdapterImpl implements LoggerAdapter{
     }
 
     @Override
-    public void log(String operation, String name, String user) {
-        String formattedMessage = formatter.format(operation, name, user);
+    public void log(String operation, String name) {
+        String usuarioNome = UsuarioSession.getInstance().getUsuarioLogado() != null
+                ? UsuarioSession.getInstance().getUsuarioLogado().getNome()
+                : "Desconhecido"; // Caso ninguém esteja logado.
+
+        String formattedMessage = formatter.format(operation, name, usuarioNome);
         writer.write(formattedMessage);
     }
 
-
     public static class Builder {
         private String logType;
-        private String filePath;
 
         public Builder logType(String logType) {
             this.logType = logType;
-            return this;
-        }
-
-        public Builder filePath(String filePath) {
-            this.filePath = filePath;
             return this;
         }
 

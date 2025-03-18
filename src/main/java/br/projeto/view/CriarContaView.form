@@ -51,7 +51,7 @@
                                       <EmptySpace min="-2" pref="90" max="-2" attributes="0"/>
                                       <Component id="btnCriar" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="txtEmail" max="32767" attributes="0"/>
+                                  <Component id="txtEmail" min="-2" pref="238" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -115,8 +115,6 @@
         <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="LabelSenha"/>
       </AccessibilityProperties>
     </Component>
-    <Component class="javax.swing.JTextField" name="txtSenha">
-    </Component>
     <Component class="javax.swing.JLabel" name="LabelEmail">
       <Properties>
         <Property name="text" type="java.lang.String" value="Email"/>
@@ -135,6 +133,11 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCancelarActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JPasswordField" name="txtSenha">
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtSenhaActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

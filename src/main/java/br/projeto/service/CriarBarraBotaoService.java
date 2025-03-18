@@ -6,6 +6,7 @@ import javax.swing.JButton;
 import javax.swing.JToolBar;
 
 import br.projeto.command.ProjetoCommand;
+import br.projeto.view.LogConfigView;
 
 public class CriarBarraBotaoService {
 
@@ -21,6 +22,7 @@ public class CriarBarraBotaoService {
 
         adicionarBotao(toolBar, "Dashboard", "principal", "Principal");
         adicionarBotao(toolBar, "Novo Projeto", "projeto", "Novo projeto");
+        adicionarBotaoLog(toolBar);
 
         return toolBar;
     }
@@ -36,5 +38,16 @@ public class CriarBarraBotaoService {
             comando.execute();
         });
         toolBar.add(botao);
+    }
+    
+    // Método para adicionar o botão de Log
+    private void adicionarBotaoLog(JToolBar toolBar) {
+        JButton botaoLog = new JButton("Log");
+        botaoLog.setIcon(IconService.getIcon("log"));
+        botaoLog.addActionListener(e -> {
+            // Quando o botão "Log" for clicado, abre a tela de configuração de log
+            new LogConfigView().setVisible(true);
+        });
+        toolBar.add(botaoLog);
     }
 }
