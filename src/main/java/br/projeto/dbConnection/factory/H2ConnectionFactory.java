@@ -2,13 +2,13 @@ package br.projeto.dbConnection.factory;
 
 import java.sql.SQLException;
 
+import br.projeto.dbConnection.connections.H2Connection;
 import br.projeto.dbConnection.connections.IDatabaseConnection;
-import br.projeto.dbConnection.connections.SqliteConnection;
 
-public class SqliteConnectionFactory implements IDatabaseConnectionFactory {
+public class H2ConnectionFactory implements IDatabaseConnectionFactory {
 
     @Override
     public IDatabaseConnection getConnection() throws SQLException {
-        return new SqliteConnection();
+        return new H2Connection();
     }
 }

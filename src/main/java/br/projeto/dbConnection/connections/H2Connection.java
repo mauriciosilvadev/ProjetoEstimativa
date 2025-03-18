@@ -12,62 +12,61 @@ import org.flywaydb.core.api.FlywayException;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
-public class SqliteConnection implements IDatabaseConnection {
+public class H2Connection implements IDatabaseConnection {
 
     private static Connection connection;
-    private final String db_name;
-    private final String db_url;
+    private final String dbName;
+    private final String dbUrl;
 
-    public SqliteConnection() throws SQLException {
+    public H2Connection() throws SQLException {
         Dotenv env = Dotenv.load();
-        this.db_name = env.get("SQLITE_DB_NAME");
-        this.db_url = "jdbc:sqlite:./" + db_name;
+        this.dbName = env.get("H2_DB_NAME");
+        this.dbUrl = "jdbc:h2:./" + dbName;
 
         if (Boolean.parseBoolean(env.get("CONFIGURE_DATABASE"))) {
-            this.deleteDatabase();
-            Flyway flyway = this.configureFlyway();
-            this.runMigrations(flyway);
+            deleteDatabase();
+            Flyway flyway = configureFlyway();
+            runMigrations(flyway);
         }
 
-        SqliteConnection.connection = DriverManager.getConnection(this.db_url);
+        H2Connection.connection = DriverManager.getConnection(this.dbUrl, "sa", "");
     }
 
     @Override
     public boolean disconnect() throws SQLException {
-        if (!SqliteConnection.connection.isClosed()) {
-            SqliteConnection.connection.close();
+        if (!H2Connection.connection.isClosed()) {
+            H2Connection.connection.close();
         }
         return true;
     }
 
     @Override
     public Statement createStatement() throws SQLException {
-        return SqliteConnection.connection.createStatement();
+        return H2Connection.connection.createStatement();
     }
 
     @Override
     public PreparedStatement prepareStatement(String sql) throws SQLException {
-        return SqliteConnection.connection.prepareStatement(sql);
+        return H2Connection.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
     }
 
     private void deleteDatabase() {
-        File dbFile = new File(db_name + ".db");
-
+        File dbFile = new File(dbName + ".mv.db");
         if (dbFile.exists()) {
             if (dbFile.delete()) {
-                System.out.println("Banco de dados deletado com sucesso.");
+                System.out.println("Banco de dados H2 deletado com sucesso.");
             } else {
-                System.err.println("Erro ao deletar o banco de dados.");
+                System.err.println("Erro ao deletar o banco de dados H2.");
             }
         } else {
-            System.out.println("Banco de dados não existe.");
+            System.out.println("Banco de dados H2 não existe.");
         }
     }
 
     private Flyway configureFlyway() {
         return Flyway.configure()
-                .dataSource(this.db_url, null, null)
-                .locations("classpath:db/migration/sqlite")
+                .dataSource(this.dbUrl, "sa", "")
+                .locations("classpath:db/migration/h2")
                 .mixed(true)
                 .baselineOnMigrate(true)
                 .load();
@@ -76,10 +75,9 @@ public class SqliteConnection implements IDatabaseConnection {
     private void runMigrations(Flyway flyway) {
         try {
             flyway.migrate();
-            System.out.println("Migrations aplicadas com sucesso.");
+            System.out.println("Migrations H2 aplicadas com sucesso.");
         } catch (FlywayException e) {
-            System.err.println("Erro ao executar as migrations: " + e);
+            System.err.println("Erro ao executar as migrations H2: " + e);
         }
     }
-
 }

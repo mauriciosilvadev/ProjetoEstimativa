@@ -44,6 +44,7 @@ import br.projeto.service.NoArvoreComposite;
 import br.projeto.session.UsuarioSession;
 import br.projeto.view.GlobalWindowManager;
 import br.projeto.view.PrincipalView;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public final class PrincipalPresenter implements Observer {
 
@@ -84,11 +85,13 @@ public final class PrincipalPresenter implements Observer {
         var usuario = UsuarioSession.getInstance().getUsuarioLogado();
         final long loginTime = System.currentTimeMillis();
 
-        view.getFooterLabel().setText("Usuário Logado: " + usuario.getNome() + " (" + usuario.getEmail() + ") | Tempo logado: 0s");
+        Dotenv env = Dotenv.load();
+
+        view.getFooterLabel().setText(("Usuário Logado: " + usuario.getNome() + " (" + usuario.getEmail() + ") | Tempo logado: 0s" + " | Banco de dados sendo utilizado: " + env.get("DB_TYPE").toUpperCase()));
 
         Timer timer = new Timer(1000, e -> {
             long segundos = (System.currentTimeMillis() - loginTime) / 1000;
-            view.getFooterLabel().setText("Usuário Logado: " + usuario.getNome() + " (" + usuario.getEmail() + ") | Tempo logado: " + segundos + "s");
+            view.getFooterLabel().setText("Usuário Logado: " + usuario.getNome() + " (" + usuario.getEmail() + ") | Tempo logado: " + segundos + "s" + " | Banco de dados sendo utilizado: " + env.get("DB_TYPE").toUpperCase());
         });
         timer.start();
     }
