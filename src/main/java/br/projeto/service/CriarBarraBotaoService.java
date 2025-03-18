@@ -39,7 +39,7 @@ public class CriarBarraBotaoService {
         });
         toolBar.add(botao);
     }
-    
+
     // Método para adicionar o botão de Log
     private void adicionarBotaoLog(JToolBar toolBar) {
         JButton botaoLog = new JButton("Log");

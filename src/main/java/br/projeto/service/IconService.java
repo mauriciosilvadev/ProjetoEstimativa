@@ -18,6 +18,7 @@ public class IconService {
         icons.put("action", loadIcon("action-icon.png"));
         icons.put("power", loadIcon("power-icon.png"));
         icons.put("cross", loadIcon("cross-icon.png"));
+        icons.put("log", loadIcon("log-icon.png"));
     }
 
     private static ImageIcon loadIcon(String path) {

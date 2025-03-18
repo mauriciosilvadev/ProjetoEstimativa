@@ -12,6 +12,7 @@ import br.projeto.adapter.LoggerAdapterImpl;
  * @author Romerson
  */
 public class LogConfigView extends JFrame {
+
     private JComboBox<String> comboBoxLogType;
     private JTextField txtFilePath;
     private JButton btnSalvar;
@@ -31,8 +32,6 @@ public class LogConfigView extends JFrame {
         JPanel panel = new JPanel();
         panel.add(new JLabel("Tipo de Log:"));
         panel.add(comboBoxLogType);
-        panel.add(new JLabel("Caminho do Arquivo:"));
-        panel.add(txtFilePath);
         panel.add(btnSalvar);
 
         add(panel);
@@ -42,18 +41,10 @@ public class LogConfigView extends JFrame {
     }
 
     private void salvarConfiguracao() {
-        // Obtém as informações do tipo de log e do caminho do arquivo
         String logType = (String) comboBoxLogType.getSelectedItem();
-        String filePath = txtFilePath.getText();
 
-        // Configura o LoggerAdapter com as informações fornecidas
-        LoggerAdapterImpl logger = new LoggerAdapterImpl.Builder()
-                .logType(logType)
-                .build();
+        LoggerAdapterImpl.getInstance().setLogType(logType);
 
-        
-
-        // Fecha a janela de configuração
         dispose();
     }
 }

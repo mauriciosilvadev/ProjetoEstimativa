@@ -2,25 +2,36 @@ package br.projeto.adapter;
 
 import br.projeto.session.UsuarioSession;
 import br.ufes.log.*;
+
 import java.io.File;
 
-public class LoggerAdapterImpl implements LoggerAdapter{
-    private final LogFormatter formatter;
-    private final LogWriter writer;
+import io.github.cdimascio.dotenv.Dotenv;
 
-    LoggerAdapterImpl(Builder builder) {
-        String logType = builder.logType;
+public class LoggerAdapterImpl implements LoggerAdapter {
 
-        // Define diretório padrão para salvar os logs
+    private LogFormatter formatter;
+    private LogWriter writer;
+    private static LoggerAdapterImpl instance;
+    private String logType;
+
+    private LoggerAdapterImpl() {
+        Dotenv env = Dotenv.load();
+
+        this.logType = env.get("LOG_TYPE");
+
+        configureLog();
+    }
+
+    private void configureLog() {
         String directoryPath = "logs";
-        new File(directoryPath).mkdirs(); // Cria o diretório se não existir
 
-        // Define o nome do arquivo automaticamente baseado no tipo de log
-        String filePath = directoryPath + "/log." + (logType.equalsIgnoreCase("csv") ? "csv" : "json");
+        new File(directoryPath).mkdirs();
 
-        if ("csv".equalsIgnoreCase(logType)) {
+        String filePath = directoryPath + "/log." + (this.logType.equalsIgnoreCase("csv") ? "csv" : "json");
+
+        if ("csv".equalsIgnoreCase(this.logType)) {
             this.formatter = new CSVLogFormatter();
-        } else if ("json".equalsIgnoreCase(logType)) {
+        } else if ("json".equalsIgnoreCase(this.logType)) {
             this.formatter = new JSONLogFormatter();
         } else {
             throw new IllegalArgumentException("Tipo de log inválido.");
@@ -32,22 +43,22 @@ public class LoggerAdapterImpl implements LoggerAdapter{
     public void log(String operation, String name) {
         String usuarioNome = UsuarioSession.getInstance().getUsuarioLogado() != null
                 ? UsuarioSession.getInstance().getUsuarioLogado().getNome()
-                : "Desconhecido"; // Caso ninguém esteja logado.
+                : "Desconhecido";
 
         String formattedMessage = formatter.format(operation, name, usuarioNome);
         writer.write(formattedMessage);
     }
 
-    public static class Builder {
-        private String logType;
-
-        public Builder logType(String logType) {
-            this.logType = logType;
-            return this;
+    public static LoggerAdapterImpl getInstance() {
+        if (instance == null) {
+            instance = new LoggerAdapterImpl();
         }
+        return instance;
+    }
 
-        public LoggerAdapterImpl build() {
-            return new LoggerAdapterImpl(this);
-        }
+    public void setLogType(String logType) {
+        this.logType = logType;
+
+        configureLog();
     }
 }
