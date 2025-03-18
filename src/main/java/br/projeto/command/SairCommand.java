@@ -13,6 +13,7 @@ import br.projeto.state.login.LoginNaoAutenticadoState;
  * @author Usuário
  */
 public class SairCommand implements ProjetoCommand {
+
     private final PrincipalPresenter principalPresenter;
     private final LoginPresenter loginPresenter;
 
@@ -20,15 +21,15 @@ public class SairCommand implements ProjetoCommand {
         this.principalPresenter = principalPresenter;
         this.loginPresenter = loginPresenter;
     }
-    
+
     @Override
     public void execute() {
-        // Executa a lógica de logout
-        
-        
-        // Fecha a tela principal e reexibe a tela de login
         principalPresenter.getView().dispose();
         loginPresenter.setState(new LoginNaoAutenticadoState());
+
+        loginPresenter.getView().getTxtEmail().setText("");
+        loginPresenter.getView().getTxtSenha().setText("");
+
         loginPresenter.getView().setVisible(true);
     }
 

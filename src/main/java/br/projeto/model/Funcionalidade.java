@@ -6,6 +6,7 @@ package br.projeto.model;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonIgnore; // Importe a anotação
 
 /**
@@ -16,7 +17,7 @@ public class Funcionalidade {
 
     private int id;
     private Categoria categoria;
-    
+
     @JsonIgnore // Ignora a referência ao Perfil durante a serialização
     private Perfil perfil;
 
@@ -71,6 +72,12 @@ public class Funcionalidade {
     }
 
     public void addValorPlataforma(Plataforma plataforma, Double valor) {
+        for (Plataforma p : valoresPlataformas.keySet()) {
+            if (p.getId() == plataforma.getId()) {
+                valoresPlataformas.replace(p, valor);
+                return;
+            }
+        }
         valoresPlataformas.put(plataforma, valor);
     }
 

@@ -1,7 +1,6 @@
 package br.projeto;
 
 import javax.swing.SwingUtilities;
-
 import br.projeto.dbConnection.factory.ConnectionFactory;
 import br.projeto.presenter.LoginPresenter;
 import br.projeto.repository.UsuarioRepositoryImpl;

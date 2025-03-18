@@ -13,9 +13,10 @@ import br.projeto.model.Perfil;
 import br.projeto.model.Plataforma;
 import br.projeto.model.ProjetoEstimativa;
 import br.projeto.presenter.Observer;
+import br.projeto.repository.traits.PegarUltimoIdInserido;
 import br.projeto.session.UsuarioSession;
 
-public class ProjetoRepositoryImpl implements ProjetoRepository {
+public class ProjetoRepositoryImpl extends PegarUltimoIdInserido implements ProjetoRepository {
 
     private final List<Observer> observers;
     private static ProjetoRepository instance;
@@ -200,10 +201,11 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
                 pstmt.setString(14, projetoEstimativa.getDataCriacao());
 
                 pstmt.executeUpdate();
-            }
 
-            int projetoId = obterUltimoIdInserido(connection);
-            projetoEstimativa.setId(projetoId);
+                int projetoId = obterUltimoIdInserido(connection, pstmt);
+
+                projetoEstimativa.setId(projetoId);
+            }
 
             try (PreparedStatement pstmtPlataforma = connection.prepareStatement(projetoPlataformaSql)) {
                 for (Plataforma plataforma : projetoEstimativa.getPlatafomasSelecionadas()) {
@@ -211,7 +213,7 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
                     pstmtPlataforma.setInt(2, plataforma.getId());
                     pstmtPlataforma.executeUpdate();
 
-                    int idProjetoPlataforma = obterUltimoIdInserido(connection);
+                    int idProjetoPlataforma = obterUltimoIdInserido(connection, pstmtPlataforma);
 
                     for (Funcionalidade funcionalidade : projetoEstimativa.getFuncionalidadesSelecionadas()) {
                         try (PreparedStatement pstmtFuncionalidade = connection.prepareStatement(projetoFuncionalidadeSql)) {
@@ -264,17 +266,17 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
                 pstmt.setDouble(13, projetoEstimativa.getValorTotal());
                 pstmt.setInt(14, projetoEstimativa.getId());
 
-                System.out.println(pstmt.executeUpdate());
+                pstmt.executeUpdate();
             }
 
             try (PreparedStatement pstmt = connection.prepareStatement(deleteProjetoFuncionalidadeSql)) {
                 pstmt.setInt(1, projetoEstimativa.getId());
-                System.out.println(pstmt.executeUpdate());
+                pstmt.executeUpdate();
             }
 
             try (PreparedStatement pstmt = connection.prepareStatement(deleteProjetoPlataformaSql)) {
                 pstmt.setInt(1, projetoEstimativa.getId());
-                System.out.println(pstmt.executeUpdate());
+                pstmt.executeUpdate();
             }
 
             try (PreparedStatement pstmtPlataforma = connection.prepareStatement(projetoPlataformaSql)) {
@@ -283,7 +285,7 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
                     pstmtPlataforma.setInt(2, plataforma.getId());
                     pstmtPlataforma.executeUpdate();
 
-                    int idProjetoPlataforma = obterUltimoIdInserido(connection);
+                    int idProjetoPlataforma = obterUltimoIdInserido(connection, pstmtPlataforma);
                     for (Funcionalidade funcionalidade : projetoEstimativa.getFuncionalidadesSelecionadas()) {
                         try (PreparedStatement pstmtFuncionalidade = connection.prepareStatement(projetoFuncionalidadeSql)) {
                             pstmtFuncionalidade.setInt(1, idProjetoPlataforma);
@@ -298,20 +300,6 @@ public class ProjetoRepositoryImpl implements ProjetoRepository {
             notifyObservers(getProjetos());
         } catch (SQLException e) {
             throw new RuntimeException("Não foi possível atualizar o projeto de estimativa", e);
-        }
-    }
-
-    /**
-     * Método auxiliar para obter o último ID inserido
-     */
-    private int obterUltimoIdInserido(IDatabaseConnection conn) throws SQLException {
-        try (Statement stmt = conn.createStatement(); ResultSet rs = stmt.executeQuery("SELECT last_insert_rowid()")) {
-
-            if (rs.next()) {
-                return rs.getInt(1);
-            } else {
-                throw new SQLException("Falha ao obter o ID gerado.");
-            }
         }
     }
 

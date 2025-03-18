@@ -22,6 +22,7 @@ import br.projeto.command.AbrirEditarProjetoCommand;
 import br.projeto.command.ExcluirProjetoProjetoCommand;
 import br.projeto.command.ExportarProjetoEstimativaCSVCommand;
 import br.projeto.command.ExportarProjetoEstimativaJSONCommand;
+import br.projeto.command.ExportarProjetoEstimativaPDFCommand;
 import br.projeto.command.MostrarMensagemProjetoCommand;
 import br.projeto.command.ProjetoCommand;
 import br.projeto.command.SairCommand;
@@ -44,6 +45,7 @@ import br.projeto.service.NoArvoreComposite;
 import br.projeto.session.UsuarioSession;
 import br.projeto.view.GlobalWindowManager;
 import br.projeto.view.PrincipalView;
+import io.github.cdimascio.dotenv.Dotenv;
 
 public final class PrincipalPresenter implements Observer {
 
@@ -84,11 +86,13 @@ public final class PrincipalPresenter implements Observer {
         var usuario = UsuarioSession.getInstance().getUsuarioLogado();
         final long loginTime = System.currentTimeMillis();
 
-        view.getFooterLabel().setText("Usuário Logado: " + usuario.getNome() + " (" + usuario.getEmail() + ") | Tempo logado: 0s");
+        Dotenv env = Dotenv.load();
+
+        view.getFooterLabel().setText(("Usuário Logado: " + usuario.getNome() + " (" + usuario.getEmail() + ") | Tempo logado: 0s" + " | Banco de dados sendo utilizado: " + env.get("DB_TYPE").toUpperCase()));
 
         Timer timer = new Timer(1000, e -> {
             long segundos = (System.currentTimeMillis() - loginTime) / 1000;
-            view.getFooterLabel().setText("Usuário Logado: " + usuario.getNome() + " (" + usuario.getEmail() + ") | Tempo logado: " + segundos + "s");
+            view.getFooterLabel().setText("Usuário Logado: " + usuario.getNome() + " (" + usuario.getEmail() + ") | Tempo logado: " + segundos + "s" + " | Banco de dados sendo utilizado: " + env.get("DB_TYPE").toUpperCase());
         });
         timer.start();
     }
@@ -106,7 +110,6 @@ public final class PrincipalPresenter implements Observer {
         comandos.put("Principal", new AbrirDashboardProjetoCommand(view.getDesktop(), projetoRepository));
         comandos.put("Exportar projeto de estimativa", new MostrarMensagemProjetoCommand("Exportar ainda não implementado"));
         comandos.put("Novo projeto", new AbrirCriarProjetoCommand(perfilRepository, projetoRepository, view.getDesktop()));
-        comandos.put("Excluir projeto", new ExcluirProjetoProjetoCommand(projetoRepository));
         comandos.put("Sair", new SairCommand(this, presenter));
 
         return comandos;
@@ -203,20 +206,25 @@ public final class PrincipalPresenter implements Observer {
                 }
             };
 
-            ExcluirProjetoProjetoCommand cmdExcluir = new ExcluirProjetoProjetoCommand(projetoRepository, projeto.getNome());
+            ExcluirProjetoProjetoCommand cmdExcluir = new ExcluirProjetoProjetoCommand(projetoRepository, projeto.getNome(), view.getDesktop());
 
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Visualizar", "action", cmdDetalhes));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Editar", "action", cmdEditar));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Compartilhar", "action", cmdCompartilhar));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo(
-                    "Exportar projeto para JSON",
+                    "Exportar projeto em JSON",
                     "action",
                     new ExportarProjetoEstimativaJSONCommand(projetoRepository, projeto.getNome())
             ));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo(
-                    "Exportar projeto para CSV",
+                    "Exportar projeto em CSV",
                     "action",
                     new ExportarProjetoEstimativaCSVCommand(projetoRepository, projeto.getNome())
+            ));
+            noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo(
+                    "Exportar projeto em PDF",
+                    "action",
+                    new ExportarProjetoEstimativaPDFCommand(projetoRepository, projeto.getNome())
             ));
             noProjeto.adicionarFilho(construtorDeArvoreNavegacaoService.criarNo("Excluir", "cross", cmdExcluir));
             noProjetos.adicionarFilho(noProjeto);

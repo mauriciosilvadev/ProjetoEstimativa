@@ -1,5 +1,5 @@
 INSERT INTO usuarios (nome, email, senha) VALUES 
-('Mauricio', 'mauricio.s.dev@gmail.com', 'secret'),
+('Mauricio', 'mauricio@example.com', 'secret'),
 ('Ana', 'ana@example.com', 'secret'),
 ('Anabela', 'anabela@example.com', 'secret'),
 ('Anastasia', 'anastasia@example.com', 'secret'),

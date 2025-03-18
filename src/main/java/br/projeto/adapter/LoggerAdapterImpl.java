@@ -1,18 +1,37 @@
 package br.projeto.adapter;
 
+import br.projeto.session.UsuarioSession;
 import br.ufes.log.*;
 
-public class LoggerAdapterImpl implements LoggerAdapter{
-    private final LogFormatter formatter;
-    private final LogWriter writer;
+import java.io.File;
 
-    LoggerAdapterImpl(Builder builder) {
-        String logType = builder.logType;
-        String filePath = builder.filePath;
+import io.github.cdimascio.dotenv.Dotenv;
 
-        if ("csv".equalsIgnoreCase(logType)) {
+public class LoggerAdapterImpl implements LoggerAdapter {
+
+    private LogFormatter formatter;
+    private LogWriter writer;
+    private static LoggerAdapterImpl instance;
+    private String logType;
+
+    private LoggerAdapterImpl() {
+        Dotenv env = Dotenv.load();
+
+        this.logType = env.get("LOG_TYPE");
+
+        configureLog();
+    }
+
+    private void configureLog() {
+        String directoryPath = "logs";
+
+        new File(directoryPath).mkdirs();
+
+        String filePath = directoryPath + "/log." + (this.logType.equalsIgnoreCase("csv") ? "csv" : "json");
+
+        if ("csv".equalsIgnoreCase(this.logType)) {
             this.formatter = new CSVLogFormatter();
-        } else if ("json".equalsIgnoreCase(logType)) {
+        } else if ("json".equalsIgnoreCase(this.logType)) {
             this.formatter = new JSONLogFormatter();
         } else {
             throw new IllegalArgumentException("Tipo de log inválido.");
@@ -21,28 +40,25 @@ public class LoggerAdapterImpl implements LoggerAdapter{
     }
 
     @Override
-    public void log(String operation, String name, String user) {
-        String formattedMessage = formatter.format(operation, name, user);
+    public void log(String operation, String name) {
+        String usuarioNome = UsuarioSession.getInstance().getUsuarioLogado() != null
+                ? UsuarioSession.getInstance().getUsuarioLogado().getNome()
+                : "Desconhecido";
+
+        String formattedMessage = formatter.format(operation, name, usuarioNome);
         writer.write(formattedMessage);
     }
 
-
-    public static class Builder {
-        private String logType;
-        private String filePath;
-
-        public Builder logType(String logType) {
-            this.logType = logType;
-            return this;
+    public static LoggerAdapterImpl getInstance() {
+        if (instance == null) {
+            instance = new LoggerAdapterImpl();
         }
+        return instance;
+    }
 
-        public Builder filePath(String filePath) {
-            this.filePath = filePath;
-            return this;
-        }
+    public void setLogType(String logType) {
+        this.logType = logType;
 
-        public LoggerAdapterImpl build() {
-            return new LoggerAdapterImpl(this);
-        }
+        configureLog();
     }
 }

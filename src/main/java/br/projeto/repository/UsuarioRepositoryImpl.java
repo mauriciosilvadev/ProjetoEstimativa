@@ -9,9 +9,10 @@ import java.util.List;
 
 import br.projeto.dbConnection.connections.IDatabaseConnection;
 import br.projeto.model.Usuario;
+import br.projeto.repository.traits.PegarUltimoIdInserido;
 import br.projeto.session.UsuarioSession;
 
-public class UsuarioRepositoryImpl implements UsuarioRepository {
+public class UsuarioRepositoryImpl extends PegarUltimoIdInserido implements UsuarioRepository {
 
     private final IDatabaseConnection connection;
 
@@ -26,23 +27,16 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
             pstmt.setString(1, nome);
             pstmt.setString(2, email);
             pstmt.setString(3, senha);
-
             pstmt.executeUpdate();
 
-            // Recupera o ID gerado utilizando o método próprio do SQLite
-            try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery("SELECT last_insert_rowid()")) {
-                if (rs.next()) {
-                    int id = rs.getInt(1);
-                    return new Usuario.Builder()
-                            .id(id)
-                            .nome(nome)
-                            .email(email)
-                            .senha(senha)
-                            .build();
-                } else {
-                    throw new SQLException("Falha ao obter o ID gerado.");
-                }
-            }
+            int id = obterUltimoIdInserido(connection, pstmt);
+
+            return new Usuario.Builder()
+                    .id(id)
+                    .nome(nome)
+                    .email(email)
+                    .senha(senha)
+                    .build();
         } catch (SQLException e) {
             throw new RuntimeException("Não foi possível inserir o usuário", e);
         }

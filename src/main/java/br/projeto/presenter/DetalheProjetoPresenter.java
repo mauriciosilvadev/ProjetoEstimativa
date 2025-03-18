@@ -84,12 +84,7 @@ public class DetalheProjetoPresenter implements Observer {
             List<Plataforma> plataformas = projeto.getPlatafomasSelecionadas();
             for (Plataforma plataforma : plataformas) {
                 double valor = 0;
-                try {
-                    valor = func.getValorPorPlataforma(plataforma);
-                } catch (Exception e) {
-                    System.out.println("Erro ao obter valor para " + func.getNome()
-                            + " na plataforma " + plataforma.getNome() + ": " + e.getMessage());
-                }
+                valor = func.getValorPorPlataforma(plataforma);
                 String linhaDetalhe;
                 switch (func.getCategoria().getTipo()) {
                     case "dia":
