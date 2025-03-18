@@ -140,6 +140,21 @@
             <artifactId>powermock-module-junit4</artifactId>
             <version>2.0.9</version>
         </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>kernel</artifactId>
+            <version>7.1.15</version>
+        </dependency>
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>layout</artifactId>
+            <version>7.1.15</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.romersonmedina</groupId>
+            <artifactId>log-adapter</artifactId>
+            <version>v1.0.0</version>
+        </dependency>
     </dependencies>
 
     <build>
